@@ -78,9 +78,17 @@ int main(int argc, char *argv[])
 
     printf(" - Speed: %i", me->speed);
 
-	printf(" - Health: %i-%i",
-	  me->hpdice[0] * me->hpdice[1] + me->hpdice[3],
-	  me->hpdice[0] * (me->hpdice[1] + me->hpdice[2]) + me->hpdice[3]);
+    const int hd = me->hpdice[0];
+    printf(" - HD: %d", hd);
+
+    printf(" - Health: ");
+    const int hplow = hd * me->hpdice[1] + me->hpdice[3];
+    const int hphigh =
+        hd * (me->hpdice[1] + me->hpdice[2]) + me->hpdice[3];
+    if (hplow < hphigh)
+        printf("%i-%i", hplow, hphigh);
+    else
+        printf("%i", hplow);
 
     printf(" - AC/EV: %i/%i", me->AC, me->ev);
 
