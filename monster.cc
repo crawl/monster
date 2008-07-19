@@ -29,7 +29,7 @@ static void record_resvul(const char *name, const char *caption,
         str += ", ";
 
     str += name;
-    if (rval > 1 && rval < 3) {
+    if (rval > 1 && rval <= 3) {
         while (rval-- > 0)
             str += "+";
     }
