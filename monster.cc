@@ -29,10 +29,9 @@ static void record_resvul(const char *name, const char *caption,
         str += ", ";
 
     str += name;
-    if (rval > 1) {
-        char buf[10];
-        snprintf(buf, sizeof buf, "(%d)", rval);
-        str += buf;
+    if (rval > 1 && rval < 3) {
+        while (rval-- > 0)
+            str += "+";
     }
 }
 
