@@ -24,7 +24,7 @@ static void record_resvul(const char *name, const char *caption,
                           std::string &str, int rval)
 {
     if (str.empty())
-        str = " - " + std::string(caption) + ": ";
+        str = " | " + std::string(caption) + ": ";
     else
         str += ", ";
 
@@ -76,12 +76,12 @@ int main(int argc, char *argv[])
 
     printf("%s", monstername.c_str());
 
-    printf(" - Speed: %i", me->speed);
+    printf(" | Speed: %i", me->speed);
 
     const int hd = me->hpdice[0];
-    printf(" - HD: %d", hd);
+    printf(" | HD: %d", hd);
 
-    printf(" - Health: ");
+    printf(" | Health: ");
     const int hplow = hd * me->hpdice[1] + me->hpdice[3];
     const int hphigh =
         hd * (me->hpdice[1] + me->hpdice[2]) + me->hpdice[3];
@@ -90,14 +90,14 @@ int main(int argc, char *argv[])
     else
         printf("%i", hplow);
 
-    printf(" - AC/EV: %i/%i", me->AC, me->ev);
+    printf(" | AC/EV: %i/%i", me->AC, me->ev);
 
     for (int x = 0; x < 4; x++)
 	{
 	  if (me->attack[x].type)
       {
 	    if (monsterattacks.empty())
-		  monsterattacks = " - Damage: ";
+		  monsterattacks = " | Damage: ";
 	    else
 	      monsterattacks += ", ";
 		monsterattacks += to_string((short int) me->attack[x].damage);
@@ -192,35 +192,35 @@ int main(int argc, char *argv[])
 	{
 	  case MH_HOLY:
 	    if (monsterflags.empty())
-		  monsterflags = " - Flags: ";
+		  monsterflags = " | Flags: ";
 	    else
 	      monsterflags += ", ";
 		monsterflags += "holy";
 	  break;
 	  case MH_UNDEAD:
 	    if (monsterflags.empty())
-		  monsterflags = " - Flags: ";
+		  monsterflags = " | Flags: ";
 	    else
 	      monsterflags += ", ";
 		monsterflags += "undead";
 	  break;
 	  case MH_DEMONIC:
 	    if (monsterflags.empty())
-		  monsterflags = " - Flags: ";
+		  monsterflags = " | Flags: ";
 	    else
 	      monsterflags += ", ";
 		monsterflags += "demonic";
 	  break;
 	  case MH_NONLIVING:
 	    if (monsterflags.empty())
-		  monsterflags = " - Flags: ";
+		  monsterflags = " | Flags: ";
 	    else
 	      monsterflags += ", ";
 		monsterflags += "non-living";
 	  break;
 	  case MH_PLANT:
 	    if (monsterflags.empty())
-		  monsterflags = " - Flags: ";
+		  monsterflags = " | Flags: ";
 	    else
 	      monsterflags += ", ";
 		monsterflags += "plant";
@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
 	if (me->bitfields & M_EVIL)
 	{
 	  if (monsterflags.empty())
-	    monsterflags = " - Flags: ";
+	    monsterflags = " | Flags: ";
 	  else
 	    monsterflags += ", ";
 	  monsterflags += "evil";
@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
 	if (me->bitfields & M_SPELLCASTER)
 	{
 	  if (monsterflags.empty())
-	    monsterflags = " - Flags: ";
+	    monsterflags = " | Flags: ";
 	  else
 	    monsterflags += ", ";
 	  monsterflags += "spellcaster";
@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
 	if (me->bitfields & M_COLD_BLOOD)
 	{
 	  if (monsterflags.empty())
-	    monsterflags = " - Flags: ";
+	    monsterflags = " | Flags: ";
 	  else
 	    monsterflags += ", ";
 	  monsterflags += "cold-blooded";
@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
 	if (me->bitfields & M_SENSE_INVIS)
 	{
 	  if (monsterflags.empty())
-	    monsterflags = " - Flags: ";
+	    monsterflags = " | Flags: ";
 	  else
 	    monsterflags += ", ";
 	  monsterflags += "sense invisible";
@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
 	if (me->bitfields & M_SEE_INVIS)
 	{
 	  if (monsterflags.empty())
-	    monsterflags = " - Flags: ";
+	    monsterflags = " | Flags: ";
 	  else
 	    monsterflags += ", ";
 	  monsterflags += "see invisible";
@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
 	if (me->resist_magic == 5000)
 	{
 	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
+	      monsterresistances = " | Res: ";
 	    else
 	      monsterresistances += ", ";
 		monsterresistances += "magic(immune)";
@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
 	else if (me->resist_magic < 0)
 	{
 	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
+	      monsterresistances = " | Res: ";
 	    else
 	      monsterresistances += ", ";
 		monsterresistances += "magic("
@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
 	else if (me->resist_magic > 0)
 	{
 	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
+	      monsterresistances = " | Res: ";
 	    else
 	      monsterresistances += ", ";
 		monsterresistances += "magic("
@@ -333,7 +333,7 @@ int main(int argc, char *argv[])
 
 	if (me->weight != 0 && me->corpse_thingy != CE_NOCORPSE && me->corpse_thingy != CE_CLEAN)
 	{
-	  printf(" - Chunks: ");
+	  printf(" | Chunks: ");
 	  switch (me->corpse_thingy)
 	  {
 		case CE_CONTAMINATED:
