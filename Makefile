@@ -1,6 +1,7 @@
-
+CRAWL_PATH=crawl-rel/latest/source
 all:
-	g++ -Icrawl-rel/latest/source/ -Wall -pedantic -DNDEBUG -DUNIX monster.cc -o monster
+	g++ -I$(CRAWL_PATH) -Wall -pedantic -DNDEBUG -DUNIX monster.cc \
+		 -o monster
 	strip -s monster
 
 test: all

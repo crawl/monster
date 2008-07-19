@@ -8,7 +8,7 @@ static monsterentry mondata[] = {
 #include "mon-data.h"
 };
 
-#define MONDATASIZE ARRAYSIZE(mondata)
+#define MONDATASIZE ARRAYSZ(mondata)
 
 void init_my_monsters();
 monsterentry *get_monster_data_by_id(int monsterid);
@@ -19,6 +19,32 @@ std::string &lowercase(std::string &s);
 std::string uppercase_first(std::string s);
 
 template <class T> inline std::string to_string (const T& t);
+
+static void record_resvul(const char *name, const char *caption,
+                          std::string &str, int rval)
+{
+    if (str.empty())
+        str = " - " + std::string(caption) + ": ";
+    else
+        str += ", ";
+
+    str += name;
+    if (rval > 1) {
+        char buf[10];
+        snprintf(buf, sizeof buf, "(%d)", rval);
+        str += buf;
+    }
+}
+
+static void record_resist(const char *name,
+                          std::string &res, std::string &vul,
+                          int rval)
+{
+    if (rval > 0)
+        record_resvul(name, "Res", res, rval);
+    else if (rval < 0)
+        record_resvul(name, "Vul", vul, -rval);
+}
 
 int main(int argc, char *argv[])
 {
@@ -52,7 +78,7 @@ int main(int argc, char *argv[])
     printf("%s", monstername.c_str());
 
     printf(" - Speed: %i", me->speed);
-	
+
 	printf(" - Health: %i-%i",
 	  me->hpdice[0] * me->hpdice[1] + me->hpdice[3],
 	  me->hpdice[0] * (me->hpdice[1] + me->hpdice[2]) + me->hpdice[3]);
@@ -69,7 +95,7 @@ int main(int argc, char *argv[])
 	      monsterattacks += ", ";
 		monsterattacks += to_string((short int) me->attack[x].damage);
 
-		if (me->name == "hydra")
+		if (!strcmp(me->name, "hydra"))
 		  monsterattacks += " per head";
 
 		switch (me->attack[x].flavour)
@@ -273,148 +299,28 @@ int main(int argc, char *argv[])
 		  + ")";
 	}
 
-	if (me->resists)
-	{
-	  if (me->resists & MR_RES_HELLFIRE)
-	  {
-	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += "hellfire";
-	  }
-	  else
-	    if (me->resists & MR_RES_FIRE)
-	    {
-	      if (monsterresistances.empty())
-	        monsterresistances = " - Res: ";
-	      else
-	        monsterresistances += ", ";
-		  monsterresistances += "fire";
-	    }
-	  if (me->resists & MR_RES_COLD)
-	  {
-	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += "cold";
-	  }
-	  if (me->resists & MR_RES_ELEC)
-	  {
-	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += "electricity";
-	  }
-	  if (me->resists & MR_RES_POISON)
-	  {
-	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += "poison";
-	  }
-	  if (me->resists & MR_RES_ACID)
-	  {
-	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += "acid";
-	  }
-	  if (me->resists & MR_RES_ASPHYX)
-	  {
-	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += "asphyx";
-	  }
-	  if (me->resists & MR_RES_PIERCE)
-	  {
-	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += "pierce";
-	  }
-	  if (me->resists & MR_RES_SLICE)
-	  {
-	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += "slice";
-	  }
-	  if (me->resists & MR_RES_BLUDGEON)
-	  {
-	    if (monsterresistances.empty())
-	      monsterresistances = " - Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += "bludgeon";
-	  }
+#define res(x) \
+    do                                          \
+    {                                           \
+        record_resist(#x,                             \
+                      monsterresistances,             \
+                      monstervulnerabilities,         \
+                      me->resists.x);                 \
+    } while (false)                                   \
 
-	  if (me->resists & MR_VUL_FIRE)
-	  {
-	    if (monstervulnerabilities.empty())
-	      monstervulnerabilities = " - Vul: ";
-	    else
-	      monstervulnerabilities += ", ";
-	    monstervulnerabilities += "fire";
-	  }
-	  if (me->resists & MR_VUL_COLD)
-	  {
-	    if (monstervulnerabilities.empty())
-	      monstervulnerabilities = " - Vul: ";
-	    else
-	      monstervulnerabilities += ", ";
-	    monstervulnerabilities += "cold";
-	  }
-	  if (me->resists & MR_VUL_ELEC)
-	  {
-	    if (monstervulnerabilities.empty())
-	      monstervulnerabilities = " - Vul: ";
-	    else
-	      monstervulnerabilities += ", ";
-	    monstervulnerabilities += "electricity";
-	  }
-	  if (me->resists & MR_VUL_POISON)
-	  {
-	    if (monstervulnerabilities.empty())
-	      monstervulnerabilities = " - Vul: ";
-	    else
-	      monstervulnerabilities += ", ";
-	    monstervulnerabilities += "poison";
-	  }
-	  if (me->resists & MR_VUL_PIERCE)
-	  {
-	    if (monstervulnerabilities.empty())
-	      monstervulnerabilities = " - Vul: ";
-	    else
-	      monstervulnerabilities += ", ";
-	    monstervulnerabilities += "pierce";
-	  }
-	  if (me->resists & MR_VUL_SLICE)
-	  {
-	    if (monstervulnerabilities.empty())
-	      monstervulnerabilities = " - Vul: ";
-	    else
-	      monstervulnerabilities += ", ";
-	    monstervulnerabilities += "slice";
-	  }
-	  if (me->resists & MR_VUL_BLUDGEON)
-	  {
-	    if (monstervulnerabilities.empty())
-	      monstervulnerabilities = " - Vul: ";
-	    else
-	      monstervulnerabilities += ", ";
-	    monstervulnerabilities += "bludgeon";
-	  }
 
-    }
+    res(hellfire);
+    if (me->resists.hellfire <= 0)
+        res(fire);
+    res(cold);
+    res(elec);
+    res(poison);
+    res(acid);
+    res(asphyx);
+    res(pierce);
+    res(slice);
+    res(bludgeon);
+
 	printf("%s", monsterresistances.c_str());
 	printf("%s", monstervulnerabilities.c_str());
 
@@ -500,13 +406,6 @@ std::string &lowercase(std::string &s)
     return (s);
 }
 
-std::string uppercase_first(std::string s)
-{
-    if (s.length())
-        s[0] = toupper(s[0]);
-    return (s);
-}
-
 template <class T> inline std::string to_string (const T& t)
 {
   std::stringstream ss;
@@ -514,3 +413,93 @@ template <class T> inline std::string to_string (const T& t)
   return ss.str();
 }
 
+// Unfortunate duplication from mon-util.cc, but otherwise we'll have
+// to link in the entire Crawl codebase:
+
+mon_resist_def::mon_resist_def()
+    : elec(0), poison(0), fire(0), steam(0), cold(0), hellfire(0),
+      asphyx(0), acid(0), sticky_flame(false), pierce(0),
+      slice(0), bludgeon(0)
+{
+}
+
+short mon_resist_def::get_default_res_level(int resist, short level) const
+{
+    if (level != -100)
+        return level;
+    switch (resist)
+    {
+    case MR_RES_STEAM:
+    case MR_RES_ACID:
+        return 3;
+    case MR_RES_ELEC:
+        return 2;
+    default:
+        return 1;
+    }
+}
+
+mon_resist_def::mon_resist_def(int flags, short level)
+    : elec(0), poison(0), fire(0), steam(0), cold(0), hellfire(0),
+      asphyx(0), acid(0), sticky_flame(false), pierce(0),
+      slice(0), bludgeon(0)
+{
+    for (int i = 0; i < 32; ++i)
+    {
+        const short nl = get_default_res_level(1 << i, level);
+        switch (flags & (1 << i))
+        {
+        // resistances
+        case MR_RES_STEAM:    steam    =  3; break;
+        case MR_RES_ELEC:     elec     = nl; break;
+        case MR_RES_POISON:   poison   = nl; break;
+        case MR_RES_FIRE:     fire     = nl; break;
+        case MR_RES_HELLFIRE: hellfire = nl; break;
+        case MR_RES_COLD:     cold     = nl; break;
+        case MR_RES_ASPHYX:   asphyx   = nl; break;
+        case MR_RES_ACID:     acid     = nl; break;
+
+        // vulnerabilities
+        case MR_VUL_ELEC:     elec     = -nl; break;
+        case MR_VUL_POISON:   poison   = -nl; break;
+        case MR_VUL_FIRE:     fire     = -nl; break;
+        case MR_VUL_COLD:     cold     = -nl; break;
+
+        // resistance to certain damage types
+        case MR_RES_PIERCE:   pierce   = nl; break;
+        case MR_RES_SLICE:    slice    = nl; break;
+        case MR_RES_BLUDGEON: bludgeon = nl; break;
+
+        // vulnerability to certain damage types
+        case MR_VUL_PIERCE:   pierce   = -nl; break;
+        case MR_VUL_SLICE:    slice    = -nl; break;
+        case MR_VUL_BLUDGEON: bludgeon = -nl; break;
+
+        case MR_RES_STICKY_FLAME: sticky_flame = true; break;
+
+        default: break;
+        }
+    }
+}
+
+const mon_resist_def &mon_resist_def::operator |= (const mon_resist_def &o)
+{
+    elec        += o.elec;
+    poison      += o.poison;
+    fire        += o.fire;
+    cold        += o.cold;
+    hellfire    += o.hellfire;
+    asphyx      += o.asphyx;
+    acid        += o.acid;
+    pierce      += o.pierce;
+    slice       += o.slice;
+    bludgeon    += o.bludgeon;
+    sticky_flame = sticky_flame || o.sticky_flame;
+    return (*this);
+}
+
+mon_resist_def mon_resist_def::operator | (const mon_resist_def &o) const
+{
+    mon_resist_def c(*this);
+    return (c |= o);
+}
