@@ -203,11 +203,14 @@ int main(int argc, char *argv[])
 
   mons_spec spec = mons.get_monster(0);
 
-  if ((spec.mid < 0 || spec.mid >= NUM_MONSTERS) || !err.empty()) {
+  if ((spec.mid < 0 || spec.mid >= NUM_MONSTERS
+       || spec.mid == MONS_PLAYER_GHOST)
+      || !err.empty())
+  {
     if (err.empty())
       printf("No Habla Espanol: '%s'\n", target.c_str());
     else
-      printf("Bad monster name: %s (%s)\n", target.c_str(), err.c_str());
+      printf("No Habla Espanol (%s)\n", err.c_str());
     return 1;
   }
 
@@ -223,13 +226,24 @@ int main(int argc, char *argv[])
   std::set<std::string> spell_sets;
 
   long exper = 0L;
+  int hp_min = 0;
+  int hp_max = 0;
+  int mac = 0;
+  int mev = 0;
   // Calculate averages.
   for (int i = 0; i < ntrials; ++i) {
     if (i == ntrials)
       break;
     monsters *mp = &menv[index];
-    record_spell_set(mp, spell_sets);
+    if (!mons_class_is_zombified(mp->type))
+      record_spell_set(mp, spell_sets);
     exper += exper_value(mp);
+    mac += mp->ac;
+    mev += mp->ev;
+    if (!hp_min || mp->hit_points < hp_min)
+      hp_min = mp->hit_points;
+    if (!hp_max || mp->hit_points > hp_max)
+      hp_max = mp->hit_points;
     mp->reset();
     you.unique_creatures[spec.mid] = false;
     index = dgn_place_monster(spec, 10, coord_def(GXM / 2, GYM / 2),
@@ -241,8 +255,13 @@ int main(int argc, char *argv[])
     }
   }
   exper /= ntrials;
+  mac /= ntrials;
+  mev /= ntrials;
 
   monsters &mon(menv[index]);
+  const bool generated =
+    mons_class_is_zombified(mon.type)
+    || mon.type == MONS_BEAST || mon.type == MONS_PANDEMONIUM_DEMON;
   const monsterentry *me = mon.find_monsterentry();
 
   if (me)
@@ -259,19 +278,21 @@ int main(int argc, char *argv[])
 
     printf(" | Speed: %s", monster_speed(mon, me).c_str());
 
-    const int hd = me->hpdice[0];
+    const int hd = generated? mon.hit_dice : me->hpdice[0];
     printf(" | HD: %d", hd);
 
     printf(" | Health: ");
-    const int hplow = hd * me->hpdice[1] + me->hpdice[3];
-    const int hphigh =
+    const int hplow = generated? hp_min : hd * me->hpdice[1] + me->hpdice[3];
+    const int hphigh = generated? hp_max :
         hd * (me->hpdice[1] + me->hpdice[2]) + me->hpdice[3];
     if (hplow < hphigh)
         printf("%i-%i", hplow, hphigh);
     else
         printf("%i", hplow);
 
-    printf(" | AC/EV: %i/%i", me->AC, me->ev);
+    const int ac = generated? mac : me->AC;
+    const int ev = generated? mev : me->ev;
+    printf(" | AC/EV: %i/%i", ac, ev);
 
     mon.wield_melee_weapon();
     for (int x = 0; x < 4; x++)
