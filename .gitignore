@@ -1,3 +1,4 @@
 crawl-*
 mingw*
 monster
+*.o

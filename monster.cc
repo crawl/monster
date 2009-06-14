@@ -18,22 +18,26 @@
  * ===========================================================================
  */
 
+#include "externs.h"
+#include "dungeon.h"
 #include "mon-util.h"
 #include "view.h"
+#include "maps.h"
+#include "initfile.h"
+#include "itemname.h"
+#include "spl-util.h"
+#include "state.h"
 #include <sstream>
+#include <set>
 
-static FixedVector < int, NUM_MONSTERS > mon_entry;
-
-#include "mon-data.h"
-
-#define MONDATASIZE ARRAYSZ(mondata)
-
-void init_my_monsters();
-monsterentry *get_monster_data_by_id(int monsterid);
-int get_monster_id_by_name(std::string monstername);
+// Clockwise, around the compass from north (same order as enum RUN_DIR)
+const coord_def Compass[8] =
+{
+    coord_def(0, -1), coord_def(1, -1), coord_def(1, 0), coord_def(1, 1),
+    coord_def(0, 1), coord_def(-1, 1), coord_def(-1, 0), coord_def(-1, -1),
+};
 
 
-std::string &lowercase(std::string &s);
 std::string uppercase_first(std::string s);
 
 template <class T> inline std::string to_string (const T& t);
@@ -73,11 +77,13 @@ static void monster_action_cost(std::string &qual, int cost, const char *desc) {
   }
 }
 
-static std::string monster_speed(const monsterentry *me) {
+static std::string monster_speed(const monsters &mon,
+                                 const monsterentry *me)
+{
   std::string speed;
 
   char buf[50];
-  snprintf(buf, sizeof buf, "%i", me->speed);
+  snprintf(buf, sizeof buf, "%i", mon.speed);
   speed += buf;
 
   const mon_energy_usage &cost(me->energy_usage);
@@ -118,14 +124,60 @@ static void mons_check_flag(bool set, std::string &flag,
     mons_flag(flag, newflag);
 }
 
+static void initialize_crawl() {
+  init_monsters();
+  init_properties();
+  init_item_name_cache();
+
+  init_spell_descs();
+  init_feature_table();
+  init_monster_symbols();
+  init_mon_name_cache();
+
+  dgn_reset_level();
+}
+
+static std::string mons_spell_set(const monsters *mp) {
+  std::string spells;
+  std::set<spell_type> seen;
+  for (int i = 0; i < NUM_MONSTER_SPELL_SLOTS; ++i) {
+    const spell_type sp = mp->spells[i];
+    if (sp != SPELL_NO_SPELL && seen.find(sp) == seen.end()) {
+      seen.insert(sp);
+      std::string name = spell_title(sp);
+      std::string::size_type pos = name.find('\'');
+      if (pos != std::string::npos) {
+        pos = name.find(' ', pos);
+        if (pos != std::string::npos)
+          name = name.substr(pos + 1);
+      }
+      if (!spells.empty())
+        spells += ", ";
+      spells += name;
+    }
+  }
+  return spells;
+}
+
+static void record_spell_set(const monsters *mp,
+                             std::set<std::string> &sets)
+{
+  std::string spell_set = mons_spell_set(mp);
+  if (!spell_set.empty())
+    sets.insert(spell_set);
+}
+
 int main(int argc, char *argv[])
 {
   if (argc < 2)
   {
 	printf("Usage: @? <monster name>\n");
-	exit(0);
+    return 0;
   }
 
+  initialize_crawl();
+
+  mons_list mons;
   std::string target = argv[1];
 
   if (argc > 2)
@@ -135,21 +187,64 @@ int main(int argc, char *argv[])
 	  target.append(argv[x]);
 	}
 
-  init_my_monsters();
+  std::string err = mons.add_mons(target, false);
+  mons_spec spec = mons.get_monster(0);
 
-  monsterentry *me = get_monster_data_by_id(get_monster_id_by_name(target));
+  if ((spec.mid < 0 || spec.mid >= NUM_MONSTERS) || !err.empty()) {
+    if (err.empty())
+      printf("No Habla Espanol: '%s'\n", target.c_str());
+    else
+      printf("Bad monster name: %s (%s)\n", target.c_str(), err.c_str());
+    return 1;
+  }
+
+  int index = dgn_place_monster(spec, 10, coord_def(GXM / 2, GYM / 2),
+                                true, false, false);
+  if (index < 0 || index >= MAX_MONSTERS) {
+    printf("Failed to create test monster for %s\n", target.c_str());
+    return 1;
+  }
+
+  const int ntrials = 150;
+
+  std::set<std::string> spell_sets;
+
+  long exper = 0L;
+  // Calculate averages.
+  for (int i = 0; i < ntrials; ++i) {
+    if (i == ntrials)
+      break;
+    monsters *mp = &menv[index];
+    record_spell_set(mp, spell_sets);
+    exper += exper_value(mp);
+    mp->reset();
+    you.unique_creatures[spec.mid] = false;
+    index = dgn_place_monster(spec, 10, coord_def(GXM / 2, GYM / 2),
+                              true, false, false);
+    if (index == -1) {
+      printf("Unexpected failure generating monster for %s\n",
+             target.c_str());
+      return 1;
+    }
+  }
+  exper /= ntrials;
+
+  monsters &mon(menv[index]);
+  const monsterentry *me = mon.find_monsterentry();
 
   if (me)
   {
-    std::string monstername = uppercase_first(me->name);
 	std::string monsterflags;
 	std::string monsterresistances;
 	std::string monstervulnerabilities;
 	std::string monsterattacks;
 
-    printf("%s", monstername.c_str());
+    lowercase(target);
 
-    printf(" | Speed: %s", monster_speed(me).c_str());
+    printf("%s", mon.has_hydra_multi_attack() ?
+           target.c_str() : mon.name(DESC_PLAIN, true).c_str());
+
+    printf(" | Speed: %s", monster_speed(mon, me).c_str());
 
     const int hd = me->hpdice[0];
     printf(" | HD: %d", hd);
@@ -165,20 +260,19 @@ int main(int argc, char *argv[])
 
     printf(" | AC/EV: %i/%i", me->AC, me->ev);
 
+    mon.wield_melee_weapon();
     for (int x = 0; x < 4; x++)
 	{
-	  if (me->attack[x].type)
+      mon_attack_def attk = mons_attack_spec(&mon, x);
+	  if (attk.type)
       {
 	    if (monsterattacks.empty())
 		  monsterattacks = " | Damage: ";
 	    else
 	      monsterattacks += ", ";
-		monsterattacks += to_string((short int) me->attack[x].damage);
+		monsterattacks += to_string((short int) attk.damage);
 
-		if (!strcmp(me->name, "hydra"))
-		  monsterattacks += " per head";
-
-		switch (me->attack[x].flavour)
+		switch (attk.flavour)
 		{
 		  case AF_ACID:
 		    monsterattacks += "(acid)";
@@ -256,7 +350,12 @@ int main(int argc, char *argv[])
 		  default:
 			break;
 		}
+
+		if (mon.has_hydra_multi_attack())
+		  monsterattacks += " per head";
 	  }
+      if (mon.has_hydra_multi_attack())
+        break;
 	}
 
 	printf("%s", monsterattacks.c_str());
@@ -373,63 +472,26 @@ int main(int argc, char *argv[])
 	  }
 	}
 
+    printf(" | XP: %ld", exper);
+
+    if (!spell_sets.empty()) {
+      printf(" | Sp: ");
+      bool first = true;
+      for (std::set<std::string>::const_iterator i = spell_sets.begin();
+           i != spell_sets.end(); ++i)
+      {
+        if (!first)
+          printf(" / ");
+        first = false;
+        printf("%s", i->c_str());
+      }
+    }
+
     printf(".\n");
 
     return 0;
   }
-
-  printf("No monster with such name \"%s\"...\n", target.c_str());
-
   return 1;
-}
-
-void init_my_monsters()
-{
-  unsigned int x;
-
-  mon_entry.init(-1);
-
-  for (x = 0; x < MONDATASIZE; x++)
-    mon_entry[mondata[x].mc] = x;
-
-  for (x = 0; x < NUM_MONSTERS; x++)
-    if (mon_entry[x] == -1)
-      mon_entry[x] = mon_entry[MONS_PROGRAM_BUG];
-}
-
-monsterentry *get_monster_data_by_id(int monsterid)
-{
-  const int me = monsterid != -1? mon_entry[monsterid] : -1;
-
-  if (me >= 0)
-    return (&mondata[me]);
-  else
-    return (NULL);
-}
-
-int get_monster_id_by_name(std::string monstername)
-{
-  lowercase(monstername);
-
-  for (unsigned int x = 0; x < MONDATASIZE; x++)
-  {
-    std::string match = mondata[x].name;
-	lowercase(match);
-
-    if (monstername == match)
-      return mondata[x].mc;
-
-    continue;
-  }
-
-  return (-1);
-}
-
-std::string &lowercase(std::string &s)
-{
-    for (unsigned i = 0, sz = s.size(); i < sz; ++i)
-        s[i] = tolower(s[i]);
-    return (s);
 }
 
 template <class T> inline std::string to_string (const T& t)
@@ -439,93 +501,31 @@ template <class T> inline std::string to_string (const T& t)
   return ss.str();
 }
 
-// Unfortunate duplication from mon-util.cc, but otherwise we'll have
-// to link in the entire Crawl codebase:
+//////////////////////////////////////////////////////////////////////////
+// acr.cc stuff
 
-mon_resist_def::mon_resist_def()
-    : elec(0), poison(0), fire(0), steam(0), cold(0), hellfire(0),
-      asphyx(0), acid(0), sticky_flame(false), pierce(0),
-      slice(0), bludgeon(0)
-{
+CLua clua(true);
+CLua dlua(false);      // Lua interpreter for the dungeon builder.
+crawl_environment env; // Requires dlua.
+player you;
+system_environment SysEnv;
+game_state crawl_state;
+
+FILE *yyin;
+int yylineno;
+
+std::string init_file_error;    // externed in newgame.cc
+
+char info[ INFO_SIZE ];         // messaging queue extern'd everywhere {dlb}
+
+int stealth;                    // externed in view.cc
+
+void process_command(command_type) {
 }
 
-short mon_resist_def::get_default_res_level(int resist, short level) const
-{
-    if (level != -100)
-        return level;
-    switch (resist)
-    {
-    case MR_RES_STEAM:
-    case MR_RES_ACID:
-        return 3;
-    case MR_RES_ELEC:
-        return 2;
-    default:
-        return 1;
-    }
+int yyparse() {
+  return 0;
 }
 
-mon_resist_def::mon_resist_def(int flags, short level)
-    : elec(0), poison(0), fire(0), steam(0), cold(0), hellfire(0),
-      asphyx(0), acid(0), sticky_flame(false), pierce(0),
-      slice(0), bludgeon(0)
-{
-    for (int i = 0; i < 32; ++i)
-    {
-        const short nl = get_default_res_level(1 << i, level);
-        switch (flags & (1 << i))
-        {
-        // resistances
-        case MR_RES_STEAM:    steam    =  3; break;
-        case MR_RES_ELEC:     elec     = nl; break;
-        case MR_RES_POISON:   poison   = nl; break;
-        case MR_RES_FIRE:     fire     = nl; break;
-        case MR_RES_HELLFIRE: hellfire = nl; break;
-        case MR_RES_COLD:     cold     = nl; break;
-        case MR_RES_ASPHYX:   asphyx   = nl; break;
-        case MR_RES_ACID:     acid     = nl; break;
-
-        // vulnerabilities
-        case MR_VUL_ELEC:     elec     = -nl; break;
-        case MR_VUL_POISON:   poison   = -nl; break;
-        case MR_VUL_FIRE:     fire     = -nl; break;
-        case MR_VUL_COLD:     cold     = -nl; break;
-
-        // resistance to certain damage types
-        case MR_RES_PIERCE:   pierce   = nl; break;
-        case MR_RES_SLICE:    slice    = nl; break;
-        case MR_RES_BLUDGEON: bludgeon = nl; break;
-
-        // vulnerability to certain damage types
-        case MR_VUL_PIERCE:   pierce   = -nl; break;
-        case MR_VUL_SLICE:    slice    = -nl; break;
-        case MR_VUL_BLUDGEON: bludgeon = -nl; break;
-
-        case MR_RES_STICKY_FLAME: sticky_flame = true; break;
-
-        default: break;
-        }
-    }
-}
-
-const mon_resist_def &mon_resist_def::operator |= (const mon_resist_def &o)
-{
-    elec        += o.elec;
-    poison      += o.poison;
-    fire        += o.fire;
-    cold        += o.cold;
-    hellfire    += o.hellfire;
-    asphyx      += o.asphyx;
-    acid        += o.acid;
-    pierce      += o.pierce;
-    slice       += o.slice;
-    bludgeon    += o.bludgeon;
-    sticky_flame = sticky_flame || o.sticky_flame;
-    return (*this);
-}
-
-mon_resist_def mon_resist_def::operator | (const mon_resist_def &o) const
-{
-    mon_resist_def c(*this);
-    return (c |= o);
+void world_reacts() {
 }
