@@ -47,6 +47,7 @@ all: monster
 
 monster: $(OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
 	g++ $(CFLAGS) -o $@ $(OBJECTS) $(LFLAGS)
+	strip -s $@
 
 $(LUASRC)/$(LUALIBA):
 	echo Building Lua...
