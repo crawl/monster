@@ -41,26 +41,79 @@ template <class T> inline std::string to_string (const T& t);
 static void record_resvul(const char *name, const char *caption,
                           std::string &str, int rval)
 {
-    if (str.empty())
-        str = " | " + std::string(caption) + ": ";
-    else
-        str += ", ";
+  if (str.empty())
+    str = " | " + std::string(caption) + ": ";
+  else
+    str += ", ";
 
-    str += name;
-    if (rval > 1 && rval <= 3) {
-        while (rval-- > 0)
-            str += "+";
-    }
+  str += name;
+  if (rval > 1 && rval <= 3) {
+    while (rval-- > 0)
+      str += "+";
+  }
 }
 
 static void record_resist(const char *name,
                           std::string &res, std::string &vul,
                           int rval)
 {
-    if (rval > 0)
-        record_resvul(name, "Res", res, rval);
-    else if (rval < 0)
-        record_resvul(name, "Vul", vul, -rval);
+  if (rval > 0)
+    record_resvul(name, "Res", res, rval);
+  else if (rval < 0)
+    record_resvul(name, "Vul", vul, -rval);
+}
+
+static void monster_action_cost(std::string &qual, int cost, const char *desc) {
+  char buf[80];
+  if (cost != 10) {
+    snprintf(buf, sizeof buf, "%s: %d%%", desc, cost * 10);
+    if (!qual.empty())
+      qual += "; ";
+    qual += buf;
+  }
+}
+
+static std::string monster_speed(const monsterentry *me) {
+  std::string speed;
+
+  char buf[50];
+  snprintf(buf, sizeof buf, "%i", me->speed);
+  speed += buf;
+
+  const mon_energy_usage &cost(me->energy_usage);
+  std::string qualifiers;
+  if (cost.attack == cost.missile && cost.attack == cost.spell
+      && cost.attack == cost.special && cost.attack == cost.item)
+    monster_action_cost(qualifiers, cost.attack, "act");
+  else {
+    monster_action_cost(qualifiers, cost.move, "move");
+    monster_action_cost(qualifiers, cost.swim, "swim");
+    monster_action_cost(qualifiers, cost.attack, "atk");
+    monster_action_cost(qualifiers, cost.missile, "msl");
+    monster_action_cost(qualifiers, cost.spell, "spell");
+    monster_action_cost(qualifiers, cost.special, "special");
+    monster_action_cost(qualifiers, cost.item, "item");
+  }
+
+  if (!qualifiers.empty())
+    speed += " (" + qualifiers + ")";
+
+  return speed;
+}
+
+static void mons_flag(std::string &flag, const std::string &newflag) {
+  if (flag.empty())
+    flag = " | Flags: ";
+  else
+    flag += ", ";
+  flag += newflag;
+}
+
+static void mons_check_flag(bool set, std::string &flag,
+                            const std::string &newflag)
+{
+  if (set)
+    mons_flag(flag, newflag);
 }
 
 int main(int argc, char *argv[])
@@ -94,7 +147,7 @@ int main(int argc, char *argv[])
 
     printf("%s", monstername.c_str());
 
-    printf(" | Speed: %i", me->speed);
+    printf(" | Speed: %s", monster_speed(me).c_str());
 
     const int hd = me->hpdice[0];
     printf(" | HD: %d", hd);
@@ -208,90 +261,36 @@ int main(int argc, char *argv[])
 
 	switch (me->holiness)
 	{
-	  case MH_HOLY:
-	    if (monsterflags.empty())
-		  monsterflags = " | Flags: ";
-	    else
-	      monsterflags += ", ";
-		monsterflags += "holy";
-	  break;
-	  case MH_UNDEAD:
-	    if (monsterflags.empty())
-		  monsterflags = " | Flags: ";
-	    else
-	      monsterflags += ", ";
-		monsterflags += "undead";
-	  break;
-	  case MH_DEMONIC:
-	    if (monsterflags.empty())
-		  monsterflags = " | Flags: ";
-	    else
-	      monsterflags += ", ";
-		monsterflags += "demonic";
-	  break;
-	  case MH_NONLIVING:
-	    if (monsterflags.empty())
-		  monsterflags = " | Flags: ";
-	    else
-	      monsterflags += ", ";
-		monsterflags += "non-living";
-	  break;
-	  case MH_PLANT:
-	    if (monsterflags.empty())
-		  monsterflags = " | Flags: ";
-	    else
-	      monsterflags += ", ";
-		monsterflags += "plant";
-	  break;
-	  case MH_NATURAL:
-	  default:
-		break;
+    case MH_HOLY:
+      mons_flag(monsterflags, "holy");
+      break;
+    case MH_UNDEAD:
+      mons_flag(monsterflags, "undead");
+      break;
+    case MH_DEMONIC:
+      mons_flag(monsterflags, "demonic");
+      break;
+    case MH_NONLIVING:
+      mons_flag(monsterflags, "non-living");
+      break;
+    case MH_PLANT:
+      mons_flag(monsterflags, "plant");
+      break;
+    case MH_NATURAL:
+    default:
+      break;
 	}
 
-	if (me->bitfields & M_EVIL)
-	{
-	  if (monsterflags.empty())
-	    monsterflags = " | Flags: ";
-	  else
-	    monsterflags += ", ";
-	  monsterflags += "evil";
-	}
+    mons_check_flag(me->habitat == HT_AMPHIBIOUS_WATER ||
+                    me->habitat == HT_AMPHIBIOUS_LAND,
+                    monsterflags, "amphibious");
 
-	if (me->bitfields & M_SPELLCASTER)
-	{
-	  if (monsterflags.empty())
-	    monsterflags = " | Flags: ";
-	  else
-	    monsterflags += ", ";
-	  monsterflags += "spellcaster";
-	}
-
-	if (me->bitfields & M_COLD_BLOOD)
-	{
-	  if (monsterflags.empty())
-	    monsterflags = " | Flags: ";
-	  else
-	    monsterflags += ", ";
-	  monsterflags += "cold-blooded";
-	}
-
-	if (me->bitfields & M_SENSE_INVIS)
-	{
-	  if (monsterflags.empty())
-	    monsterflags = " | Flags: ";
-	  else
-	    monsterflags += ", ";
-	  monsterflags += "sense invisible";
-	}
-
-	if (me->bitfields & M_SEE_INVIS)
-	{
-	  if (monsterflags.empty())
-	    monsterflags = " | Flags: ";
-	  else
-	    monsterflags += ", ";
-	  monsterflags += "see invisible";
-	}
+    mons_check_flag(me->bitfields & M_EVIL, monsterflags, "evil");
+    mons_check_flag(me->bitfields & M_SPELLCASTER, monsterflags, "spellcaster");
+    mons_check_flag(me->bitfields & M_COLD_BLOOD, monsterflags, "cold-blooded");
+    mons_check_flag(me->bitfields & M_SENSE_INVIS, monsterflags,
+                    "sense invisible");
+    mons_check_flag(me->bitfields & M_SEE_INVIS, monsterflags, "see invisible");
 
 	printf("%s", monsterflags.c_str());
 
