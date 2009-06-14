@@ -188,6 +188,12 @@ int main(int argc, char *argv[])
 	}
 
   std::string err = mons.add_mons(target, false);
+  if (!err.empty()) {
+    const std::string test = mons.add_mons("the " + target, false);
+    if (test.empty())
+      err = test;
+  }
+
   mons_spec spec = mons.get_monster(0);
 
   if ((spec.mid < 0 || spec.mid >= NUM_MONSTERS) || !err.empty()) {
