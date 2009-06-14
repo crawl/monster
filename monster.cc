@@ -24,9 +24,7 @@
 
 static FixedVector < int, NUM_MONSTERS > mon_entry;
 
-static monsterentry mondata[] = {
 #include "mon-data.h"
-};
 
 #define MONDATASIZE ARRAYSZ(mondata)
 
