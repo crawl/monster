@@ -1,4 +1,4 @@
-CRAWL_PATH=crawl-git/crawl-ref/source
+CRAWL_PATH=../crawl-git/crawl-ref/source
 
 CXX = g++
 LUASRC := $(CRAWL_PATH)/util/lua/src
