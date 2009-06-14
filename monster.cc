@@ -145,12 +145,19 @@ static std::string mons_spell_set(const monsters *mp) {
     if (sp != SPELL_NO_SPELL && seen.find(sp) == seen.end()) {
       seen.insert(sp);
       std::string name = spell_title(sp);
+      lowercase(name);
       std::string::size_type pos = name.find('\'');
       if (pos != std::string::npos) {
         pos = name.find(' ', pos);
         if (pos != std::string::npos)
           name = name.substr(pos + 1);
       }
+      if ((pos = name.find(" of ")) != std::string::npos)
+        name = name.substr(pos + 4) + " " + name.substr(0, pos);
+      if (name.find("summon ") == 0 && name != "summon undead")
+        name = name.substr(7);
+      if (name.find("bolt") == name.length() - 4)
+        name = "b." + name.substr(0, name.length() - 5);
       if (!spells.empty())
         spells += ", ";
       spells += name;
