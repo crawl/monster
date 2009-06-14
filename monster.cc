@@ -82,12 +82,14 @@ static std::string monster_speed(const monsterentry *me) {
 
   const mon_energy_usage &cost(me->energy_usage);
   std::string qualifiers;
-  if (cost.attack == cost.missile && cost.attack == cost.spell
+  if (cost.attack != 10
+      && cost.attack == cost.missile && cost.attack == cost.spell
       && cost.attack == cost.special && cost.attack == cost.item)
     monster_action_cost(qualifiers, cost.attack, "act");
   else {
     monster_action_cost(qualifiers, cost.move, "move");
-    monster_action_cost(qualifiers, cost.swim, "swim");
+    if (cost.swim != cost.move)
+      monster_action_cost(qualifiers, cost.swim, "swim");
     monster_action_cost(qualifiers, cost.attack, "atk");
     monster_action_cost(qualifiers, cost.missile, "msl");
     monster_action_cost(qualifiers, cost.spell, "spell");
