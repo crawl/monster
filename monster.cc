@@ -78,12 +78,18 @@ static void monster_action_cost(std::string &qual, int cost, const char *desc) {
 }
 
 static std::string monster_speed(const monsters &mon,
-                                 const monsterentry *me)
+                                 const monsterentry *me,
+                                 int speed_min,
+                                 int speed_max)
 {
   std::string speed;
 
   char buf[50];
-  snprintf(buf, sizeof buf, "%i", mon.speed);
+  if (speed_max != speed_min)
+    snprintf(buf, sizeof buf, "%i-%i", speed_min, speed_max);
+  else
+    snprintf(buf, sizeof buf, "%i", speed_max);
+
   speed += buf;
 
   const mon_energy_usage &cost(me->energy_usage);
@@ -174,6 +180,13 @@ static void record_spell_set(const monsters *mp,
     sets.insert(spell_set);
 }
 
+static inline void set_min_max(int num, int &min, int &max) {
+  if (!min || num < min)
+    min = num;
+  if (!max || num > max)
+    max = num;
+}
+
 int main(int argc, char *argv[])
 {
   if (argc < 2)
@@ -230,6 +243,7 @@ int main(int argc, char *argv[])
   int hp_max = 0;
   int mac = 0;
   int mev = 0;
+  int speed_min = 0, speed_max = 0;
   // Calculate averages.
   for (int i = 0; i < ntrials; ++i) {
     if (i == ntrials)
@@ -240,10 +254,10 @@ int main(int argc, char *argv[])
     exper += exper_value(mp);
     mac += mp->ac;
     mev += mp->ev;
-    if (!hp_min || mp->hit_points < hp_min)
-      hp_min = mp->hit_points;
-    if (!hp_max || mp->hit_points > hp_max)
-      hp_max = mp->hit_points;
+    set_min_max(mp->speed, speed_min, speed_max);
+    set_min_max(mp->hit_points, hp_min, hp_max);
+
+    // Destroy the monster.
     mp->reset();
     you.unique_creatures[spec.mid] = false;
     index = dgn_place_monster(spec, 10, coord_def(GXM / 2, GYM / 2),
@@ -273,10 +287,14 @@ int main(int argc, char *argv[])
 
     lowercase(target);
 
-    printf("%s", mon.has_hydra_multi_attack() ?
-           target.c_str() : mon.name(DESC_PLAIN, true).c_str());
+    const bool changing_name =
+      mon.has_hydra_multi_attack() || mon.type == MONS_PANDEMONIUM_DEMON;
 
-    printf(" | Speed: %s", monster_speed(mon, me).c_str());
+    printf("%s",
+           changing_name ? me->name : mon.name(DESC_PLAIN, true).c_str());
+
+    printf(" | Speed: %s",
+           monster_speed(mon, me, speed_min, speed_max).c_str());
 
     const int hd = generated? mon.hit_dice : me->hpdice[0];
     printf(" | HD: %d", hd);
@@ -510,14 +528,19 @@ int main(int argc, char *argv[])
 
     if (!spell_sets.empty()) {
       printf(" | Sp: ");
-      bool first = true;
-      for (std::set<std::string>::const_iterator i = spell_sets.begin();
-           i != spell_sets.end(); ++i)
-      {
-        if (!first)
-          printf(" / ");
-        first = false;
-        printf("%s", i->c_str());
+
+      if (mon.type == MONS_PANDEMONIUM_DEMON)
+        printf("(random)");
+      else {
+        bool first = true;
+        for (std::set<std::string>::const_iterator i = spell_sets.begin();
+             i != spell_sets.end(); ++i)
+        {
+          if (!first)
+            printf(" / ");
+          first = false;
+          printf("%s", i->c_str());
+        }
       }
     }
 
