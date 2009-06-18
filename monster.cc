@@ -262,6 +262,11 @@ int main(int argc, char *argv[])
   const bool generated =
     mons_class_is_zombified(mon.type)
     || mon.type == MONS_BEAST || mon.type == MONS_PANDEMONIUM_DEMON;
+  const bool varying_names =
+    mon.has_hydra_multi_attack()
+    || mons_is_mimic(mon.type)
+    || mons_is_shapeshifter(&mon);
+
   const monsterentry *me = mon.find_monsterentry();
 
   if (me)
@@ -297,6 +302,7 @@ int main(int argc, char *argv[])
     mon.wield_melee_weapon();
     for (int x = 0; x < 4; x++)
 	{
+      mon_attack_def orig_attk(me->attack[x]);
       mon_attack_def attk = mons_attack_spec(&mon, x);
 	  if (attk.type)
       {
@@ -306,7 +312,9 @@ int main(int argc, char *argv[])
 	      monsterattacks += ", ";
 		monsterattacks += to_string((short int) attk.damage);
 
-		switch (attk.flavour)
+        const mon_attack_flavour flavour(
+          orig_attk.flavour == AF_KLOWN ? AF_KLOWN : attk.flavour);
+		switch (flavour)
 		{
 		  case AF_ACID:
 		    monsterattacks += "(acid)";
