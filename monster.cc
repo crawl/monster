@@ -276,12 +276,14 @@ int main(int argc, char *argv[])
   const bool generated =
     mons_class_is_zombified(mon.type)
     || mon.type == MONS_BEAST || mon.type == MONS_PANDEMONIUM_DEMON;
-  const bool varying_names =
-    mon.has_hydra_multi_attack()
-    || mons_is_mimic(mon.type)
-    || mons_is_shapeshifter(&mon);
 
-  const monsterentry *me = mon.find_monsterentry();
+  const bool shapeshifter =
+      mons_is_shapeshifter(&mon)
+      || spec.mid == MONS_SHAPESHIFTER
+      || spec.mid == MONS_GLOWING_SHAPESHIFTER;
+
+  const monsterentry *me =
+      shapeshifter ? get_monster_data(spec.mid) : mon.find_monsterentry();
 
   if (me)
   {
@@ -293,7 +295,9 @@ int main(int argc, char *argv[])
     lowercase(target);
 
     const bool changing_name =
-      mon.has_hydra_multi_attack() || mon.type == MONS_PANDEMONIUM_DEMON;
+      mon.has_hydra_multi_attack() || mon.type == MONS_PANDEMONIUM_DEMON
+        || mons_is_mimic(mon.type) || shapeshifter
+        || mon.type == MONS_DANCING_WEAPON;
 
     printf("%s",
            changing_name ? me->name : mon.name(DESC_PLAIN, true).c_str());
@@ -484,13 +488,15 @@ int main(int argc, char *argv[])
 		  + ")";
 	}
 
+    const mon_resist_def res(
+        shapeshifter? me->resists : get_mons_resists(&mon));
 #define res(x) \
     do                                          \
     {                                           \
         record_resist(#x,                             \
                       monsterresistances,             \
                       monstervulnerabilities,         \
-                      me->resists.x);                 \
+                      res.x);                         \
     } while (false)                                   \
 
 
@@ -537,7 +543,7 @@ int main(int argc, char *argv[])
     if (!spell_sets.empty()) {
       printf(" | Sp: ");
 
-      if (mon.type == MONS_PANDEMONIUM_DEMON)
+      if (shapeshifter || mon.type == MONS_PANDEMONIUM_DEMON)
         printf("(random)");
       else {
         bool first = true;

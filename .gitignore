@@ -2,3 +2,4 @@ crawl-*
 mingw*
 monster
 *.o
+TAGS
