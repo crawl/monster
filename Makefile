@@ -16,8 +16,8 @@ CFLAGS = -Wall -Wno-parentheses -pedantic -DNDEBUG -DUNIX \
 LFLAGS = -L$(SQLSRC)  -l$(SQLLIB) -L$(LUASRC) -l$(LUALIB) -lncurses
 
 CRAWL_OBJECTS = \
-	abl-show.o abyss.o arena.o beam.o branch.cc cio.o chardump.o clua.o \
-	cloud.o \
+	abl-show.o abyss.o arena.o artefact.o beam.o branch.cc \
+	cio.o chardump.o clua.o cloud.o \
 	command.o crash-u.o \
 	database.o debug.o decks.o delay.o describe.o directn.o dgnevent.o \
 	dungeon.o \
@@ -30,7 +30,7 @@ CRAWL_OBJECTS = \
 	mutation.o \
 	newgame.o notes.o \
 	ouch.o output.o overmap.o place.o player.o quiver.o \
-	randart.o religion.o shopping.o skills.o skills2.o spells1.o \
+	religion.o shopping.o skills.o skills2.o spells1.o \
 	spells2.o spells3.o spells4.o \
 	spl-book.o spl-cast.o spl-mis.o spl-util.o sqldbm.o state.o store.o \
 	stash.o stuff.o tags.o terrain.o traps.o transfor.o travel.o tutorial.o \
