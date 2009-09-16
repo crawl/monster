@@ -1,3 +1,11 @@
+# Use 'make stable' to compile monster, 'make trunk' to compile monster-trunk.
+# Use 'make install' to install monster, 'make install-trunk' to install
+# monster-trunk.
+
+# Branch names to target in git repo.
+STABLE = dcss05
+TRUNK = master
+
 CRAWL_PATH=crawl-ref/crawl-ref/source
 
 CXX = g++
@@ -43,9 +51,27 @@ OBJECTS += $(CRAWL_OBJECTS:%=$(CRAWL_PATH)/%)
 .cc.o:
 	${CXX} ${CFLAGS} -o $@ -c $<
 
-all: monster
+all: stable
 
-monster: $(OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
+stable: monster
+
+trunk: monster-trunk
+
+checkout-stable:
+	cd $(CRAWL_PATH) && \
+	( test "$(git branch | grep '^\*')" = "* $(STABLE)" || \
+	  git checkout $(STABLE) && git clean -f -d -x)
+
+checkout-trunk:
+	cd $(CRAWL_PATH) && \
+	( test "$(git branch | grep '^\*')" = "* $(TRUNK)" ] || \
+	  git checkout $(TRUNK) && git clean -f -d -x)
+
+monster-trunk: checkout-trunk $(OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
+	g++ $(CFLAGS) -o $@ $(OBJECTS) $(LFLAGS)
+	strip -s $@
+
+monster: checkout-stable $(OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
 	g++ $(CFLAGS) -o $@ $(OBJECTS) $(LFLAGS)
 	strip -s $@
 
@@ -63,6 +89,10 @@ test: monster
 install: monster
 	cp monster $(HOME)/bin/
 
+install-trunk: monster-trunk
+	cp monster-trunk $(HOME)/bin/
+
 clean:
 	rm -f *.o
 	rm -f monster
+	cd $(CRAWL_PATH) && git clean -f -d -x
