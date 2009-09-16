@@ -60,12 +60,12 @@ trunk: monster-trunk
 checkout-stable:
 	cd $(CRAWL_PATH) && \
 	( test "$$(git branch | grep '^\*')" = "* $(STABLE)" || \
-	  ( git checkout $(STABLE) && git clean -f -d -x ) )
+	  ( git checkout $(STABLE) && git clean -f -d -x && git pull ) )
 
 checkout-trunk:
 	cd $(CRAWL_PATH) && \
 	( test "$$(git branch | grep '^\*')" = "* $(TRUNK)" || \
-		( git checkout $(TRUNK) && git clean -f -d -x ) )
+		( git checkout $(TRUNK) && git clean -f -d -x && git pull ) )
 
 monster-trunk: checkout-trunk $(OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
 	g++ $(CFLAGS) -o $@ $(OBJECTS) $(LFLAGS)
@@ -95,4 +95,4 @@ install-trunk: monster-trunk
 clean:
 	rm -f *.o
 	rm -f monster
-	cd $(CRAWL_PATH) && git clean -f -d -x
+	cd $(CRAWL_PATH) && git clean -f -d -x && git pull
