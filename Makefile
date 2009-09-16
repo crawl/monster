@@ -59,12 +59,12 @@ trunk: monster-trunk
 
 checkout-stable:
 	cd $(CRAWL_PATH) && \
-	( test "$(git branch | grep '^\*')" = "* $(STABLE)" || \
+	( test "$$(git branch | grep '^\*')" = "* $(STABLE)" || \
 	  git checkout $(STABLE) && git clean -f -d -x)
 
 checkout-trunk:
 	cd $(CRAWL_PATH) && \
-	( test "$(git branch | grep '^\*')" = "* $(TRUNK)" || \
+	( test "$$(git branch | grep '^\*')" = "* $(TRUNK)" || \
 	  git checkout $(TRUNK) && git clean -f -d -x)
 
 monster-trunk: checkout-trunk $(OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
