@@ -24,7 +24,7 @@ CFLAGS = -Wall -Wno-parentheses -pedantic -DNDEBUG -DUNIX \
 LFLAGS = -L$(SQLSRC)  -l$(SQLLIB) -L$(LUASRC) -l$(LUALIB) -lncurses
 
 CRAWL_OBJECTS = \
-	abl-show.o abyss.o arena.o artefact.o beam.o branch.cc \
+	abl-show.o abyss.o arena.o beam.o branch.cc \
 	cio.o chardump.o clua.o cloud.o \
 	command.o crash-u.o \
 	database.o debug.o decks.o delay.o describe.o directn.o dgnevent.o \
@@ -43,6 +43,11 @@ CRAWL_OBJECTS = \
 	spl-book.o spl-cast.o spl-mis.o spl-util.o sqldbm.o state.o store.o \
 	stash.o stuff.o tags.o terrain.o traps.o transfor.o travel.o tutorial.o \
 	version.o view.o xom.o
+ 
+CONDITIONAL_OBJECTS = randart.o artefact.o
+
+CRAWL_OBJECTS += $(foreach src,$(CONDITIONAL_OBJECTS:%.o=%.cc), \
+		   $(shell [ -f $(CRAWL_PATH)/$(src) ] && echo $(src:%.cc=%.o)))
 
 OBJECTS = monster.o
 
