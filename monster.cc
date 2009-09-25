@@ -187,6 +187,52 @@ static inline void set_min_max(int num, int &min, int &max) {
     max = num;
 }
 
+static std::string colour_codes[] = {
+    "01",
+    "02",
+    "03",
+    "10",
+    "04",
+    "06",
+    "05",
+    "15",
+    "14",
+    "12",
+    "09",
+    "11",
+    "b04",
+    "13",
+    "08",
+    "16"
+};
+
+#ifdef CONTROL
+#undef CONTROL
+#endif
+#define CONTROL(x) char(x - 'A' + 1)
+static std::string monster_colour(const monsterentry *me) {
+    int colour(me->colour);
+    if (is_element_colour(colour))
+        colour = element_colour(colour, true);
+    const std::string code(colour_codes[colour]);
+
+    return (code[0] == 'b' ?
+            std::string() + CONTROL('B') + CONTROL('C') + code.substr(1)
+            : std::string() + CONTROL('C') + code);
+}
+
+static std::string monster_symbol(const monsters &mon) {
+    std::string symbol;
+    const monsterentry *me = mon.find_monsterentry();
+    if (me) {
+        symbol += me->showchar;
+        const std::string colour = monster_colour(me);
+        if (!colour.empty())
+            symbol = colour + symbol + CONTROL('O');
+    }
+    return (symbol);
+}
+
 int main(int argc, char *argv[])
 {
   if (argc < 2)
@@ -273,6 +319,9 @@ int main(int argc, char *argv[])
   mev /= ntrials;
 
   monsters &mon(menv[index]);
+
+  const std::string symbol(monster_symbol(mon));
+
   const bool generated =
     mons_class_is_zombified(mon.type)
     || mon.type == MONS_BEAST || mon.type == MONS_PANDEMONIUM_DEMON;
@@ -299,8 +348,9 @@ int main(int argc, char *argv[])
         || mons_is_mimic(mon.type) || shapeshifter
         || mon.type == MONS_DANCING_WEAPON;
 
-    printf("%s",
-           changing_name ? me->name : mon.name(DESC_PLAIN, true).c_str());
+    printf("%s (%s)",
+           changing_name ? me->name : mon.name(DESC_PLAIN, true).c_str(),
+           symbol.c_str());
 
     printf(" | Speed: %s",
            monster_speed(mon, me, speed_min, speed_max).c_str());
@@ -338,80 +388,79 @@ int main(int argc, char *argv[])
           orig_attk.flavour == AF_KLOWN ? AF_KLOWN : attk.flavour);
 		switch (flavour)
 		{
-		  case AF_ACID:
+        case AF_ACID:
 		    monsterattacks += "(acid)";
 			break;
-		  case AF_BLINK:
+        case AF_BLINK:
 		    monsterattacks += "(blink)";
 			break;
-		  case AF_COLD:
+        case AF_COLD:
 		    monsterattacks += "(cold)";
 			break;
-		  case AF_CONFUSE:
+        case AF_CONFUSE:
 		    monsterattacks += "(confuse)";
 			break;
-		  case AF_DISEASE:
+        case AF_DISEASE:
 		    monsterattacks += "(disease)";
 			break;
-		  case AF_DRAIN_DEX:
+        case AF_DRAIN_DEX:
 		    monsterattacks += "(drain dexterity)";
 			break;
-		  case AF_DRAIN_STR:
+        case AF_DRAIN_STR:
 		    monsterattacks += "(drain strength)";
 			break;
-		  case AF_DRAIN_XP:
+        case AF_DRAIN_XP:
 		    monsterattacks += "(drain)";
 			break;
-		  case AF_ELEC:
+        case AF_CHAOS:
+            monsterattacks += "(chaos)";
+        case AF_ELEC:
 		    monsterattacks += "(elec)";
 			break;
-		  case AF_FIRE:
+        case AF_FIRE:
 		    monsterattacks += "(fire)";
 			break;
-		  case AF_HUNGER:
+        case AF_HUNGER:
 		    monsterattacks += "(hunger)";
 			break;
-		  case AF_MUTATE:
+        case AF_MUTATE:
 		    monsterattacks += "(mutation)";
 			break;
-		  case AF_BAD_MUTATE:
-		    monsterattacks += "(bad mutation)";
-			break;
-		  case AF_PARALYSE:
+        case AF_PARALYSE:
 		    monsterattacks += "(paralyse)";
 			break;
-		  case AF_POISON:
+        case AF_POISON:
 		    monsterattacks += "(poison)";
 			break;
-		  case AF_POISON_NASTY:
+        case AF_POISON_NASTY:
 		    monsterattacks += "(nasty poison)";
 			break;
-		  case AF_POISON_MEDIUM:
+        case AF_POISON_MEDIUM:
 		    monsterattacks += "(medium poison)";
 			break;
-		  case AF_POISON_STRONG:
+        case AF_POISON_STRONG:
 		    monsterattacks += "(strong poison)";
 			break;
-		  case AF_POISON_STR:
+        case AF_POISON_STR:
 		    monsterattacks += "(poison, drain strength)";
 			break;
-		  case AF_ROT:
+        case AF_ROT:
 		    monsterattacks += "(rot)";
 			break;
-		  case AF_VAMPIRIC:
+        case AF_VAMPIRIC:
 		    monsterattacks += "(vampiric)";
 			break;
-		  case AF_KLOWN:
+        case AF_KLOWN:
 		    monsterattacks += "(klown)";
 			break;
-		  case AF_DISTORT:
+        case AF_DISTORT:
 		    monsterattacks += "(distort)";
 			break;
-		  case AF_RAGE:
+        case AF_RAGE:
 		    monsterattacks += "(rage)";
 			break;
-		  case AF_PLAIN:
-		  default:
+        case AF_PLAIN:
+        default:
 			break;
 		}
 
