@@ -1,5 +1,6 @@
 crawl-*
 mingw*
 monster
+monster-trunk
 *.o
 TAGS
