@@ -221,7 +221,7 @@ static std::string monster_colour(const monsterentry *me) {
          std::string() + CONTROL('B') + CONTROL('C') + code.substr(1)
          : std::string() + CONTROL('C') + code);
     if (!base.empty())
-        base += ",00";
+        base += ",01";
     return (base);
 }
 
