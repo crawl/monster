@@ -451,7 +451,9 @@ int main(int argc, char *argv[])
                     monsterflags, "amphibious");
 
     mons_check_flag(me->bitfields & M_EVIL, monsterflags, "evil");
-    mons_check_flag(me->bitfields & M_SPELLCASTER, monsterflags, "spellcaster");
+    mons_check_flag((me->bitfields & M_SPELLCASTER)
+                    && (me->bitfields & M_ACTUAL_SPELLS),
+                    monsterflags, "spellcaster");
     mons_check_flag(me->bitfields & M_COLD_BLOOD, monsterflags, "cold-blooded");
     mons_check_flag(me->bitfields & M_SENSE_INVIS, monsterflags,
                     "sense invisible");
