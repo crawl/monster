@@ -1,6 +1,9 @@
 crawl-*
 mingw*
+*.sw?
+*.log
 monster
 monster-trunk
+out.txt
 *.o
 TAGS

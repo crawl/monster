@@ -188,7 +188,7 @@ static inline void set_min_max(int num, int &min, int &max) {
 }
 
 static std::string colour_codes[] = {
-    "01",
+    "",
     "02",
     "03",
     "10",
@@ -215,8 +215,8 @@ static std::string monster_colour(const monsterentry *me) {
     if (is_element_colour(colour))
         colour = element_colour(colour, true);
     const std::string code(colour_codes[colour]);
-
-    return (code[0] == 'b' ?
+    return (code.empty() ? code :
+            code[0] == 'b' ?
             std::string() + CONTROL('B') + CONTROL('C') + code.substr(1)
             : std::string() + CONTROL('C') + code);
 }
