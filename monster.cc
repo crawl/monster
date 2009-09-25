@@ -215,10 +215,14 @@ static std::string monster_colour(const monsterentry *me) {
     if (is_element_colour(colour))
         colour = element_colour(colour, true);
     const std::string code(colour_codes[colour]);
-    return (code.empty() ? code :
-            code[0] == 'b' ?
-            std::string() + CONTROL('B') + CONTROL('C') + code.substr(1)
-            : std::string() + CONTROL('C') + code);
+    std::string base =
+        (code.empty() ? code :
+         code[0] == 'b' ?
+         std::string() + CONTROL('B') + CONTROL('C') + code.substr(1)
+         : std::string() + CONTROL('C') + code);
+    if (!base.empty())
+        base += ",00";
+    return (base);
 }
 
 static std::string monster_symbol(const monsters &mon) {
