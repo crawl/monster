@@ -210,8 +210,8 @@ static std::string colour_codes[] = {
 #undef CONTROL
 #endif
 #define CONTROL(x) char(x - 'A' + 1)
-static std::string monster_colour(const monsterentry *me) {
-    int colour(me->colour);
+static std::string monster_colour(const monsters &mon) {
+    int colour(mon.colour);
     if (is_element_colour(colour))
         colour = element_colour(colour, true);
     const std::string code(colour_codes[colour]);
@@ -230,7 +230,7 @@ static std::string monster_symbol(const monsters &mon) {
     const monsterentry *me = mon.find_monsterentry();
     if (me) {
         symbol += me->showchar;
-        const std::string colour = monster_colour(me);
+        const std::string colour = monster_colour(mon);
         if (!colour.empty())
             symbol = colour + symbol + CONTROL('O');
     }

@@ -3,7 +3,7 @@
 # monster-trunk.
 
 # Branch names to target in git repo.
-STABLE = dcss05
+STABLE = stone_soup-0.5
 TRUNK = master
 
 CRAWL_PATH=crawl-ref/crawl-ref/source
