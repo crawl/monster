@@ -19,8 +19,10 @@
  */
 
 #include "externs.h"
+#include "colour.h"
 #include "dungeon.h"
 #include "mon-util.h"
+#include "version.h"
 #include "view.h"
 #include "maps.h"
 #include "initfile.h"
@@ -31,7 +33,7 @@
 #include <set>
 
 // Clockwise, around the compass from north (same order as enum RUN_DIR)
-const coord_def Compass[8] =
+struct coord_def Compass[8] =
 {
     coord_def(0, -1), coord_def(1, -1), coord_def(1, 0), coord_def(1, 1),
     coord_def(0, 1), coord_def(-1, 1), coord_def(-1, 0), coord_def(-1, -1),
@@ -136,7 +138,6 @@ static void initialize_crawl() {
   init_item_name_cache();
 
   init_spell_descs();
-  init_feature_table();
   init_monster_symbols();
   init_mon_name_cache();
 
@@ -245,6 +246,14 @@ int main(int argc, char *argv[])
     return 0;
   }
 
+  if (!strcmp(argv[1], "-version"))
+  {
+    printf("%s\n",
+           std::string("Monster stats Crawl version: "
+                       + Version::Long()).c_str());
+    return 0;
+  }
+
   initialize_crawl();
 
   mons_list mons;
@@ -331,7 +340,7 @@ int main(int argc, char *argv[])
     || mon.type == MONS_BEAST || mon.type == MONS_PANDEMONIUM_DEMON;
 
   const bool shapeshifter =
-      mons_is_shapeshifter(&mon)
+      mon.is_shapeshifter()
       || spec.mid == MONS_SHAPESHIFTER
       || spec.mid == MONS_GLOWING_SHAPESHIFTER;
 
@@ -503,7 +512,7 @@ int main(int argc, char *argv[])
                     me->habitat == HT_AMPHIBIOUS_LAND,
                     monsterflags, "amphibious");
 
-    mons_check_flag(me->bitfields & M_EVIL, monsterflags, "evil");
+    mons_check_flag(mon.is_evil(), monsterflags, "evil");
     mons_check_flag((me->bitfields & M_SPELLCASTER)
                     && (me->bitfields & M_ACTUAL_SPELLS),
                     monsterflags, "spellcaster");
@@ -511,8 +520,8 @@ int main(int argc, char *argv[])
     mons_check_flag(me->bitfields & M_SENSE_INVIS, monsterflags,
                     "sense invisible");
     mons_check_flag(me->bitfields & M_SEE_INVIS, monsterflags, "see invisible");
-    mons_check_flag(me->bitfields & M_LEVITATE, monsterflags, "lev");
-    mons_check_flag(me->bitfields & M_FLIES, monsterflags, "fly");
+    mons_check_flag(me->fly == FL_LEVITATE, monsterflags, "lev");
+    mons_check_flag(me->fly == FL_FLY, monsterflags, "fly");
 
 	printf("%s", monsterflags.c_str());
 
