@@ -68,10 +68,7 @@ $(FSQLLIBA):
 	cd $(SQLSRC) && $(MAKE)
 
 test: monster
-	./monster quasit
-
-install: monster
-	cp monster $(HOME)/bin/
+	./monster-trunk quasit
 
 install-trunk: monster-trunk
 	cp monster-trunk $(HOME)/bin/
