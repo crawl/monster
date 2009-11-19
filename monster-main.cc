@@ -246,7 +246,7 @@ int main(int argc, char *argv[])
     return 0;
   }
 
-  if (!strcmp(argv[1], "-version"))
+  if (strstr(argv[1], "-version"))
   {
     printf("%s\n",
            std::string("Monster stats Crawl version: "

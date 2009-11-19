@@ -29,7 +29,7 @@ LFLAGS = -L$(SQLSRC)  -l$(SQLLIB) -L$(LUASRC) -l$(LUALIB) -lncurses
 
 include $(CRAWL_PATH)/makefile.obj
 
-CRAWL_OBJECTS := $(OBJECTS:acr.o=)
+CRAWL_OBJECTS := $(OBJECTS:main.o=)
 CRAWL_OBJECTS := $(CRAWL_OBJECTS:dbg-asrt.o=) libunix.o
 
 ALL_OBJECTS = monster-main.o $(CRAWL_PATH)/version.o
