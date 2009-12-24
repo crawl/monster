@@ -242,6 +242,7 @@ static std::string monster_symbol(const monsters &mon) {
 
 int main(int argc, char *argv[])
 {
+  crawl_state.test = true;
   if (argc < 2)
   {
 	printf("Usage: @? <monster name>\n");
