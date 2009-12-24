@@ -19,6 +19,7 @@
  */
 
 #include "externs.h"
+#include "env.h"
 #include "colour.h"
 #include "dungeon.h"
 #include "mon-util.h"
@@ -588,19 +589,19 @@ int main(int argc, char *argv[])
 	  printf(" | Chunks: ");
 	  switch (me->corpse_thingy)
 	  {
-		case CE_CONTAMINATED:
-		  printf(colour(BROWN,"contaminated").c_str());
-		  break;
-		case CE_POISONOUS:
-		  printf(colour(LIGHTGREEN,"poisonous").c_str());
-		  break;
-		case CE_HCL:
-		  printf(colour(LIGHTRED,"hydrochloric acid").c_str());
-		  break;
-		case CE_MUTAGEN_RANDOM:
-		  printf(colour(MAGENTA, "mutagenic").c_str());
-		break;
-		default:
+      case CE_CONTAMINATED:
+          printf("%s", colour(BROWN,"contaminated").c_str());
+          break;
+      case CE_POISONOUS:
+          printf("%s", colour(LIGHTGREEN,"poisonous").c_str());
+          break;
+      case CE_HCL:
+          printf("%s", colour(LIGHTRED,"hydrochloric acid").c_str());
+          break;
+      case CE_MUTAGEN_RANDOM:
+		  printf("%s", colour(MAGENTA, "mutagenic").c_str());
+          break;
+      default:
 		  printf("clean/none/unknown");
 		  break;
 	  }

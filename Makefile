@@ -25,7 +25,7 @@ endif
 CFLAGS = -Wall -Wno-parentheses -pedantic -DNDEBUG -DUNIX \
 	-I$(LUASRC) -I$(SQLSRC) -I$(CRAWL_PATH) -g
 
-LFLAGS = -L$(SQLSRC)  -l$(SQLLIB) -L$(LUASRC) -l$(LUALIB) -lncurses
+LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncurses
 
 include $(CRAWL_PATH)/makefile.obj
 
