@@ -283,9 +283,9 @@ int main(int argc, char *argv[])
       || !err.empty())
   {
     if (err.empty())
-      printf("No Habla Espanol: '%s'\n", target.c_str());
+      printf("Unknown monster: '%s'\n", target.c_str());
     else
-      printf("No Habla Espanol (%s)\n", err.c_str());
+      printf("%s\n", err.c_str());
     return 1;
   }
 
