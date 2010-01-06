@@ -283,7 +283,7 @@ int main(int argc, char *argv[])
       || !err.empty())
   {
     if (err.empty())
-      printf("Unknown monster: '%s'\n", target.c_str());
+      printf("unknown monster: \"%s\"\n", target.c_str());
     else
       printf("%s\n", err.c_str());
     return 1;
