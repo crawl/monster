@@ -52,7 +52,7 @@ trunk: monster-trunk
 
 checkout-trunk:
 	cd $(CRAWL_PATH) && \
-	( test "$$(git branch | grep '^\*')" = "* $(TRUNK)" || \
+	( test "$$(git branch | grep '^\*')" = "* $(TRUNK)" && \
 		( git checkout $(TRUNK) && git clean -f -d -x && git pull ) )
 
 monster-trunk: checkout-trunk $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
