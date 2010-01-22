@@ -405,80 +405,83 @@ int main(int argc, char *argv[])
           orig_attk.flavour == AF_KLOWN ? AF_KLOWN : attk.flavour);
 		switch (flavour)
 		{
+        case AF_REACH:
+          monsterattacks += "(reach)";
+          break;
         case AF_ACID:
-		    monsterattacks += colour(YELLOW,"(acid)");
-			break;
+          monsterattacks += colour(YELLOW,"(acid)");
+          break;
         case AF_BLINK:
-		    monsterattacks += colour(MAGENTA, "(blink)");
-			break;
+          monsterattacks += colour(MAGENTA, "(blink)");
+          break;
         case AF_COLD:
-		    monsterattacks += colour(LIGHTBLUE, "(cold)");
-			break;
+          monsterattacks += colour(LIGHTBLUE, "(cold)");
+          break;
         case AF_CONFUSE:
-		    monsterattacks += colour(LIGHTMAGENTA,"(confuse)");
-			break;
+          monsterattacks += colour(LIGHTMAGENTA,"(confuse)");
+          break;
         case AF_DISEASE:
-		    monsterattacks += colour(BROWN,"(disease)");
-			break;
+          monsterattacks += colour(BROWN,"(disease)");
+          break;
         case AF_DRAIN_DEX:
-		    monsterattacks += colour(RED,"(drain dexterity)");
-			break;
+          monsterattacks += colour(RED,"(drain dexterity)");
+          break;
         case AF_DRAIN_STR:
-		    monsterattacks += colour(RED,"(drain strength)");
-			break;
+          monsterattacks += colour(RED,"(drain strength)");
+          break;
         case AF_DRAIN_XP:
-		    monsterattacks += colour(LIGHTMAGENTA, "(drain)");
-			break;
+          monsterattacks += colour(LIGHTMAGENTA, "(drain)");
+          break;
         case AF_CHAOS:
-            monsterattacks += colour(LIGHTGREEN, "(chaos)");
+          monsterattacks += colour(LIGHTGREEN, "(chaos)");
         case AF_ELEC:
-		    monsterattacks += colour(LIGHTCYAN, "(elec)");
-			break;
+          monsterattacks += colour(LIGHTCYAN, "(elec)");
+          break;
         case AF_FIRE:
-		    monsterattacks += colour(LIGHTRED, "(fire)");
-			break;
+          monsterattacks += colour(LIGHTRED, "(fire)");
+          break;
         case AF_HUNGER:
-		    monsterattacks += colour(BLUE, "(hunger)");
-			break;
+          monsterattacks += colour(BLUE, "(hunger)");
+          break;
         case AF_MUTATE:
-		    monsterattacks += colour(LIGHTGREEN, "(mutation)");
-			break;
+          monsterattacks += colour(LIGHTGREEN, "(mutation)");
+          break;
         case AF_PARALYSE:
-		    monsterattacks += colour(LIGHTRED, "(paralyse)");
-			break;
+          monsterattacks += colour(LIGHTRED, "(paralyse)");
+          break;
         case AF_POISON:
-		    monsterattacks += colour(YELLOW,"(poison)");
-			break;
+          monsterattacks += colour(YELLOW,"(poison)");
+          break;
         case AF_POISON_NASTY:
-		    monsterattacks += colour(YELLOW,"(nasty poison)");
-			break;
+          monsterattacks += colour(YELLOW,"(nasty poison)");
+          break;
         case AF_POISON_MEDIUM:
-		    monsterattacks += colour(LIGHTRED,"(medium poison)");
-			break;
+          monsterattacks += colour(LIGHTRED,"(medium poison)");
+          break;
         case AF_POISON_STRONG:
-		    monsterattacks += colour(RED,"(strong poison)");
-			break;
+          monsterattacks += colour(RED,"(strong poison)");
+          break;
         case AF_POISON_STR:
-		    monsterattacks += colour(LIGHTRED,"(poison, drain strength)");
-			break;
+          monsterattacks += colour(LIGHTRED,"(poison, drain strength)");
+          break;
         case AF_ROT:
-		    monsterattacks += colour(LIGHTRED,"(rot)");
-			break;
+          monsterattacks += colour(LIGHTRED,"(rot)");
+          break;
         case AF_VAMPIRIC:
-		    monsterattacks += colour(RED,"(vampiric)");
-			break;
+          monsterattacks += colour(RED,"(vampiric)");
+          break;
         case AF_KLOWN:
-		    monsterattacks += colour(LIGHTBLUE,"(klown)");
-			break;
+          monsterattacks += colour(LIGHTBLUE,"(klown)");
+          break;
         case AF_DISTORT:
-		    monsterattacks += colour(LIGHTBLUE,"(distort)");
-			break;
+          monsterattacks += colour(LIGHTBLUE,"(distort)");
+          break;
         case AF_RAGE:
-		    monsterattacks += colour(RED,"(rage)");
-			break;
+          monsterattacks += colour(RED,"(rage)");
+          break;
         case AF_PLAIN:
         default:
-			break;
+          break;
 		}
 
 		if (mon.has_hydra_multi_attack())
@@ -512,8 +515,7 @@ int main(int argc, char *argv[])
       break;
 	}
 
-    mons_check_flag(me->habitat == HT_AMPHIBIOUS_WATER ||
-                    me->habitat == HT_AMPHIBIOUS_LAND,
+    mons_check_flag(me->habitat == HT_AMPHIBIOUS,
                     monsterflags, "amphibious");
 
     mons_check_flag(mon.is_evil(), monsterflags, "evil");
