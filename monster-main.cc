@@ -19,6 +19,7 @@
  */
 
 #include "externs.h"
+#include "unwind.h"
 #include "env.h"
 #include "colour.h"
 #include "dungeon.h"
@@ -27,6 +28,7 @@
 #include "view.h"
 #include "maps.h"
 #include "initfile.h"
+#include "libutil.h"
 #include "itemname.h"
 #include "spl-util.h"
 #include "state.h"
@@ -138,14 +140,21 @@ static std::string monster_speed(const monsters &mon,
 
   const mon_energy_usage &cost(me->energy_usage);
   std::string qualifiers;
+
+  bool skip_action = false;
   if (cost.attack != 10
       && cost.attack == cost.missile && cost.attack == cost.spell
       && cost.attack == cost.special && cost.attack == cost.item)
+  {
     monster_action_cost(qualifiers, cost.attack, "act");
-  else {
-    monster_action_cost(qualifiers, cost.move, "move");
-    if (cost.swim != cost.move)
-      monster_action_cost(qualifiers, cost.swim, "swim");
+    skip_action = true;
+  }
+
+  monster_action_cost(qualifiers, cost.move, "move");
+  if (cost.swim != cost.move)
+    monster_action_cost(qualifiers, cost.swim, "swim");
+  if (!skip_action)
+  {
     monster_action_cost(qualifiers, cost.attack, "atk");
     monster_action_cost(qualifiers, cost.missile, "msl");
     monster_action_cost(qualifiers, cost.spell, "spell");
