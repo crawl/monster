@@ -4,7 +4,8 @@
 
 # Branch names to target in git repo.
 STABLE = stone_soup-0.5
-TRUNK = master
+# Use stone_soup-0.6 for now
+TRUNK = stone_soup-0.6
 
 CRAWL_PATH=crawl-ref/crawl-ref/source
 
@@ -44,6 +45,11 @@ $(CRAWL_PATH)/build.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_PATH)/%.cc)
 	cd $(CRAWL_PATH) ; ./util/gen_ver.pl build.h "$(MERGE_BASE)"
 
 $(CRAWL_PATH)/version.cc: $(CRAWL_PATH)/build.h $(CRAWL_PATH)/compflag.h
+
+$(CRAWL_PATH)/art-enum.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_PATH)/%.cc)
+	cd $(CRAWL_PATH) ; ./util/art-data.pl
+
+$(CRAWL_PATH)/abl-show.cc: $(CRAWL_PATH)/art-enum.h
 
 .cc.o:
 	${CXX} ${CFLAGS} -o $@ -c $<
