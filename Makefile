@@ -50,12 +50,15 @@ $(CRAWL_PATH)/version.cc: $(CRAWL_PATH)/build.h $(CRAWL_PATH)/compflag.h
 
 trunk: monster-trunk
 
+update-cdo-git:
+	sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
+
 checkout-trunk:
 	cd $(CRAWL_PATH) && \
 	( test "$$(git branch | grep '^\*')" = "* $(TRUNK)" || \
 		( git checkout $(TRUNK) && git clean -f -d -x && git pull ) )
 
-monster-trunk: checkout-trunk $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
+monster-trunk: update-cdo-git checkout-trunk $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
 	g++ $(CFLAGS) -o $@ $(ALL_OBJECTS) $(LFLAGS)
 	strip -s $@
 
