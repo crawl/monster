@@ -3,9 +3,9 @@
 # monster-trunk.
 
 # Branch names to target in git repo.
-STABLE = stone_soup-0.5
-# Use stone_soup-0.6 for now
-TRUNK = stone_soup-0.6
+STABLE = stone_soup-0.6
+# Use master
+TRUNK = master
 
 CRAWL_PATH=crawl-ref/crawl-ref/source
 
