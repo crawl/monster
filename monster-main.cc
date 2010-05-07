@@ -18,14 +18,19 @@
  * ===========================================================================
  */
 
+#include "AppHdr.h"
 #include "externs.h"
 #include "unwind.h"
 #include "env.h"
 #include "colour.h"
 #include "dungeon.h"
+#include "message.h"
+#include "mon-abil.h"
+#include "mon-cast.h"
 #include "mon-util.h"
 #include "version.h"
 #include "view.h"
+#include "los.h"
 #include "maps.h"
 #include "initfile.h"
 #include "libutil.h"
@@ -35,8 +40,11 @@
 #include <sstream>
 #include <set>
 
+const coord_def MONSTER_PLACE(20, 20);
+const coord_def PLAYER_PLACE(21, 20);
+
 // Clockwise, around the compass from north (same order as enum RUN_DIR)
-struct coord_def Compass[8] =
+const coord_def Compass[8] =
 {
     coord_def(0, -1), coord_def(1, -1), coord_def(1, 0), coord_def(1, 1),
     coord_def(0, 1), coord_def(-1, 1), coord_def(-1, 0), coord_def(-1, -1),
@@ -193,43 +201,117 @@ static void initialize_crawl() {
   init_mon_name_cache();
 
   dgn_reset_level();
+  for (int y = 0; y < GYM; ++y)
+    for (int x = 0; x < GXM; ++x)
+      grd[x][y] = DNGN_FLOOR;
+
+  los_changed();
+  you.moveto(PLAYER_PLACE);
 }
 
-static std::string mons_spell_set(const monsters *mp) {
-  std::string spells;
+static std::string dice_def_string(dice_def dice) {
+  return (dice.num == 1? make_stringf("d%d", dice.size)
+          : make_stringf("%dd%d", dice.num, dice.size));
+}
+
+static std::string mons_human_readable_spell_damage_string(
+    monsters *monster,
+    spell_type sp)
+{
+    const bolt spell_beam = mons_spells(monster, sp, 12 * monster->hit_dice,
+                                        true);
+    if (spell_beam.damage.size && spell_beam.damage.num)
+      return make_stringf(" (%s)", dice_def_string(spell_beam.damage).c_str());
+    return ("");
+}
+
+static std::string shorten_spell_name(std::string name) {
+  lowercase(name);
+  std::string::size_type pos = name.find('\'');
+  if (pos != std::string::npos) {
+    pos = name.find(' ', pos);
+    if (pos != std::string::npos)
+      name = name.substr(pos + 1);
+  }
+  if ((pos = name.find(" of ")) != std::string::npos)
+    name = name.substr(pos + 4) + " " + name.substr(0, pos);
+  if (name.find("summon ") == 0 && name != "summon undead")
+    name = name.substr(7);
+  if (name.find("bolt") == name.length() - 4)
+    name = "b." + name.substr(0, name.length() - 5);
+  return (name);
+}
+
+static void mons_record_ability(std::set<std::string> &ability_names,
+                                monsters *monster)
+{
+  no_messages mx;
+  bolt beam;
+  mon_special_ability(monster, beam);
+  if (!beam.name.empty()) {
+    std::string ability = shorten_spell_name(beam.name);
+    if (beam.damage.num && beam.damage.size)
+      ability += make_stringf(" (%s)", dice_def_string(beam.damage).c_str());
+    ability_names.insert(ability);
+  }
+}
+
+static std::string mons_special_ability_set(monsters *monster) {
+  // Try X times to get a list of abilities.
+  std::set<std::string> abilities;
+  for (int i = 0; i < 50; ++i)
+    mons_record_ability(abilities, monster);
+  if (abilities.empty())
+    return ("");
+  return comma_separated_line(abilities.begin(), abilities.end(), ", ", ", ");
+}
+
+static std::string mons_spell_set(monsters *mp) {
   std::set<spell_type> seen;
+  std::string spells;
+
   for (int i = 0; i < NUM_MONSTER_SPELL_SLOTS; ++i) {
     const spell_type sp = mp->spells[i];
     if (sp != SPELL_NO_SPELL && seen.find(sp) == seen.end()) {
       seen.insert(sp);
-      std::string name = spell_title(sp);
-      lowercase(name);
-      std::string::size_type pos = name.find('\'');
-      if (pos != std::string::npos) {
-        pos = name.find(' ', pos);
-        if (pos != std::string::npos)
-          name = name.substr(pos + 1);
-      }
-      if ((pos = name.find(" of ")) != std::string::npos)
-        name = name.substr(pos + 4) + " " + name.substr(0, pos);
-      if (name.find("summon ") == 0 && name != "summon undead")
-        name = name.substr(7);
-      if (name.find("bolt") == name.length() - 4)
-        name = "b." + name.substr(0, name.length() - 5);
+      std::string name = shorten_spell_name(spell_title(sp));
       if (!spells.empty())
         spells += ", ";
-      spells += name;
+      spells += name + mons_human_readable_spell_damage_string(mp, sp);
     }
   }
   return spells;
 }
 
-static void record_spell_set(const monsters *mp,
+static void record_spell_set(monsters *mp,
                              std::set<std::string> &sets)
 {
   std::string spell_set = mons_spell_set(mp);
   if (!spell_set.empty())
     sets.insert(spell_set);
+}
+
+static std::string mons_spells_abilities(
+  monsters *monster,
+  bool shapeshifter,
+  const std::set<std::string> &spell_sets)
+{
+  if (shapeshifter || monster->type == MONS_PANDEMONIUM_DEMON)
+    return "(random)";
+
+  bool first = true;
+  std::string spell_abilities = mons_special_ability_set(monster);
+  for (std::set<std::string>::const_iterator i = spell_sets.begin();
+       i != spell_sets.end(); ++i)
+  {
+    if (!first)
+      spell_abilities += " / ";
+    else if (!spell_abilities.empty())
+      spell_abilities += "; ";
+    first = false;
+    spell_abilities += *i;
+  }
+  return (spell_abilities);
 }
 
 static inline void set_min_max(int num, int &min, int &max) {
@@ -247,6 +329,17 @@ static std::string monster_symbol(const monsters &mon) {
 	symbol = colour(mon.colour, symbol);
     }
     return (symbol);
+}
+
+static int mi_create_monster(mons_spec spec) {
+  const int index =
+    dgn_place_monster(spec, 10, MONSTER_PLACE, true, false, false);
+  if (index != -1 && index != NON_MONSTER) {
+    monsters *monster = &menv[index];
+    monster->behaviour = BEH_SEEK;
+    monster->foe = MHITYOU;
+  }
+  return index;
 }
 
 int main(int argc, char *argv[])
@@ -298,8 +391,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  int index = dgn_place_monster(spec, 10, coord_def(GXM / 2, GYM / 2),
-                                true, false, false);
+  int index = mi_create_monster(spec);
   if (index < 0 || index >= MAX_MONSTERS) {
     printf("Failed to create test monster for %s\n", target.c_str());
     return 1;
@@ -331,8 +423,7 @@ int main(int argc, char *argv[])
     // Destroy the monster.
     mp->reset();
     you.unique_creatures[spec.mid] = false;
-    index = dgn_place_monster(spec, 10, coord_def(GXM / 2, GYM / 2),
-                              true, false, false);
+    index = mi_create_monster(spec);
     if (index == -1) {
       printf("Unexpected failure generating monster for %s\n",
              target.c_str());
@@ -621,23 +712,11 @@ int main(int argc, char *argv[])
 
     printf(" | XP: %ld", exper);
 
-    if (!spell_sets.empty()) {
-      printf(" | Sp: ");
+    const std::string spell_abilities =
+      mons_spells_abilities(&mon, shapeshifter, spell_sets);
 
-      if (shapeshifter || mon.type == MONS_PANDEMONIUM_DEMON)
-        printf("(random)");
-      else {
-        bool first = true;
-        for (std::set<std::string>::const_iterator i = spell_sets.begin();
-             i != spell_sets.end(); ++i)
-        {
-          if (!first)
-            printf(" / ");
-          first = false;
-          printf("%s", i->c_str());
-        }
-      }
-    }
+    if (!spell_abilities.empty())
+      printf(" | Sp: %s", spell_abilities.c_str());
 
     printf(".\n");
 

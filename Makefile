@@ -64,9 +64,8 @@ checkout-trunk:
 	( test "$$(git branch | grep '^\*')" = "* $(TRUNK)" || \
 		( git checkout $(TRUNK) && git clean -f -d -x && git pull ) )
 
-monster-trunk: update-cdo-git checkout-trunk $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
+monster-trunk: checkout-trunk $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
 	g++ $(CFLAGS) -o $@ $(ALL_OBJECTS) $(LFLAGS)
-	strip -s $@
 
 $(LUASRC)/$(LUALIBA):
 	echo Building Lua...
