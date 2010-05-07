@@ -407,6 +407,18 @@ static int mi_create_monster(mons_spec spec) {
   return index;
 }
 
+static std::string damage_flavour(const std::string &name,
+                                  const std::string &damage)
+{
+  return "(" + name + ":" + damage + ")";
+}
+
+static std::string damage_flavour(const std::string &name,
+                                  int low, int high)
+{
+  return make_stringf("(%s:%d-%d)", name.c_str(), low, high);
+}
+
 int main(int argc, char *argv[])
 {
   crawl_state.test = true;
@@ -574,13 +586,16 @@ int main(int argc, char *argv[])
           monsterattacks += "(reach)";
           break;
         case AF_ACID:
-          monsterattacks += colour(YELLOW,"(acid)");
+          monsterattacks += colour(YELLOW,
+                                   damage_flavour("acid", "7d3"));
           break;
         case AF_BLINK:
           monsterattacks += colour(MAGENTA, "(blink)");
           break;
         case AF_COLD:
-          monsterattacks += colour(LIGHTBLUE, "(cold)");
+          monsterattacks +=
+            colour(LIGHTBLUE, damage_flavour("cold", mon.hit_dice,
+                                             3 * mon.hit_dice - 1));
           break;
         case AF_CONFUSE:
           monsterattacks += colour(LIGHTMAGENTA,"(confuse)");
@@ -600,10 +615,16 @@ int main(int argc, char *argv[])
         case AF_CHAOS:
           monsterattacks += colour(LIGHTGREEN, "(chaos)");
         case AF_ELEC:
-          monsterattacks += colour(LIGHTCYAN, "(elec)");
+          monsterattacks +=
+            colour(LIGHTCYAN,
+                   damage_flavour("elec", mon.hit_dice,
+                                  mon.hit_dice +
+                                  std::max(mon.hit_dice / 2 - 1, 0)));
           break;
         case AF_FIRE:
-          monsterattacks += colour(LIGHTRED, "(fire)");
+          monsterattacks +=
+            colour(LIGHTRED, damage_flavour("fire", mon.hit_dice,
+                                            mon.hit_dice * 2 - 1));
           break;
         case AF_HUNGER:
           monsterattacks += colour(BLUE, "(hunger)");
