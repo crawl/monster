@@ -43,6 +43,8 @@
 const coord_def MONSTER_PLACE(20, 20);
 const coord_def PLAYER_PLACE(21, 20);
 
+const int PLAYER_MAXHP = 500;
+
 // Clockwise, around the compass from north (same order as enum RUN_DIR)
 const coord_def Compass[8] =
 {
@@ -207,6 +209,7 @@ static void initialize_crawl() {
 
   los_changed();
   you.moveto(PLAYER_PLACE);
+  you.hp = you.hp_max = PLAYER_MAXHP;
 }
 
 static std::string dice_def_string(dice_def dice) {
@@ -255,7 +258,11 @@ static void mons_record_ability(std::set<std::string> &ability_names,
 {
   no_messages mx;
   bolt beam;
+  you.hp = you.hp_max = PLAYER_MAXHP;
   mon_special_ability(monster, beam);
+  if (you.hp == PLAYER_MAXHP / 2 + 1) {
+    beam.name = "symbol of torment";
+  }
   if (!beam.name.empty()) {
     std::string ability = shorten_spell_name(beam.name);
     if (beam.damage.num && beam.damage.size) {
