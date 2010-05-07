@@ -35,6 +35,7 @@
 #include "initfile.h"
 #include "libutil.h"
 #include "itemname.h"
+#include "random.h"
 #include "spl-util.h"
 #include "state.h"
 #include <sstream>
@@ -228,7 +229,7 @@ static std::string mons_human_readable_spell_damage_string(
     spell_type sp)
 {
   bolt spell_beam = mons_spells(monster, sp, 12 * monster->hit_dice,
-                                      true);
+                                true);
   if (sp == SPELL_IOOD)
     spell_beam.damage = mi_calc_iood_damage(monster);
   if (spell_beam.damage.size && spell_beam.damage.num)
@@ -267,9 +268,10 @@ static void mons_record_ability(std::set<std::string> &ability_names,
     std::string ability = shorten_spell_name(beam.name);
     if (beam.damage.num && beam.damage.size) {
       std::string extra;
+      // Skip the shield slot when reckoning acid damage.
       if (ability == "acid splash")
         extra = "+" +
-          dice_def_string(dice_def(EQ_MAX_ARMOUR - EQ_MIN_ARMOUR + 3, 5));
+          dice_def_string(dice_def(EQ_MAX_ARMOUR - EQ_MIN_ARMOUR + 2, 5));
       ability += make_stringf(" (%s%s)",
                               dice_def_string(beam.damage).c_str(),
                               extra.c_str());
@@ -292,6 +294,7 @@ static std::string mons_spell_set(monsters *mp) {
   std::set<spell_type> seen;
   std::string spells;
 
+  rng_save_excursion exc(1);
   for (int i = 0; i < NUM_MONSTER_SPELL_SLOTS; ++i) {
     const spell_type sp = mp->spells[i];
     if (sp != SPELL_NO_SPELL && seen.find(sp) == seen.end()) {
