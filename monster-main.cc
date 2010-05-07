@@ -224,12 +224,24 @@ static dice_def mi_calc_iood_damage(monsters *mons) {
   return dice_def(8, power / 4);
 }
 
+static std::string mi_calc_smiting_damage(monsters *mons) {
+  return "7-17";
+}
+
+static std::string mi_calc_airstrike_damage(monsters *mons) {
+  return make_stringf("0-%d", 10 + 2 * mons->hit_dice);
+}
+
 static std::string mons_human_readable_spell_damage_string(
     monsters *monster,
     spell_type sp)
 {
   bolt spell_beam = mons_spells(monster, sp, 12 * monster->hit_dice,
                                 true);
+  if (sp == SPELL_SMITING)
+    return make_stringf(" (%s)", mi_calc_smiting_damage(monster).c_str());
+  if (sp == SPELL_AIRSTRIKE)
+    return make_stringf(" (%s)", mi_calc_airstrike_damage(monster).c_str());
   if (sp == SPELL_IOOD)
     spell_beam.damage = mi_calc_iood_damage(monster);
   if (spell_beam.damage.size && spell_beam.damage.num)
