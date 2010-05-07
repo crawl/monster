@@ -399,6 +399,8 @@ static int mi_create_monster(mons_spec spec) {
     monsters *monster = &menv[index];
     monster->behaviour = BEH_SEEK;
     monster->foe = MHITYOU;
+    no_messages mx;
+    monster->del_ench(ENCH_SUBMERGED);
   }
   return index;
 }
