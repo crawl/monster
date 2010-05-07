@@ -281,6 +281,12 @@ static void mons_record_ability(std::set<std::string> &ability_names,
 }
 
 static std::string mons_special_ability_set(monsters *monster) {
+  if (mons_genus(monster->type) == MONS_DRACONIAN
+      && draco_subspecies(monster) != MONS_YELLOW_DRACONIAN)
+  {
+    return ("");
+  }
+
   // Try X times to get a list of abilities.
   std::set<std::string> abilities;
   for (int i = 0; i < 50; ++i)
@@ -290,16 +296,34 @@ static std::string mons_special_ability_set(monsters *monster) {
   return comma_separated_line(abilities.begin(), abilities.end(), ", ", ", ");
 }
 
+static spell_type mi_draconian_breath_spell(monsters *mons) {
+  if (mons_genus(mons->type) != MONS_DRACONIAN)
+    return SPELL_NO_SPELL;
+  switch (draco_subspecies(mons)) {
+  case MONS_DRACONIAN:
+  case MONS_YELLOW_DRACONIAN:
+    return SPELL_NO_SPELL;
+  default:
+    return SPELL_DRACONIAN_BREATH;
+  }
+}
+
 static std::string mons_spell_set(monsters *mp) {
   std::set<spell_type> seen;
   std::string spells;
 
   rng_save_excursion exc(1);
-  for (int i = 0; i < NUM_MONSTER_SPELL_SLOTS; ++i) {
-    const spell_type sp = mp->spells[i];
+  for (int i = -1; i < NUM_MONSTER_SPELL_SLOTS; ++i) {
+    const spell_type sp = i == -1?
+      mi_draconian_breath_spell(mp) : mp->spells[i];
     if (sp != SPELL_NO_SPELL && seen.find(sp) == seen.end()) {
       seen.insert(sp);
-      std::string name = shorten_spell_name(spell_title(sp));
+      std::string rawname = spell_title(sp);
+      if (sp == SPELL_DRACONIAN_BREATH) {
+        const bolt spell_beam = mons_spells(mp, sp, 12 * mp->hit_dice, true);
+        rawname = spell_title(spell_beam.origin_spell);
+      }
+      std::string name = shorten_spell_name(rawname);
       if (!spells.empty())
         spells += ", ";
       spells += name + mons_human_readable_spell_damage_string(mp, sp);
