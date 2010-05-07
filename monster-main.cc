@@ -214,15 +214,23 @@ static std::string dice_def_string(dice_def dice) {
           : make_stringf("%dd%d", dice.num, dice.size));
 }
 
+static dice_def mi_calc_iood_damage(monsters *mons) {
+  const int power = stepdown_value(6 * mons->hit_dice,
+                                   30, 30, 200, -1);
+  return dice_def(8, power / 4);
+}
+
 static std::string mons_human_readable_spell_damage_string(
     monsters *monster,
     spell_type sp)
 {
-    const bolt spell_beam = mons_spells(monster, sp, 12 * monster->hit_dice,
-                                        true);
-    if (spell_beam.damage.size && spell_beam.damage.num)
-      return make_stringf(" (%s)", dice_def_string(spell_beam.damage).c_str());
-    return ("");
+  bolt spell_beam = mons_spells(monster, sp, 12 * monster->hit_dice,
+                                      true);
+  if (sp == SPELL_IOOD)
+    spell_beam.damage = mi_calc_iood_damage(monster);
+  if (spell_beam.damage.size && spell_beam.damage.num)
+    return make_stringf(" (%s)", dice_def_string(spell_beam.damage).c_str());
+  return ("");
 }
 
 static std::string shorten_spell_name(std::string name) {
