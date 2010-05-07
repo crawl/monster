@@ -258,8 +258,15 @@ static void mons_record_ability(std::set<std::string> &ability_names,
   mon_special_ability(monster, beam);
   if (!beam.name.empty()) {
     std::string ability = shorten_spell_name(beam.name);
-    if (beam.damage.num && beam.damage.size)
-      ability += make_stringf(" (%s)", dice_def_string(beam.damage).c_str());
+    if (beam.damage.num && beam.damage.size) {
+      std::string extra;
+      if (ability == "acid splash")
+        extra = "+" +
+          dice_def_string(dice_def(EQ_MAX_ARMOUR - EQ_MIN_ARMOUR + 3, 5));
+      ability += make_stringf(" (%s%s)",
+                              dice_def_string(beam.damage).c_str(),
+                              extra.c_str());
+    }
     ability_names.insert(ability);
   }
 }
