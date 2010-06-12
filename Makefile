@@ -23,7 +23,7 @@ ifdef USE_MERGE_BASE
 MERGE_BASE := $(shell cd $(CRAWL_PATH) ; git merge-base HEAD $(USE_MERGE_BASE))
 endif
 
-CFLAGS = -Wall -Wno-parentheses -pedantic -DNDEBUG -DUNIX \
+CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX \
 	-I$(LUASRC) -I$(SQLSRC) -I$(CRAWL_PATH) -g
 
 LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncurses
