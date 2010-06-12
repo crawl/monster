@@ -86,7 +86,8 @@ static std::string colour(int colour, std::string text, bool bg = false) {
     if (code.empty())
         return text;
 
-    return std::string() + CONTROL('C') + code + (bg ? ",01" : "") + text + CONTROL('O');
+    return (std::string() + CONTROL('C') + code + (bg ? ",01" : "")
+            + text + CONTROL('O'));
 }
 
 std::string uppercase_first(std::string s);
@@ -102,7 +103,7 @@ static void record_resvul(int color, const char *name, const char *caption,
     str += ", ";
 
   if (color && (rval == 3 || rval == 1 && color == BROWN
-		|| std::string(caption) == "Vul"))
+                || std::string(caption) == "Vul"))
     color += 8;
 
   std::string token(name);
@@ -385,13 +386,13 @@ static inline void set_min_max(int num, int &min, int &max) {
 }
 
 static std::string monster_symbol(const monsters &mon) {
-    std::string symbol;
-    const monsterentry *me = mon.find_monsterentry();
-    if (me) {
-        symbol += me->showchar;
-	symbol = colour(mon.colour, symbol);
-    }
-    return (symbol);
+  std::string symbol;
+  const monsterentry *me = mon.find_monsterentry();
+  if (me) {
+    symbol += me->showchar;
+    symbol = colour(mon.colour, symbol);
+  }
+  return (symbol);
 }
 
 static int mi_create_monster(mons_spec spec) {
@@ -424,7 +425,7 @@ int main(int argc, char *argv[])
   crawl_state.test = true;
   if (argc < 2)
   {
-	printf("Usage: @? <monster name>\n");
+    printf("Usage: @? <monster name>\n");
     return 0;
   }
 
@@ -443,10 +444,10 @@ int main(int argc, char *argv[])
 
   if (argc > 2)
     for (int x = 2; x < argc; x++)
-	{
-	  target.append(" ");
-	  target.append(argv[x]);
-	}
+    {
+      target.append(" ");
+      target.append(argv[x]);
+    }
 
   std::string err = mons.add_mons(target, false);
   if (!err.empty()) {
@@ -530,10 +531,10 @@ int main(int argc, char *argv[])
 
   if (me)
   {
-	std::string monsterflags;
-	std::string monsterresistances;
-	std::string monstervulnerabilities;
-	std::string monsterattacks;
+    std::string monsterflags;
+    std::string monsterresistances;
+    std::string monstervulnerabilities;
+    std::string monsterattacks;
 
     lowercase(target);
 
@@ -567,21 +568,21 @@ int main(int argc, char *argv[])
 
     mon.wield_melee_weapon();
     for (int x = 0; x < 4; x++)
-	{
+    {
       mon_attack_def orig_attk(me->attack[x]);
       mon_attack_def attk = mons_attack_spec(&mon, x);
-	  if (attk.type)
+      if (attk.type)
       {
-	    if (monsterattacks.empty())
-		  monsterattacks = " | Damage: ";
-	    else
-	      monsterattacks += ", ";
-		monsterattacks += to_string((short int) attk.damage);
+        if (monsterattacks.empty())
+          monsterattacks = " | Damage: ";
+        else
+          monsterattacks += ", ";
+        monsterattacks += to_string((short int) attk.damage);
 
         const mon_attack_flavour flavour(
           orig_attk.flavour == AF_KLOWN ? AF_KLOWN : attk.flavour);
-		switch (flavour)
-		{
+        switch (flavour)
+        {
         case AF_REACH:
           monsterattacks += "(reach)";
           break;
@@ -626,6 +627,9 @@ int main(int argc, char *argv[])
             colour(LIGHTRED, damage_flavour("fire", mon.hit_dice,
                                             mon.hit_dice * 2 - 1));
           break;
+        case AF_NAPALM:
+          monsterattacks += colour(LIGHTRED, "(napalm)");
+          break;
         case AF_HUNGER:
           monsterattacks += colour(BLUE, "(hunger)");
           break;
@@ -668,19 +672,19 @@ int main(int argc, char *argv[])
         case AF_PLAIN:
         default:
           break;
-		}
+        }
 
-		if (mon.has_hydra_multi_attack())
-		  monsterattacks += " per head";
-	  }
+        if (mon.has_hydra_multi_attack())
+          monsterattacks += " per head";
+      }
       if (mon.has_hydra_multi_attack())
         break;
-	}
+    }
 
-	printf("%s", monsterattacks.c_str());
+    printf("%s", monsterattacks.c_str());
 
-	switch (me->holiness)
-	{
+    switch (me->holiness)
+    {
     case MH_HOLY:
       mons_flag(monsterflags, colour(YELLOW, "holy"));
       break;
@@ -699,7 +703,7 @@ int main(int argc, char *argv[])
     case MH_NATURAL:
     default:
       break;
-	}
+    }
 
     mons_check_flag(me->habitat == HT_AMPHIBIOUS,
                     monsterflags, "amphibious");
@@ -715,52 +719,52 @@ int main(int argc, char *argv[])
     mons_check_flag(me->fly == FL_LEVITATE, monsterflags, "lev");
     mons_check_flag(me->fly == FL_FLY, monsterflags, "fly");
 
-	printf("%s", monsterflags.c_str());
+    printf("%s", monsterflags.c_str());
 
-	if (me->resist_magic == 5000)
-	{
-	    if (monsterresistances.empty())
-	      monsterresistances = " | Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += colour(LIGHTMAGENTA, "magic(immune)");
-	}
-	else if (me->resist_magic < 0)
-	{
-	    if (monsterresistances.empty())
-	      monsterresistances = " | Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += colour(MAGENTA, std::string() + "magic("
-		  + to_string((short int) me->hpdice[0] * me->resist_magic * 4 / 3 * -1)
-		  + ")");
-	}
-	else if (me->resist_magic > 0)
-	{
-	    if (monsterresistances.empty())
-	      monsterresistances = " | Res: ";
-	    else
-	      monsterresistances += ", ";
-		monsterresistances += colour(MAGENTA, std::string("magic(")
-		  + to_string((short int) me->resist_magic)
-		  + ")");
-	}
+    if (me->resist_magic == 5000)
+    {
+      if (monsterresistances.empty())
+        monsterresistances = " | Res: ";
+      else
+        monsterresistances += ", ";
+      monsterresistances += colour(LIGHTMAGENTA, "magic(immune)");
+    }
+    else if (me->resist_magic < 0)
+    {
+      if (monsterresistances.empty())
+        monsterresistances = " | Res: ";
+      else
+        monsterresistances += ", ";
+      monsterresistances += colour(MAGENTA, std::string() + "magic("
+                                   + to_string((short int) me->hpdice[0] * me->resist_magic * 4 / 3 * -1)
+                                   + ")");
+    }
+    else if (me->resist_magic > 0)
+    {
+      if (monsterresistances.empty())
+        monsterresistances = " | Res: ";
+      else
+        monsterresistances += ", ";
+      monsterresistances += colour(MAGENTA, std::string("magic(")
+                                   + to_string((short int) me->resist_magic)
+                                   + ")");
+    }
 
     const mon_resist_def res(
-        shapeshifter? me->resists : get_mons_resists(&mon));
-#define res(c,x) \
+      shapeshifter? me->resists : get_mons_resists(&mon));
+#define res(c,x)                                \
     do                                          \
     {                                           \
-        record_resist(c,#x,                           \
-                      monsterresistances,             \
-                      monstervulnerabilities,         \
-                      res.x);                         \
-    } while (false)                                   \
+      record_resist(c,#x,                       \
+                    monsterresistances,         \
+                    monstervulnerabilities,     \
+                    res.x);                     \
+    } while (false)                             \
 
 
     res(RED,hellfire);
     if (me->resists.hellfire <= 0)
-        res(RED,fire);
+      res(RED,fire);
     res(BLUE,cold);
     res(CYAN,elec);
     res(GREEN,poison);
@@ -770,31 +774,31 @@ int main(int argc, char *argv[])
     res(0,slice);
     res(0,bludgeon);
 
-	printf("%s", monsterresistances.c_str());
-	printf("%s", monstervulnerabilities.c_str());
+    printf("%s", monsterresistances.c_str());
+    printf("%s", monstervulnerabilities.c_str());
 
-	if (me->weight != 0 && me->corpse_thingy != CE_NOCORPSE && me->corpse_thingy != CE_CLEAN)
-	{
-	  printf(" | Chunks: ");
-	  switch (me->corpse_thingy)
-	  {
+    if (me->weight != 0 && me->corpse_thingy != CE_NOCORPSE && me->corpse_thingy != CE_CLEAN)
+    {
+      printf(" | Chunks: ");
+      switch (me->corpse_thingy)
+      {
       case CE_CONTAMINATED:
-          printf("%s", colour(BROWN,"contaminated").c_str());
-          break;
+        printf("%s", colour(BROWN,"contaminated").c_str());
+        break;
       case CE_POISONOUS:
-          printf("%s", colour(LIGHTGREEN,"poisonous").c_str());
-          break;
+        printf("%s", colour(LIGHTGREEN,"poisonous").c_str());
+        break;
       case CE_HCL:
-          printf("%s", colour(LIGHTRED,"hydrochloric acid").c_str());
-          break;
+        printf("%s", colour(LIGHTRED,"hydrochloric acid").c_str());
+        break;
       case CE_MUTAGEN_RANDOM:
-		  printf("%s", colour(MAGENTA, "mutagenic").c_str());
-          break;
+        printf("%s", colour(MAGENTA, "mutagenic").c_str());
+        break;
       default:
-		  printf("clean/none/unknown");
-		  break;
-	  }
-	}
+        printf("clean/none/unknown");
+        break;
+      }
+    }
 
     printf(" | XP: %ld", exper);
 
