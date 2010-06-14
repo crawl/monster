@@ -420,6 +420,26 @@ static std::string damage_flavour(const std::string &name,
   return make_stringf("(%s:%d-%d)", name.c_str(), low, high);
 }
 
+static void rebind_mspec(std::string *requested_name,
+                         const std::string &actual_name,
+                         mons_spec *mspec)
+{
+  if (*requested_name != actual_name
+      && requested_name->find("draconian") == 0)
+  {
+    // If the user requested a drac, the game might generate a
+    // coloured drac in response. Try to reuse that colour for further
+    // tests.
+    mons_list mons;
+    const std::string err = mons.add_mons(actual_name, false);
+    if (err.empty())
+    {
+      *mspec          = mons.get_monster(0);
+      *requested_name = actual_name;
+    }
+  }
+}
+
 int main(int argc, char *argv[])
 {
   crawl_state.test = true;
@@ -451,7 +471,8 @@ int main(int argc, char *argv[])
 
   std::string err = mons.add_mons(target, false);
   if (!err.empty()) {
-    const std::string test = mons.add_mons("the " + target, false);
+    target = "the " + target;
+    const std::string test = mons.add_mons(target, false);
     if (test.empty())
       err = test;
   }
@@ -490,6 +511,7 @@ int main(int argc, char *argv[])
     if (i == ntrials)
       break;
     monsters *mp = &menv[index];
+    const std::string mname = mp->name(DESC_PLAIN, true);
     if (!mons_class_is_zombified(mp->type))
       record_spell_set(mp, spell_sets);
     exper += exper_value(mp);
@@ -501,6 +523,9 @@ int main(int argc, char *argv[])
     // Destroy the monster.
     mp->reset();
     you.unique_creatures[spec.mid] = false;
+
+    rebind_mspec(&target, mname, &spec);
+
     index = mi_create_monster(spec);
     if (index == -1) {
       printf("Unexpected failure generating monster for %s\n",

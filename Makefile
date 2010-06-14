@@ -46,10 +46,8 @@ $(CRAWL_PATH)/build.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_PATH)/%.cc)
 
 $(CRAWL_PATH)/version.cc: $(CRAWL_PATH)/build.h $(CRAWL_PATH)/compflag.h
 
-$(CRAWL_PATH)/art-enum.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_PATH)/%.cc)
+$(CRAWL_PATH)/art-enum.h $(CRAWL_PATH)/art-data.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_PATH)/%.cc)
 	cd $(CRAWL_PATH) ; ./util/art-data.pl
-
-$(CRAWL_PATH)/abl-show.cc: $(CRAWL_PATH)/art-enum.h
 
 .cc.o:
 	${CXX} ${CFLAGS} -o $@ -c $<
@@ -64,7 +62,7 @@ checkout-trunk:
 	( test "$$(git branch | grep '^\*')" = "* $(TRUNK)" || \
 		( git checkout $(TRUNK) && git clean -f -d -x && git pull ) )
 
-monster-trunk: update-cdo-git checkout-trunk $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
+monster-trunk: update-cdo-git checkout-trunk $(CRAWL_PATH)/art-data.h $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
 	g++ $(CFLAGS) -o $@ $(ALL_OBJECTS) $(LFLAGS)
 
 $(LUASRC)/$(LUALIBA):
