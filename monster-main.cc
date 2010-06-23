@@ -35,6 +35,7 @@
 #include "initfile.h"
 #include "libutil.h"
 #include "itemname.h"
+#include "mon-stuff.h"
 #include "random.h"
 #include "spl-util.h"
 #include "state.h"
@@ -743,6 +744,8 @@ int main(int argc, char *argv[])
     mons_check_flag(me->bitfields & M_SEE_INVIS, monsterflags, "see invisible");
     mons_check_flag(me->fly == FL_LEVITATE, monsterflags, "lev");
     mons_check_flag(me->fly == FL_FLY, monsterflags, "fly");
+    mons_check_flag(monster_descriptor(mon.type, MDSC_REGENERATES),
+                    monsterflags, "regen");
 
     printf("%s", monsterflags.c_str());
 

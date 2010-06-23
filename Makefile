@@ -55,7 +55,7 @@ $(CRAWL_PATH)/art-enum.h $(CRAWL_PATH)/art-data.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_P
 trunk: monster-trunk
 
 update-cdo-git:
-	sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
+	[ "`hostname`" != "ipx14623" ] || sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
 
 checkout-trunk:
 	cd $(CRAWL_PATH) && \
