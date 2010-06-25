@@ -747,7 +747,12 @@ int main(int argc, char *argv[])
     mons_check_flag(me->fly == FL_FLY, monsterflags, "fly");
     mons_check_flag(monster_descriptor(mon.type, MDSC_REGENERATES),
                     monsterflags, "regen");
-    mons_check_flag(!mon.is_priest() && !mon.is_actual_spellcaster()
+
+    const std::string spell_abilities =
+      mons_spells_abilities(&mon, shapeshifter, spell_sets);
+
+    mons_check_flag(!spell_abilities.empty()
+                    && !mon.is_priest() && !mon.is_actual_spellcaster()
                     && !mons_class_flag(mon.type, M_SPELL_NO_SILENT),
                     monsterflags, "!sil");
 
@@ -833,9 +838,6 @@ int main(int argc, char *argv[])
     }
 
     printf(" | XP: %ld", exper);
-
-    const std::string spell_abilities =
-      mons_spells_abilities(&mon, shapeshifter, spell_sets);
 
     if (!spell_abilities.empty())
       printf(" | Sp: %s", spell_abilities.c_str());
