@@ -24,6 +24,7 @@
 #include "env.h"
 #include "colour.h"
 #include "dungeon.h"
+#include "los.h"
 #include "message.h"
 #include "mon-abil.h"
 #include "mon-cast.h"
@@ -746,6 +747,9 @@ int main(int argc, char *argv[])
     mons_check_flag(me->fly == FL_FLY, monsterflags, "fly");
     mons_check_flag(monster_descriptor(mon.type, MDSC_REGENERATES),
                     monsterflags, "regen");
+    mons_check_flag(!mon.is_priest() && !mon.is_actual_spellcaster()
+                    && !mons_class_flag(mon.type, M_SPELL_NO_SILENT),
+                    monsterflags, "!sil");
 
     printf("%s", monsterflags.c_str());
 
