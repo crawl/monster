@@ -205,6 +205,8 @@ static void initialize_crawl() {
   init_spell_descs();
   init_monster_symbols();
   init_mon_name_cache();
+  init_spell_name_cache();
+  init_mons_spells();
 
   dgn_reset_level();
   for (int y = 0; y < GYM; ++y)
@@ -498,7 +500,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  const int ntrials = 150;
+  const int ntrials = 1000;
 
   std::set<std::string> spell_sets;
 
@@ -577,13 +579,12 @@ int main(int argc, char *argv[])
     printf(" | Speed: %s",
            monster_speed(mon, me, speed_min, speed_max).c_str());
 
-    const int hd = generated? mon.hit_dice : me->hpdice[0];
+    const int hd = mon.hit_dice;
     printf(" | HD: %d", hd);
 
     printf(" | Health: ");
-    const int hplow = generated? hp_min : hd * me->hpdice[1] + me->hpdice[3];
-    const int hphigh = generated? hp_max :
-        hd * (me->hpdice[1] + me->hpdice[2]) + me->hpdice[3];
+    const int hplow = hp_min;
+    const int hphigh = hp_max;
     if (hplow < hphigh)
         printf("%i-%i", hplow, hphigh);
     else
