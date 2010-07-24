@@ -2,8 +2,6 @@
 # Use 'make install' to install monster, 'make install-trunk' to install
 # monster-trunk.
 
-# Branch names to target in git repo.
-STABLE = stone_soup-0.6
 # Use master
 TRUNK = master
 
@@ -57,12 +55,7 @@ trunk: monster-trunk
 update-cdo-git:
 	[ "`hostname`" != "ipx14623" ] || sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
 
-checkout-trunk:
-	cd $(CRAWL_PATH) && \
-	( test "$$(git branch | grep '^\*')" = "* $(TRUNK)" || \
-		( git checkout $(TRUNK) && git clean -f -d -x && git pull ) )
-
-monster-trunk: update-cdo-git checkout-trunk $(CRAWL_PATH)/art-data.h $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
+monster-trunk: update-cdo-git $(CRAWL_PATH)/art-data.h $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
 	g++ $(CFLAGS) -o $@ $(ALL_OBJECTS) $(LFLAGS)
 
 $(LUASRC)/$(LUALIBA):
