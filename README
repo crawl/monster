@@ -1,0 +1,13 @@
+Crawl monster descriptions
+--------------------------
+
+This repository contains the source for the monster description
+command used by Gretell on ##crawl Freenode (@?).
+
+To build it, clone a copy of the crawl-ref repository in the current
+directory (./crawl-ref/crawl-ref/source) and build the binary with
+
+$ make
+
+If all goes well, you should have a monster-trunk binary in the
+current directory that can provide monster stats.
