@@ -826,6 +826,9 @@ int main(int argc, char *argv[])
       case CE_POISONOUS:
         printf("%s", colour(LIGHTGREEN,"poisonous").c_str());
         break;
+      case CE_POISON_CONTAM:
+        printf("%s", colour(LIGHTGREEN,"poison+contam").c_str());
+        break;
       case CE_HCL:
         printf("%s", colour(LIGHTRED,"hydrochloric acid").c_str());
         break;
