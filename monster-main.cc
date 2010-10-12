@@ -137,7 +137,7 @@ static void monster_action_cost(std::string &qual, int cost, const char *desc) {
   }
 }
 
-static std::string monster_speed(const monsters &mon,
+static std::string monster_speed(const monster &mon,
                                  const monsterentry *me,
                                  int speed_min,
                                  int speed_max)
@@ -223,22 +223,22 @@ static std::string dice_def_string(dice_def dice) {
           : make_stringf("%dd%d", dice.num, dice.size));
 }
 
-static dice_def mi_calc_iood_damage(monsters *mons) {
+static dice_def mi_calc_iood_damage(monster *mons) {
   const int power = stepdown_value(6 * mons->hit_dice,
                                    30, 30, 200, -1);
   return dice_def(8, power / 4);
 }
 
-static std::string mi_calc_smiting_damage(monsters *mons) {
+static std::string mi_calc_smiting_damage(monster *mons) {
   return "7-17";
 }
 
-static std::string mi_calc_airstrike_damage(monsters *mons) {
+static std::string mi_calc_airstrike_damage(monster *mons) {
   return make_stringf("0-%d", 10 + 2 * mons->hit_dice);
 }
 
 static std::string mons_human_readable_spell_damage_string(
-    monsters *monster,
+    monster *monster,
     spell_type sp)
 {
   bolt spell_beam = mons_spells(monster, sp, 12 * monster->hit_dice,
@@ -272,7 +272,7 @@ static std::string shorten_spell_name(std::string name) {
 }
 
 static void mons_record_ability(std::set<std::string> &ability_names,
-                                monsters *monster)
+                                monster *monster)
 {
   no_messages mx;
   bolt beam;
@@ -299,7 +299,7 @@ static void mons_record_ability(std::set<std::string> &ability_names,
   }
 }
 
-static std::string mons_special_ability_set(monsters *monster) {
+static std::string mons_special_ability_set(monster *monster) {
   if (mons_genus(monster->type) == MONS_DRACONIAN
       && draco_subspecies(monster) != MONS_YELLOW_DRACONIAN)
   {
@@ -315,7 +315,7 @@ static std::string mons_special_ability_set(monsters *monster) {
   return comma_separated_line(abilities.begin(), abilities.end(), ", ", ", ");
 }
 
-static spell_type mi_draconian_breath_spell(monsters *mons) {
+static spell_type mi_draconian_breath_spell(monster *mons) {
   if (mons_genus(mons->type) != MONS_DRACONIAN)
     return SPELL_NO_SPELL;
   switch (draco_subspecies(mons)) {
@@ -327,7 +327,7 @@ static spell_type mi_draconian_breath_spell(monsters *mons) {
   }
 }
 
-static std::string mons_spell_set(monsters *mp) {
+static std::string mons_spell_set(monster *mp) {
   std::set<spell_type> seen;
   std::string spells;
 
@@ -351,7 +351,7 @@ static std::string mons_spell_set(monsters *mp) {
   return spells;
 }
 
-static void record_spell_set(monsters *mp,
+static void record_spell_set(monster *mp,
                              std::set<std::string> &sets)
 {
   std::string spell_set = mons_spell_set(mp);
@@ -360,7 +360,7 @@ static void record_spell_set(monsters *mp,
 }
 
 static std::string mons_spells_abilities(
-  monsters *monster,
+  monster *monster,
   bool shapeshifter,
   const std::set<std::string> &spell_sets)
 {
@@ -389,7 +389,7 @@ static inline void set_min_max(int num, int &min, int &max) {
     max = num;
 }
 
-static std::string monster_symbol(const monsters &mon) {
+static std::string monster_symbol(const monster &mon) {
   std::string symbol;
   const monsterentry *me = mon.find_monsterentry();
   if (me) {
@@ -403,7 +403,7 @@ static int mi_create_monster(mons_spec spec) {
   const int index =
     dgn_place_monster(spec, 10, MONSTER_PLACE, true, false, false);
   if (index != -1 && index != NON_MONSTER) {
-    monsters *monster = &menv[index];
+    monster *monster = &menv[index];
     monster->behaviour = BEH_SEEK;
     monster->foe = MHITYOU;
     no_messages mx;
@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
   for (int i = 0; i < ntrials; ++i) {
     if (i == ntrials)
       break;
-    monsters *mp = &menv[index];
+    monster *mp = &menv[index];
     const std::string mname = mp->name(DESC_PLAIN, true);
     if (!mons_class_is_zombified(mp->type))
       record_spell_set(mp, spell_sets);
@@ -541,7 +541,7 @@ int main(int argc, char *argv[])
   mac /= ntrials;
   mev /= ntrials;
 
-  monsters &mon(menv[index]);
+  monster &mon(menv[index]);
 
   const std::string symbol(monster_symbol(mon));
 
