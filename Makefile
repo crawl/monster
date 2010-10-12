@@ -70,6 +70,7 @@ test: monster
 	./monster-trunk quasit
 
 install-trunk: monster-trunk
+	strip -s monster-trunk
 	cp monster-trunk $(HOME)/bin/
 
 clean:
