@@ -577,6 +577,9 @@ int main(int argc, char *argv[])
            changing_name ? me->name : mon.name(DESC_PLAIN, true).c_str(),
            symbol.c_str());
 
+    if (mons_class_flag(mon.type, M_UNFINISHED))
+        printf(" | %s", colour(LIGHTRED, "UNFINISHED").c_str());
+
     printf(" | Speed: %s",
            monster_speed(mon, me, speed_min, speed_max).c_str());
 
