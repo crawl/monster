@@ -29,7 +29,7 @@ LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncurses -lz
 include $(CRAWL_PATH)/makefile.obj
 
 CRAWL_OBJECTS := $(OBJECTS:main.o=)
-CRAWL_OBJECTS := $(CRAWL_OBJECTS:dbg-asrt.o=) libunix.o
+CRAWL_OBJECTS += libunix.o crash-u.o
 
 ALL_OBJECTS = monster-main.o $(CRAWL_PATH)/version.o
 ALL_OBJECTS += $(CRAWL_OBJECTS:%=$(CRAWL_PATH)/%)
