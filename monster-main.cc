@@ -701,6 +701,9 @@ int main(int argc, char *argv[])
         case AF_RAGE:
           monsterattacks += colour(RED,"(rage)");
           break;
+        case AF_HOLY:
+          monsterattacks += colour(YELLOW,"(holy)");
+          break;
         case AF_PLAIN:
         default:
           break;
