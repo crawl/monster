@@ -92,6 +92,14 @@ def parse_mons_line (line):
         else:
             new_monsters.append(monster)
 
+    monsters = new_monsters
+    new_monsters = []
+
+    for mons in monsters:
+        if "; " in mons:
+            mons = mons.split("; ", 1)[0]
+        new_monsters.append(mons)
+
     return [cleanup_mons_line(mons) for mons in new_monsters]
 
 def parse_lua_line (line):
@@ -253,7 +261,7 @@ def main (args):
     if not os.path.isdir(des_folder):
         raise MapParseError, "Specified des folder '%s' is not a folder!" % des_folder
 
-    monsters = generate_monster_lines(des_folder, cull=True, verbose=verbose)
+    monsters = set(generate_monster_lines(des_folder, cull=True, verbose=verbose))
     output = open(output, "w")
     publish_monsters_as_cpp(monsters, output=output)
     output.close()
