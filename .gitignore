@@ -7,3 +7,4 @@ monster-trunk
 out.txt
 *.o
 TAGS
+vault_monster_data.cc
