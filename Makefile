@@ -58,6 +58,7 @@ vault_monster_data.o:
 	${CXX} ${CFLAGS} -o vault_monster_data.o -c vault_monster_data.cc
 
 vaults:
+	rm -f vault_monster_data.cc vault_monster_data.o
 	${PYTHON} parse_des.py --verbose
 
 update-cdo-git:
