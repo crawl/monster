@@ -2,6 +2,7 @@
  * ===========================================================================
  * Copyright (C) 2007 Marc H. Thoben
  * Copyright (C) 2008 Darshan Shaligram
+ * Copyright (C) 2010 Jude Brown
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,6 +41,7 @@
 #include "random.h"
 #include "spl-util.h"
 #include "state.h"
+#include "vault_monsters.h"
 #include <sstream>
 #include <set>
 
@@ -400,7 +402,7 @@ static std::string monster_symbol(const monster &mon) {
   return (symbol);
 }
 
-static int mi_create_monster(mons_spec spec) {
+int mi_create_monster(mons_spec spec) {
   const int index =
     dgn_place_monster(spec, 10, MONSTER_PLACE, true, false, false);
   if (index != -1 && index != NON_MONSTER) {
@@ -474,6 +476,8 @@ int main(int argc, char *argv[])
       target.append(argv[x]);
     }
 
+  std::string orig_target = std::string(target);
+
   std::string err = mons.add_mons(target, false);
   if (!err.empty()) {
     target = "the " + target;
@@ -483,16 +487,23 @@ int main(int argc, char *argv[])
   }
 
   mons_spec spec = mons.get_monster(0);
+  bool vault_monster = false;
 
   if ((spec.mid < 0 || spec.mid >= NUM_MONSTERS
        || spec.mid == MONS_PLAYER_GHOST)
       || !err.empty())
   {
-    if (err.empty())
-      printf("unknown monster: \"%s\"\n", target.c_str());
-    else
-      printf("%s\n", err.c_str());
-    return 1;
+    spec = get_vault_monster(orig_target);
+    if (spec.mid < 0 || spec.mid >= NUM_MONSTERS || spec.mid == MONS_PLAYER_GHOST)
+    {
+      if (err.empty())
+        printf("unknown monster: \"%s\"\n", target.c_str());
+      else
+        printf("%s\n", err.c_str());
+      return 1;
+    }
+
+    vault_monster = true;
   }
 
   int index = mi_create_monster(spec);
@@ -763,6 +774,8 @@ int main(int argc, char *argv[])
                     && !mon.is_priest() && !mon.is_actual_spellcaster()
                     && !mons_class_flag(mon.type, M_SPELL_NO_SILENT),
                     monsterflags, "!sil");
+
+    mons_check_flag(vault_monster, monsterflags, colour(BROWN, "vault"));
 
     printf("%s", monsterflags.c_str());
 

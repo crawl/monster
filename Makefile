@@ -12,6 +12,8 @@ LUASRC := $(CRAWL_PATH)/contrib/lua/src
 LUALIB = lua
 LUALIBA = lib$(LUALIB).a
 
+PYTHON = python
+
 SQLSRC := $(CRAWL_PATH)/contrib/sqlite
 SQLLIB   := sqlite3
 SQLLIBA  := lib$(SQLLIB).a
@@ -31,10 +33,10 @@ include $(CRAWL_PATH)/makefile.obj
 CRAWL_OBJECTS := $(OBJECTS:main.o=)
 CRAWL_OBJECTS += libunix.o crash-u.o
 
-ALL_OBJECTS = monster-main.o $(CRAWL_PATH)/version.o
+ALL_OBJECTS = monster-main.o vault_monster_data.o vault_monsters.o $(CRAWL_PATH)/version.o
 ALL_OBJECTS += $(CRAWL_OBJECTS:%=$(CRAWL_PATH)/%)
 
-all: trunk
+all: vaults trunk
 
 $(CRAWL_PATH)/compflag.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_PATH)/%.cc)
 	cd $(CRAWL_PATH) ; ./util/gen-cflg.pl compflag.h "$(CFLAGS)" "$(LFLAGS)"
@@ -51,6 +53,12 @@ $(CRAWL_PATH)/art-enum.h $(CRAWL_PATH)/art-data.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_P
 	${CXX} ${CFLAGS} -o $@ -c $<
 
 trunk: monster-trunk
+
+vault_monster_data.o:
+	${CXX} ${CFLAGS} -o vault_monster_data.o -c vault_monster_data.cc
+
+vaults:
+	${PYTHON} parse_des.py --verbose
 
 update-cdo-git:
 	[ "`hostname`" != "ipx14623" ] || sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
@@ -75,5 +83,6 @@ install-trunk: monster-trunk
 
 clean:
 	rm -f *.o
-	rm -f monster
+	rm -f monster monster-trunk
+	rm -f *.pyc vault_monster_data.cc
 	cd $(CRAWL_PATH) && git clean -f -d -x && git pull
