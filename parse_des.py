@@ -110,7 +110,9 @@ def parse_lua_line (line):
         if mons.strip() == "nothing":
             continue
 
-        new_monsters.extend(parse_mons_line(line))
+        mons = mons.strip("'").strip('"')
+
+        new_monsters.extend(parse_mons_line(mons))
 
     return new_monsters
 
