@@ -34,6 +34,10 @@ DIR_DELIM = os.path.sep
 
 # Return all vault-defined KMONS or MONS lines
 FIND_MONS_LINES = re.compile("(K?MONS:\s*(?:[^\n]*)\n)")
+FIND_MONS_LUA_LINES = re.compile("(k?mons\([^\)]*\))")
+
+# Find all phrases contained within quotes.
+FIND_QUOTED_LINES = re.compile("\"([^\"]*)\"")
 
 # Replace multiple instances of whitespace with a single instance of whitespace.
 _CLEANUP_WHITESPACE = re.compile("(\s)+")
@@ -89,6 +93,27 @@ def parse_mons_line (line):
             new_monsters.append(monster)
 
     return [cleanup_mons_line(mons) for mons in new_monsters]
+
+def parse_lua_line (line):
+    """
+    Strip out Lua-specific non-specification data and then returns a list of the
+    contained monsters.
+
+    :``line``: The line to parse.
+    """
+    line = line.rstrip(")")
+    line = line.split("(", 1)[1]
+    result = FIND_QUOTED_LINES.findall(line)
+    new_monsters = []
+
+    for mons in result:
+        if mons.strip() == "nothing":
+            continue
+
+        new_monsters.extend(parse_mons_line(line))
+
+    return new_monsters
+
 
 def cull_unnamed_monsters (lines):
     """
@@ -148,8 +173,16 @@ def generate_monster_lines (des_folder, cull=True, verbose=False):
             this_data = CLEANUP_SPELLS(this_data)
             this_data = CLEANUP_LINES(this_data)
 
-            for line in FIND_MONS_LINES.findall(this_data):
-                monster_lines.extend(parse_mons_line(line))
+            line_set_1 = FIND_MONS_LINES.findall(this_data)
+            line_set_2 = FIND_MONS_LUA_LINES.findall(this_data)
+
+            if line_set_1:
+                for line in line_set_1:
+                    monster_lines.extend(parse_mons_line(line))
+
+            if line_set_2:
+                for line in line_set_2:
+                    monster_lines.extend(parse_lua_line(line))
 
             done.append(fname)
 
