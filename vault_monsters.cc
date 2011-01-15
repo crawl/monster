@@ -37,6 +37,8 @@
 mons_spec get_vault_monster (std::string monster_name)
 {
     lowercase(monster_name);
+    trim_string(monster_name);
+
     monster_name = replace_all_of(monster_name, "'", "");
 
     std::vector<std::string> monsters = get_vault_monsters();
