@@ -16,6 +16,7 @@
 #include "dungeon.h"
 #include "env.h"
 #include "externs.h"
+#include "libutil.h"
 #include "mapdef.h"
 #include "message.h"
 #include "monster-main.h"
@@ -35,6 +36,9 @@
 **/
 mons_spec get_vault_monster (std::string monster_name)
 {
+    lowercase(monster_name);
+    monster_name = replace_all_of(monster_name, "'", "");
+
     std::vector<std::string> monsters = get_vault_monsters();
 
     mons_list mons;
@@ -60,8 +64,14 @@ mons_spec get_vault_monster (std::string monster_name)
             bool this_spec = false;
 
             monster *mp = &menv[index];
-            if (mp && mp->name(DESC_PLAIN, true) == monster_name)
-                this_spec = true;
+
+            if (mp)
+            {
+                std::string name = replace_all_of(mp->name(DESC_PLAIN, true), "'","");
+                lowercase(name);
+                if (name == monster_name)
+                    this_spec = true;
+            }
 
             mons_remove_from_grid(mp);
 
