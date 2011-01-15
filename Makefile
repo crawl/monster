@@ -78,9 +78,12 @@ $(FSQLLIBA):
 test: monster
 	./monster-trunk quasit
 
-install-trunk: monster-trunk
+install-trunk: monster-trunk tile_info.txt
 	strip -s monster-trunk
 	cp monster-trunk $(HOME)/bin/
+
+tile_info.txt:
+	${PYTHON} parse_tiles.py --verbose
 
 clean:
 	rm -f *.o
