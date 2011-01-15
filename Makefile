@@ -63,7 +63,7 @@ vaults:
 update-cdo-git:
 	[ "`hostname`" != "ipx14623" ] || sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
 
-monster-trunk: update-cdo-git $(CRAWL_PATH)/art-data.h $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
+monster-trunk: vaults update-cdo-git $(CRAWL_PATH)/art-data.h $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
 	g++ $(CFLAGS) -o $@ $(ALL_OBJECTS) $(LFLAGS)
 
 $(LUASRC)/$(LUALIBA):
