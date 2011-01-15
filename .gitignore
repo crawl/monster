@@ -8,3 +8,5 @@ out.txt
 *.o
 TAGS
 vault_monster_data.cc
+tile_info.txt
+*.pyc
