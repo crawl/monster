@@ -820,6 +820,15 @@ int main(int argc, char *argv[])
                     res.x);                     \
     } while (false)                             \
 
+#define res2(c,x,y)                                \
+    do                                          \
+    {                                           \
+      record_resist(c,#x,                       \
+                    monsterresistances,         \
+                    monstervulnerabilities,     \
+                    y);                         \
+    } while (false)                             \
+
 
     res(RED,hellfire);
     if (me->resists.hellfire <= 0)
@@ -828,13 +837,18 @@ int main(int argc, char *argv[])
     res(CYAN,elec);
     res(GREEN,poison);
     res(BROWN,acid);
+    res(0,steam);
     res(0,asphyx);
     res(0,pierce);
     res(0,slice);
     res(0,bludgeon);
-    record_resist(0, "neg", monsterresistances,
-                            monstervulnerabilities,
-                            mon.res_negative_energy());
+
+    res2(0,            "drown", mon.res_water_drowning());
+    res2(YELLOW,       "rot",   mon.res_rotting());
+    res2(LIGHTMAGENTA, "neg",   mon.res_negative_energy());
+    res2(WHITE,        "holy",  mon.res_holy_energy(&you));
+    res2(LIGHTMAGENTA, "torm",  mon.res_torment());
+    res2(LIGHTBLUE,    "wind",  mon.res_wind());
 
     printf("%s", monsterresistances.c_str());
     printf("%s", monstervulnerabilities.c_str());
