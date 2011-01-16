@@ -107,7 +107,8 @@ static void record_resvul(int color, const char *name, const char *caption,
     str += ", ";
 
   if (color && (rval == 3 || rval == 1 && color == BROWN
-                || std::string(caption) == "Vul"))
+                || std::string(caption) == "Vul")
+            && (int) colour <= 7)
     color += 8;
 
   std::string token(name);
