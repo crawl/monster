@@ -831,6 +831,9 @@ int main(int argc, char *argv[])
     res(0,pierce);
     res(0,slice);
     res(0,bludgeon);
+    record_resist(0, "neg", monsterresistances,
+                            monstervulnerabilities,
+                            mon.res_negative_energy());
 
     printf("%s", monsterresistances.c_str());
     printf("%s", monstervulnerabilities.c_str());
