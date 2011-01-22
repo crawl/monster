@@ -48,6 +48,8 @@
 const coord_def MONSTER_PLACE(20, 20);
 const coord_def PLAYER_PLACE(21, 20);
 
+const std::string CANG = "cang";
+
 const int PLAYER_MAXHP = 500;
 
 // Clockwise, around the compass from north (same order as enum RUN_DIR)
@@ -448,6 +450,13 @@ static void rebind_mspec(std::string *requested_name,
   }
 }
 
+static std::string canned_reports[][2] = {
+  { "cang",
+    ("cang (" + colour(LIGHTRED, "Ω")
+     + (" | Speed: c | HD: I | Health: 666 | "
+        "AC/EV: e/π | Damage: 999 | Res: sanity | XP: ∞")) },
+};
+
 int main(int argc, char *argv[])
 {
   crawl_state.test = true;
@@ -476,6 +485,19 @@ int main(int argc, char *argv[])
       target.append(" ");
       target.append(argv[x]);
     }
+
+  trim_string(target);
+
+  // [ds] Nobody mess with cang.
+  for (unsigned i = 0; i < sizeof(canned_reports) / sizeof(*canned_reports);
+       ++i)
+  {
+    if (canned_reports[i][0] == target)
+    {
+      printf("%s\n", canned_reports[i][1].c_str());
+      return 0;
+    }
+  }
 
   std::string orig_target = std::string(target);
 
