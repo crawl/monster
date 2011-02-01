@@ -681,6 +681,7 @@ int main(int argc, char *argv[])
           break;
         case AF_CHAOS:
           monsterattacks += colour(LIGHTGREEN, "(chaos)");
+          break;
         case AF_ELEC:
           monsterattacks +=
             colour(LIGHTCYAN,
