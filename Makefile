@@ -52,12 +52,14 @@ $(CRAWL_PATH)/art-enum.h $(CRAWL_PATH)/art-data.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_P
 .cc.o:
 	${CXX} ${CFLAGS} -o $@ -c $<
 
+vault_monster_data.o: vaults
+
 trunk: monster-trunk
 
 vault_monster_data.o:
 	${CXX} ${CFLAGS} -o vault_monster_data.o -c vault_monster_data.cc
 
-vaults:
+vaults: | update-cdo-git
 	rm -f vault_monster_data.cc vault_monster_data.o
 	${PYTHON} parse_des.py --verbose
 
