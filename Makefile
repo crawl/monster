@@ -49,6 +49,11 @@ $(CRAWL_PATH)/version.cc: $(CRAWL_PATH)/build.h $(CRAWL_PATH)/compflag.h
 $(CRAWL_PATH)/art-enum.h $(CRAWL_PATH)/art-data.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_PATH)/%.cc)
 	cd $(CRAWL_PATH) ; ./util/art-data.pl
 
+$(CRAWL_PATH)/mon-mst.h: $(CRAWL_PATH)/mon-spll.h
+	cd $(CRAWL_PATH) ; ./util/gen-mst.pl
+
+$(CRAWL_PATH)/mon-util.o: $(CRAWL_PATH)/mon-mst.h
+
 .cc.o:
 	${CXX} ${CFLAGS} -o $@ -c $<
 
