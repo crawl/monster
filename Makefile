@@ -24,9 +24,9 @@ MERGE_BASE := $(shell cd $(CRAWL_PATH) ; git merge-base HEAD $(USE_MERGE_BASE))
 endif
 
 CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX \
-	-I$(LUASRC) -I$(SQLSRC) -I$(CRAWL_PATH) -g
+	-I$(LUASRC) -I$(SQLSRC) -I$(CRAWL_PATH) -I/usr/include/ncursesw -g
 
-LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncurses -lz
+LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncursesw -lz
 
 include $(CRAWL_PATH)/makefile.obj
 
