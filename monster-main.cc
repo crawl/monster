@@ -719,7 +719,16 @@ int main(int argc, char *argv[])
           monsterattacks += colour(RED,"(strong poison)");
           break;
         case AF_POISON_STR:
-          monsterattacks += colour(LIGHTRED,"(poison, drain strength)");
+          monsterattacks += colour(LIGHTRED,"(poison, drain str)");
+          break;
+        case AF_POISON_INT:
+          monsterattacks += colour(LIGHTRED,"(poison, drain int)");
+          break;
+        case AF_POISON_DEX:
+          monsterattacks += colour(LIGHTRED,"(poison, drain dex)");
+          break;
+        case AF_POISON_STAT:
+          monsterattacks += colour(LIGHTRED,"(poison, drain stat)");
           break;
         case AF_ROT:
           monsterattacks += colour(LIGHTRED,"(rot)");
