@@ -53,10 +53,11 @@ const std::string CANG = "cang";
 const int PLAYER_MAXHP = 500;
 
 // Clockwise, around the compass from north (same order as enum RUN_DIR)
-const coord_def Compass[8] =
+const coord_def Compass[9] =
 {
     coord_def(0, -1), coord_def(1, -1), coord_def(1, 0), coord_def(1, 1),
     coord_def(0, 1), coord_def(-1, 1), coord_def(-1, 0), coord_def(-1, -1),
+    coord_def(0, 0),
 };
 
 
@@ -370,7 +371,7 @@ static std::string mons_spells_abilities(
   bool shapeshifter,
   const std::set<std::string> &spell_sets)
 {
-  if (shapeshifter || monster->type == MONS_PANDEMONIUM_DEMON)
+  if (shapeshifter || monster->type == MONS_PANDEMONIUM_LORD)
     return "(random)";
 
   bool first = true;
@@ -582,7 +583,7 @@ int main(int argc, char *argv[])
 
   const bool generated =
     mons_class_is_zombified(mon.type)
-    || mon.type == MONS_BEAST || mon.type == MONS_PANDEMONIUM_DEMON
+    || mon.type == MONS_HELL_BEAST || mon.type == MONS_PANDEMONIUM_LORD
     || mon.type == MONS_UGLY_THING || mon.type == MONS_DANCING_WEAPON;
 
   const bool shapeshifter =
@@ -603,7 +604,7 @@ int main(int argc, char *argv[])
     lowercase(target);
 
     const bool changing_name =
-      mon.has_hydra_multi_attack() || mon.type == MONS_PANDEMONIUM_DEMON
+      mon.has_hydra_multi_attack() || mon.type == MONS_PANDEMONIUM_LORD
         || mons_is_mimic(mon.type) || shapeshifter
         || mon.type == MONS_DANCING_WEAPON;
 
