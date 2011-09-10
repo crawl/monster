@@ -60,13 +60,6 @@ const coord_def Compass[9] =
     coord_def(0, 0),
 };
 
-bool is_element_colour(int col)
-{
-    col = col & 0x007f;
-    ASSERT(col < NUM_COLOURS);
-    return (col >= ETC_FIRE);
-}
-
 
 static std::string colour_codes[] = {
     "",
@@ -407,7 +400,7 @@ static std::string monster_symbol(const monster &mon) {
   std::string symbol;
   const monsterentry *me = mon.find_monsterentry();
   if (me) {
-    symbol += me->basechar;
+    symbol += me->showchar;
     symbol = colour(mon.colour, symbol);
   }
   return (symbol);
@@ -905,8 +898,8 @@ int main(int argc, char *argv[])
       case CE_POISONOUS:
         printf("%s", colour(LIGHTGREEN,"poisonous").c_str());
         break;
-      case CE_ROT:
-        printf("%s", colour(LIGHTRED,"rot").c_str());
+      case CE_HCL:
+        printf("%s", colour(LIGHTRED,"hydrochloric acid").c_str());
         break;
       case CE_MUTAGEN_RANDOM:
         printf("%s", colour(MAGENTA, "mutagenic").c_str());
