@@ -59,7 +59,7 @@ $(CRAWL_PATH)/mon-util.o: $(CRAWL_PATH)/mon-mst.h
 
 vault_monster_data.o: vaults
 
-trunk: monster-trunk
+trunk: monster
 
 vault_monster_data.o:
 	${CXX} ${CFLAGS} -o vault_monster_data.o -c vault_monster_data.cc
@@ -71,7 +71,7 @@ vaults: | update-cdo-git
 update-cdo-git:
 	[ "`hostname`" != "ipx14623" ] || sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
 
-monster-trunk: vaults update-cdo-git $(CRAWL_PATH)/art-data.h $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
+monster: vaults update-cdo-git $(CRAWL_PATH)/art-data.h $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
 	g++ $(CFLAGS) -o $@ $(ALL_OBJECTS) $(LFLAGS)
 
 $(LUASRC)/$(LUALIBA):
@@ -83,11 +83,11 @@ $(FSQLLIBA):
 	cd $(SQLSRC) && $(MAKE)
 
 test: monster
-	./monster-trunk quasit
+	./monster quasit
 
-install-trunk: monster-trunk tile_info.txt
-	strip -s monster-trunk
-	cp monster-trunk $(HOME)/bin/
+install: monster tile_info.txt
+	strip -s monster
+	cp monster $(HOME)/bin/
 
 tile_info.txt:
 	${PYTHON} parse_tiles.py --verbose

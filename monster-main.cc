@@ -898,7 +898,7 @@ int main(int argc, char *argv[])
       case CE_POISONOUS:
         printf("%s", colour(LIGHTGREEN,"poisonous").c_str());
         break;
-      case CE_HCL:
+      case CE_ROT:
         printf("%s", colour(LIGHTRED,"hydrochloric acid").c_str());
         break;
       case CE_MUTAGEN_RANDOM:
