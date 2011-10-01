@@ -28,7 +28,7 @@ CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX \
 
 LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncursesw -lz
 
-include $(CRAWL_PATH)/makefile.obj
+include $(CRAWL_PATH)/Makefile.obj
 
 CRAWL_OBJECTS := $(OBJECTS:main.o=)
 CRAWL_OBJECTS += libunix.o crash-u.o
