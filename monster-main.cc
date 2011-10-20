@@ -774,7 +774,7 @@ int main(int argc, char *argv[])
       else
         monsterresistances += ", ";
       monsterresistances += colour(MAGENTA, std::string() + "magic("
-                                   + to_string((short int) me->hpdice[0] * me->resist_magic * 4 / 3 * -1)
+                                   + to_string((short int) mon.hit_dice * me->resist_magic * 4 / 3 * -1)
                                    + ")");
     }
     else if (me->resist_magic > 0)
