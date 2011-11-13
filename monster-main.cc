@@ -880,9 +880,6 @@ int main(int argc, char *argv[])
     res(BROWN,acid);
     res(0,steam);
     res(0,asphyx);
-    res(0,pierce);
-    res(0,slice);
-    res(0,bludgeon);
 
     res2(LIGHTBLUE,    drown, mon.res_water_drowning());
     res2(LIGHTRED,     rot,   mon.res_rotting());
