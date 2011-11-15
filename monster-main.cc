@@ -724,7 +724,7 @@ int main(int argc, char *argv[])
           monsterattacks += colour(LIGHTRED,"(medium poison)");
           break;
         case AF_POISON_STRONG:
-          monsterattacks += colour(RED,"(strong poison)");
+          monsterattacks += colour(LIGHTRED,"(strong poison)");
           break;
         case AF_POISON_STR:
           monsterattacks += colour(LIGHTRED,"(poison, drain str)");
@@ -756,9 +756,33 @@ int main(int argc, char *argv[])
         case AF_HOLY:
           monsterattacks += colour(YELLOW,"(holy)");
           break;
-        case AF_PLAIN:
-        default:
+        case AF_PAIN:
+          monsterattacks += colour(RED,"(pain)");
           break;
+        case AF_ANTIMAGIC:
+          monsterattacks += colour(LIGHTBLUE,"(antimagic)");
+          break;
+        case AF_DRAIN_INT:
+          monsterattacks += colour(BLUE, "(drain int)");
+          break;
+        case AF_DRAIN_STAT:
+          monsterattacks += colour(BLUE, "(drain stat)");
+          break;
+        case AF_STEAL:
+          monsterattacks += colour(CYAN, "(steal)");
+          break;
+        case AF_STEAL_FOOD:
+          monsterattacks += colour(CYAN, "(steal food)");
+          break;
+        case AF_CRUSH:
+          monsterattacks += "(crush)";
+          break;
+        case AF_PLAIN:
+          break;
+// let the compiler issue warnings for us
+//      default:
+//        monsterattacks += "(???)";
+//        break;
         }
 
         if (mon.has_hydra_multi_attack())
@@ -902,6 +926,10 @@ int main(int argc, char *argv[])
       case CE_POISONOUS:
         printf("%s", colour(LIGHTGREEN,"poisonous").c_str());
         break;
+      case CE_POISON_CONTAM:
+        printf("%s+%s", colour(LIGHTGREEN,"poison").c_str(),
+                        colour(BROWN,"contam").c_str());
+        break;
       case CE_ROT:
         printf("%s", colour(LIGHTRED,"rot").c_str());
         break;
@@ -909,7 +937,7 @@ int main(int argc, char *argv[])
         printf("%s", colour(MAGENTA, "mutagenic").c_str());
         break;
       default:
-        printf("clean/none/unknown");
+        printf("???");
         break;
       }
     }
