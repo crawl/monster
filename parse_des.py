@@ -153,8 +153,6 @@ def generate_monster_lines (des_folder, cull=True, verbose=False):
     :``cull``: If True, will only return named monsters.
     :``verbose``: If True, will note which files have been parsed.
     """
-    done = []
-
     monster_lines = []
 
     for dirpath, dirnames, filenames in os.walk(des_folder):
@@ -164,9 +162,6 @@ def generate_monster_lines (des_folder, cull=True, verbose=False):
             continue
 
         for fname in filenames:
-            if fname in done:
-                continue
-
             if fname in IGNORE_DES_FILES:
                 continue
 
@@ -193,8 +188,6 @@ def generate_monster_lines (des_folder, cull=True, verbose=False):
             if line_set_2:
                 for line in line_set_2:
                     monster_lines.extend(parse_lua_line(line))
-
-            done.append(fname)
 
     if cull:
         return cull_unnamed_monsters(monster_lines)
