@@ -24,7 +24,8 @@ MERGE_BASE := $(shell cd $(CRAWL_PATH) ; git merge-base HEAD $(USE_MERGE_BASE))
 endif
 
 CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX \
-	-I$(LUASRC) -I$(SQLSRC) -I$(CRAWL_PATH) -I/usr/include/ncursesw -g
+	-I$(LUASRC) -I$(SQLSRC) -I$(CRAWL_PATH) \
+	-I$(CRAWL_PATH)/rltiles -I/usr/include/ncursesw -g
 
 LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncursesw -lz
 
@@ -32,6 +33,8 @@ include $(CRAWL_PATH)/Makefile.obj
 
 CRAWL_OBJECTS := $(OBJECTS:main.o=)
 CRAWL_OBJECTS += libunix.o crash-u.o
+TILEDEFS := floor wall feat main player gui icons dngn unrand
+CRAWL_OBJECTS += $(TILEDEFS:%=rltiles/tiledef-%.o)
 
 ALL_OBJECTS = monster-main.o vault_monster_data.o vault_monsters.o $(CRAWL_PATH)/version.o
 ALL_OBJECTS += $(CRAWL_OBJECTS:%=$(CRAWL_PATH)/%)

@@ -653,7 +653,7 @@ int main(int argc, char *argv[])
           monsterattacks += ", ";
         monsterattacks += to_string((short int) attk.damage);
 
-        const mon_attack_flavour flavour(
+        const attack_flavour flavour(
           orig_attk.flavour == AF_KLOWN ? AF_KLOWN : attk.flavour);
         switch (flavour)
         {
