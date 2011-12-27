@@ -654,7 +654,10 @@ int main(int argc, char *argv[])
         monsterattacks += to_string((short int) attk.damage);
 
         const attack_flavour flavour(
-          orig_attk.flavour == AF_KLOWN ? AF_KLOWN : attk.flavour);
+            orig_attk.flavour == AF_KLOWN ? AF_KLOWN
+          : orig_attk.flavour == AF_SUBTRACTOR ? AF_SUBTRACTOR
+          : attk.flavour);
+
         switch (flavour)
         {
         case AF_REACH:
@@ -746,6 +749,9 @@ int main(int argc, char *argv[])
           break;
         case AF_KLOWN:
           monsterattacks += colour(LIGHTBLUE,"(klown)");
+          break;
+        case AF_SUBTRACTOR:
+          monsterattacks += colour(DARKGREY, "(subtractor)");
           break;
         case AF_DISTORT:
           monsterattacks += colour(LIGHTBLUE,"(distort)");
