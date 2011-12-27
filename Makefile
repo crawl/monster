@@ -2,6 +2,8 @@
 # Use 'make install' to install monster, 'make install-trunk' to install
 # monster-trunk.
 
+.PHONY: crawl
+
 # Use master
 TRUNK = master
 
@@ -32,30 +34,17 @@ LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncursesw -lz
 include $(CRAWL_PATH)/Makefile.obj
 
 CRAWL_OBJECTS := $(OBJECTS:main.o=)
-CRAWL_OBJECTS += libunix.o crash-u.o
+CRAWL_OBJECTS += libunix.o crash-u.o version.o
 TILEDEFS := floor wall feat main player gui icons dngn unrand
 CRAWL_OBJECTS += $(TILEDEFS:%=rltiles/tiledef-%.o)
 
-ALL_OBJECTS = monster-main.o vault_monster_data.o vault_monsters.o $(CRAWL_PATH)/version.o
-ALL_OBJECTS += $(CRAWL_OBJECTS:%=$(CRAWL_PATH)/%)
+MONSTER_OBJECTS = monster-main.o vault_monster_data.o vault_monsters.o
+ALL_OBJECTS = $(MONSTER_OBJECTS) $(CRAWL_OBJECTS:%=$(CRAWL_PATH)/%)
 
 all: vaults trunk
 
-$(CRAWL_PATH)/compflag.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_PATH)/%.cc)
-	cd $(CRAWL_PATH) ; ./util/gen-cflg.pl compflag.h "$(CFLAGS)" "$(LFLAGS)"
-
-$(CRAWL_PATH)/build.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_PATH)/%.cc)
-	cd $(CRAWL_PATH) ; ./util/gen_ver.pl build.h "$(MERGE_BASE)"
-
-$(CRAWL_PATH)/version.cc: $(CRAWL_PATH)/build.h $(CRAWL_PATH)/compflag.h
-
-$(CRAWL_PATH)/art-enum.h $(CRAWL_PATH)/art-data.h: $(CRAWL_OBJECTS:%.o=$(CRAWL_PATH)/%.cc)
-	cd $(CRAWL_PATH) ; ./util/art-data.pl
-
-$(CRAWL_PATH)/mon-mst.h: $(CRAWL_PATH)/mon-spll.h
-	cd $(CRAWL_PATH) ; ./util/gen-mst.pl
-
-$(CRAWL_PATH)/mon-util.o: $(CRAWL_PATH)/mon-mst.h
+crawl:
+	make -C $(CRAWL_PATH) DEBUG= TILES= NO_LUA_BINDINGS=y
 
 .cc.o:
 	${CXX} ${CFLAGS} -o $@ -c $<
@@ -74,7 +63,7 @@ vaults: | update-cdo-git
 update-cdo-git:
 	[ "`hostname`" != "ipx14623" ] || sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
 
-monster-trunk: vaults update-cdo-git $(CRAWL_PATH)/art-data.h $(ALL_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
+monster-trunk: vaults update-cdo-git crawl $(MONSTER_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
 	g++ $(CFLAGS) -o $@ $(ALL_OBJECTS) $(LFLAGS)
 
 $(LUASRC)/$(LUALIBA):
