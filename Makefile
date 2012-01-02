@@ -29,12 +29,12 @@ CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX \
 	-I$(LUASRC) -I$(SQLSRC) -I$(CRAWL_PATH) \
 	-I$(CRAWL_PATH)/rltiles -I/usr/include/ncursesw -g
 
-LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncursesw -lz
+LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncursesw -lz -lpthread
 
 include $(CRAWL_PATH)/Makefile.obj
 
 CRAWL_OBJECTS := $(OBJECTS:main.o=)
-CRAWL_OBJECTS += libunix.o crash-u.o version.o
+CRAWL_OBJECTS += libunix.o version.o
 TILEDEFS := floor wall feat main player gui icons dngn unrand
 CRAWL_OBJECTS += $(TILEDEFS:%=rltiles/tiledef-%.o)
 
