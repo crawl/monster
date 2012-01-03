@@ -655,7 +655,9 @@ int main(int argc, char *argv[])
 
         const attack_flavour flavour(
             orig_attk.flavour == AF_KLOWN ? AF_KLOWN
+#if TAG_MAJOR_VERSION == 32
           : orig_attk.flavour == AF_SUBTRACTOR ? AF_SUBTRACTOR
+#endif
           : attk.flavour);
 
         switch (flavour)
@@ -750,9 +752,11 @@ int main(int argc, char *argv[])
         case AF_KLOWN:
           monsterattacks += colour(LIGHTBLUE,"(klown)");
           break;
+#if TAG_MAJOR_VERSION == 32
         case AF_SUBTRACTOR:
           monsterattacks += colour(DARKGREY, "(subtractor)");
           break;
+#endif
         case AF_DISTORT:
           monsterattacks += colour(LIGHTBLUE,"(distort)");
           break;
