@@ -653,6 +653,9 @@ int main(int argc, char *argv[])
           monsterattacks += ", ";
         monsterattacks += to_string((short int) attk.damage);
 
+        if (attk.type == AT_CONSTRICT)
+            monsterattacks += colour(GREEN, "(constrict)");
+
         const attack_flavour flavour(
             orig_attk.flavour == AF_KLOWN ? AF_KLOWN
 #if TAG_MAJOR_VERSION == 32
