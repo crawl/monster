@@ -414,16 +414,16 @@ static std::string monster_symbol(const monster &mon) {
 }
 
 int mi_create_monster(mons_spec spec) {
-  const int index =
+  monster *monster = 
     dgn_place_monster(spec, 10, MONSTER_PLACE, true, false, false);
-  if (index != -1 && index != NON_MONSTER) {
-    monster *monster = &menv[index];
+  if (monster) {
     monster->behaviour = BEH_SEEK;
     monster->foe = MHITYOU;
     no_messages mx;
     monster->del_ench(ENCH_SUBMERGED);
+    return monster->mindex();
   }
-  return index;
+  return NON_MONSTER;
 }
 
 static std::string damage_flavour(const std::string &name,
@@ -520,12 +520,13 @@ int main(int argc, char *argv[])
   mons_spec spec = mons.get_monster(0);
   bool vault_monster = false;
 
-  if ((spec.mid < 0 || spec.mid >= NUM_MONSTERS
-       || spec.mid == MONS_PLAYER_GHOST)
+  if ((spec.type < 0 || spec.type >= NUM_MONSTERS
+       || spec.type == MONS_PLAYER_GHOST)
       || !err.empty())
   {
     spec = get_vault_monster(orig_target);
-    if (spec.mid < 0 || spec.mid >= NUM_MONSTERS || spec.mid == MONS_PLAYER_GHOST)
+    if (spec.type < 0 || spec.type >= NUM_MONSTERS
+        || spec.type == MONS_PLAYER_GHOST)
     {
       if (err.empty())
         printf("unknown monster: \"%s\"\n", target.c_str());
@@ -569,7 +570,7 @@ int main(int argc, char *argv[])
 
     // Destroy the monster.
     mp->reset();
-    you.unique_creatures[spec.mid] = false;
+    you.unique_creatures[spec.type] = false;
 
     rebind_mspec(&target, mname, &spec);
 
@@ -595,11 +596,11 @@ int main(int argc, char *argv[])
 
   const bool shapeshifter =
       mon.is_shapeshifter()
-      || spec.mid == MONS_SHAPESHIFTER
-      || spec.mid == MONS_GLOWING_SHAPESHIFTER;
+      || spec.type == MONS_SHAPESHIFTER
+      || spec.type == MONS_GLOWING_SHAPESHIFTER;
 
   const monsterentry *me =
-      shapeshifter ? get_monster_data(spec.mid) : mon.find_monsterentry();
+      shapeshifter ? get_monster_data(spec.type) : mon.find_monsterentry();
 
   if (me)
   {
