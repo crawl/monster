@@ -44,6 +44,7 @@
 #include "vault_monsters.h"
 #include <sstream>
 #include <set>
+#include <unistd.h>
 
 const coord_def MONSTER_PLACE(20, 20);
 const coord_def PLAYER_PLACE(21, 20);
@@ -87,14 +88,26 @@ static std::string colour_codes[] = {
     "16"
 };
 
+static int bgr[8] = { 0, 4, 2, 6, 1, 5, 3, 7 };
+
 #ifdef CONTROL
 #undef CONTROL
 #endif
 #define CONTROL(x) char(x - 'A' + 1)
 
-static std::string colour(int colour, std::string text, bool bg = false) {
+static std::string colour(int colour, std::string text, bool bg = false)
+{
     if (is_element_colour(colour))
         colour = element_colour(colour, true);
+
+    if (isatty(1))
+    {
+        if (!colour)
+            return text;
+        return make_stringf("\e[0;%d%d;%dm%s\e[0m", bg ? 4 : 3, bgr[colour & 7],
+                            (colour & 8) ? 1 : 0, text.c_str());
+    }
+
     const std::string code(colour_codes[colour]);
 
     if (code.empty())
