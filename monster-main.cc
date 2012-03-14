@@ -461,7 +461,7 @@ static void rebind_mspec(std::string *requested_name,
 static std::string canned_reports[][2] = {
   { "cang",
     ("cang (" + colour(LIGHTRED, "Ω")
-     + (") | Speed: c | HD: I | Health: 666 | "
+     + (") | Speed: c | HD: i | Health: 666 | "
         "AC/EV: e/π | Damage: 999 | Res: sanity | XP: ∞")) },
 };
 
