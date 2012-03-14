@@ -44,7 +44,7 @@ ALL_OBJECTS = $(MONSTER_OBJECTS) $(CRAWL_OBJECTS:%=$(CRAWL_PATH)/%)
 all: vaults trunk
 
 crawl:
-	make -C $(CRAWL_PATH) DEBUG= TILES= NO_LUA_BINDINGS=y
+	+${MAKE} -C $(CRAWL_PATH) BUILD_SQLITE=y DEBUG= TILES= NO_LUA_BINDINGS=y
 
 .cc.o:
 	${CXX} ${CFLAGS} -o $@ -c $<
