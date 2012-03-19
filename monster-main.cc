@@ -859,6 +859,7 @@ int main(int argc, char *argv[])
     mons_check_flag(monster_descriptor(mon.type, MDSC_REGENERATES),
                     monsterflags, "regen");
     mons_check_flag(me->bitfields & M_DEFLECT_MISSILES, monsterflags, "DMsl");
+    mons_check_flag(me->bitfields & M_WEB_SENSE, monsterflags, "web sense");
 
     const std::string spell_abilities =
       mons_spells_abilities(&mon, shapeshifter, spell_sets);
