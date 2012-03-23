@@ -531,15 +531,16 @@ int main(int argc, char *argv[])
   }
 
   mons_spec spec = mons.get_monster(0);
+  monster_type spec_type = static_cast<monster_type>(spec.type);
   bool vault_monster = false;
 
-  if ((spec.type < 0 || spec.type >= NUM_MONSTERS
-       || spec.type == MONS_PLAYER_GHOST)
+  if ((spec_type < 0 || spec_type >= NUM_MONSTERS
+       || spec_type == MONS_PLAYER_GHOST)
       || !err.empty())
   {
     spec = get_vault_monster(orig_target);
-    if (spec.type < 0 || spec.type >= NUM_MONSTERS
-        || spec.type == MONS_PLAYER_GHOST)
+    if (spec_type < 0 || spec_type >= NUM_MONSTERS
+        || spec_type == MONS_PLAYER_GHOST)
     {
       if (err.empty())
         printf("unknown monster: \"%s\"\n", target.c_str());
@@ -583,7 +584,7 @@ int main(int argc, char *argv[])
 
     // Destroy the monster.
     mp->reset();
-    you.unique_creatures[spec.type] = false;
+    you.unique_creatures[spec_type] = false;
 
     rebind_mspec(&target, mname, &spec);
 
@@ -609,11 +610,11 @@ int main(int argc, char *argv[])
 
   const bool shapeshifter =
       mon.is_shapeshifter()
-      || spec.type == MONS_SHAPESHIFTER
-      || spec.type == MONS_GLOWING_SHAPESHIFTER;
+      || spec_type == MONS_SHAPESHIFTER
+      || spec_type == MONS_GLOWING_SHAPESHIFTER;
 
   const monsterentry *me =
-      shapeshifter ? get_monster_data(spec.type) : mon.find_monsterentry();
+      shapeshifter ? get_monster_data(spec_type) : mon.find_monsterentry();
 
   if (me)
   {
