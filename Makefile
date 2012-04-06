@@ -24,7 +24,11 @@ LFLAGS = -lncursesw -lz -lpthread
 
 LUA_INCLUDE_DIR = /usr/include/lua5.1
 
-ifneq (,$(wildcard $(LUA_INCLUDE_DIR)/lua.h))
+ifeq (,$(wildcard $(LUA_INCLUDE_DIR)/lua.h))
+	BUILD_LUA = y
+endif
+
+ifeq (,$(BUILD_LUA))
 	CFLAGS += -I$(LUA_INCLUDE_DIR)
 	LFLAGS += -llua5.1
 else
@@ -38,7 +42,11 @@ endif
 
 SQLITE_INCLUDE_DIR = /usr/include
 
-ifneq (,$(wildcard $(SQLITE_INCLUDE_DIR)/sqlite3.h))
+ifeq (,$(wildcard $(SQLITE_INCLUDE_DIR)/sqlite3.h))
+	BUILD_SQLITE = y
+endif
+
+ifeq (,$(BUILD_SQLITE))
 	LFLAGS += -lsqlite3
 else
 	SQLSRC := $(CRAWL_PATH)/contrib/sqlite
