@@ -10,26 +10,46 @@ TRUNK = master
 CRAWL_PATH=crawl-ref/crawl-ref/source
 
 CXX = g++
-LUASRC := $(CRAWL_PATH)/contrib/lua/src
-LUALIB = lua
-LUALIBA = lib$(LUALIB).a
 
 PYTHON = python
-
-SQLSRC := $(CRAWL_PATH)/contrib/sqlite
-SQLLIB   := sqlite3
-SQLLIBA  := lib$(SQLLIB).a
-FSQLLIBA := $(SQLSRC)/$(SQLLIBA)
 
 ifdef USE_MERGE_BASE
 MERGE_BASE := $(shell cd $(CRAWL_PATH) ; git merge-base HEAD $(USE_MERGE_BASE))
 endif
 
-CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX \
-	-I$(LUASRC) -I$(SQLSRC) -I$(CRAWL_PATH) \
+CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX -I$(CRAWL_PATH) \
 	-I$(CRAWL_PATH)/rltiles -I/usr/include/ncursesw -g
 
-LFLAGS = $(FSQLLIBA) $(LUASRC)/$(LUALIBA) -lncursesw -lz -lpthread
+LFLAGS = -lncursesw -lz -lpthread
+
+LUA_INCLUDE_DIR = /usr/include/lua5.1
+
+ifneq (,$(wildcard $(LUA_INCLUDE_DIR)/lua.h))
+	CFLAGS += -I$(LUA_INCLUDE_DIR)
+	LFLAGS += -llua5.1
+else
+	LUASRC := $(CRAWL_PATH)/contrib/lua/src
+	LUALIB = lua
+	LUALIBA = lib$(LUALIB).a
+	CFLAGS += -I$(LUASRC)
+	LFLAGS += $(LUASRC)/$(LUALIBA)
+	CONTRIB_OBJECTS += $(LUASRC)/$(LUALIBA)
+endif
+
+SQLITE_INCLUDE_DIR = /usr/include
+
+ifneq (,$(wildcard $(SQLITE_INCLUDE_DIR)/sqlite3.h))
+	LFLAGS += -lsqlite3
+else
+	SQLSRC := $(CRAWL_PATH)/contrib/sqlite
+	SQLLIB   := sqlite3
+	SQLLIBA  := lib$(SQLLIB).a
+	FSQLLIBA := $(SQLSRC)/$(SQLLIBA)
+	CFLAGS += -I$(SQLSRC)
+	LFLAGS += $(FSQLLIBA)
+	CONTRIB_OBJECTS += $(FSQLLIBA)
+endif
+
 
 include $(CRAWL_PATH)/Makefile.obj
 
@@ -63,7 +83,7 @@ vaults: | update-cdo-git
 update-cdo-git:
 	[ "`hostname`" != "ipx14623" ] || sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
 
-monster-trunk: vaults update-cdo-git crawl $(MONSTER_OBJECTS) $(LUASRC)/$(LUALIBA) $(FSQLLIBA)
+monster-trunk: vaults update-cdo-git crawl $(MONSTER_OBJECTS) $(CONTRIB_OBJECTS)
 	g++ $(CFLAGS) -o $@ $(ALL_OBJECTS) $(LFLAGS)
 
 $(LUASRC)/$(LUALIBA):
