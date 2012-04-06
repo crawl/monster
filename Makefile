@@ -69,7 +69,7 @@ CRAWL_OBJECTS += $(TILEDEFS:%=rltiles/tiledef-%.o)
 MONSTER_OBJECTS = monster-main.o vault_monster_data.o vault_monsters.o
 ALL_OBJECTS = $(MONSTER_OBJECTS) $(CRAWL_OBJECTS:%=$(CRAWL_PATH)/%)
 
-all: vaults trunk
+all: vaults stable
 
 crawl:
 	+${MAKE} -C $(CRAWL_PATH) DEBUG= TILES= NO_LUA_BINDINGS=y
@@ -79,7 +79,7 @@ crawl:
 
 vault_monster_data.o: vaults
 
-trunk: monster-trunk
+stable: monster-stable
 
 vault_monster_data.o:
 	${CXX} ${CFLAGS} -o vault_monster_data.o -c vault_monster_data.cc
@@ -91,7 +91,7 @@ vaults: | update-cdo-git
 update-cdo-git:
 	[ "`hostname`" != "ipx14623" ] || sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
 
-monster-trunk: vaults update-cdo-git crawl $(MONSTER_OBJECTS) $(CONTRIB_OBJECTS)
+monster-stable: vaults update-cdo-git crawl $(MONSTER_OBJECTS) $(CONTRIB_OBJECTS)
 	g++ $(CFLAGS) -o $@ $(ALL_OBJECTS) $(LFLAGS)
 
 $(LUASRC)/$(LUALIBA):
@@ -103,17 +103,17 @@ $(FSQLLIBA):
 	cd $(SQLSRC) && $(MAKE)
 
 test: monster
-	./monster-trunk quasit
+	./monster-stable quasit
 
-install-trunk: monster-trunk tile_info.txt
-	strip -s monster-trunk
-	cp monster-trunk $(HOME)/bin/
+install-stable: monster-stable tile_info.txt
+	strip -s monster-stable
+	cp monster-stable $(HOME)/bin/
 
 tile_info.txt:
 	${PYTHON} parse_tiles.py --verbose
 
 clean:
 	rm -f *.o
-	rm -f monster monster-trunk
+	rm -f monster monster-stable
 	rm -f *.pyc vault_monster_data.cc
 	cd $(CRAWL_PATH) && git clean -f -d -x && git pull
