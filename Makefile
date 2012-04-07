@@ -17,6 +17,8 @@ ifdef USE_MERGE_BASE
 MERGE_BASE := $(shell cd $(CRAWL_PATH) ; git merge-base HEAD $(USE_MERGE_BASE))
 endif
 
+VERSION = $(shell cd $(CRAWL_PATH) ; git describe)
+
 CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX -I$(CRAWL_PATH) \
 	-I$(CRAWL_PATH)/rltiles -I/usr/include/ncursesw -g
 
@@ -108,6 +110,9 @@ test: monster
 install-trunk: monster-trunk tile_info.txt
 	strip -s monster-trunk
 	cp monster-trunk $(HOME)/bin/
+	if [ -f ~/source/announcements.log ]; then \
+	  echo 'Monster database of master branch on crawl.develz.org updated to: $(VERSION)' >>~/source/announcements.log;\
+	fi
 
 tile_info.txt:
 	${PYTHON} parse_tiles.py --verbose
