@@ -539,6 +539,7 @@ int main(int argc, char *argv[])
       || !err.empty())
   {
     spec = get_vault_monster(orig_target);
+    spec_type = static_cast<monster_type>(spec.type);
     if (spec_type < 0 || spec_type >= NUM_MONSTERS
         || spec_type == MONS_PLAYER_GHOST)
     {
