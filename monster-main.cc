@@ -803,12 +803,10 @@ int main(int argc, char *argv[])
         case AF_STEAL_FOOD:
           monsterattacks += colour(CYAN, "(steal food)");
           break;
-        case AF_CRUSH:
-          monsterattacks += "(crush)";
-          break;
         case AF_ENSNARE:
           monsterattacks += colour(WHITE, "(ensnare)");
           break;
+        case AF_CRUSH:
         case AF_PLAIN:
           break;
 // let the compiler issue warnings for us
