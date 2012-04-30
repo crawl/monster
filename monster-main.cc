@@ -163,6 +163,50 @@ static void monster_action_cost(std::string &qual, int cost, const char *desc) {
   }
 }
 
+static std::string monster_int(const monster &mon)
+{
+  std::string intel = "???";
+  switch (mons_intel(&mon))
+  {
+  case I_PLANT:
+    intel = "plant";
+    break;
+  case I_INSECT:
+    intel = "insect";
+    break;
+  case I_ANIMAL:
+    intel = "animal";
+    break;
+  case I_NORMAL:
+    intel = "normal";
+    break;
+  case I_HIGH:
+    intel = "high";
+    break;
+  // Let the compiler issue warnings for missing entries.
+  }
+
+  switch (mons_itemuse(&mon))
+  {
+  case MONUSE_NOTHING:
+    break;
+  case MONUSE_OPEN_DOORS:
+    intel += " (doors)";
+    break;
+  case MONUSE_STARTING_EQUIPMENT:
+    intel += " (starting)";
+    break;
+  case MONUSE_WEAPONS_ARMOUR:
+    intel += " (items)";
+    break;
+  case NUM_MONUSE:  // Can't happen
+    intel += " (bugs)";
+    break;
+  }
+
+  return intel;
+}
+
 static std::string monster_speed(const monster &mon,
                                  const monsterentry *me,
                                  int speed_min,
@@ -210,7 +254,7 @@ static std::string monster_speed(const monster &mon,
 
 static void mons_flag(std::string &flag, const std::string &newflag) {
   if (flag.empty())
-    flag = " | Flags: ";
+    flag = " | Fl: ";
   else
     flag += ", ";
   flag += newflag;
@@ -474,8 +518,8 @@ static void rebind_mspec(std::string *requested_name,
 static std::string canned_reports[][2] = {
   { "cang",
     ("cang (" + colour(LIGHTRED, "Ω")
-     + (") | Speed: c | HD: i | Health: 666 | "
-        "AC/EV: e/π | Damage: 999 | Res: sanity | XP: ∞")) },
+     + (") | Spd: c | Int: god | HD: i | HP: 666 | "
+        "AC/EV: e/π | Dam: 999 | Res: sanity | XP: ∞")) },
 };
 
 int main(int argc, char *argv[])
@@ -638,13 +682,16 @@ int main(int argc, char *argv[])
     if (mons_class_flag(mon.type, M_UNFINISHED))
         printf(" | %s", colour(LIGHTRED, "UNFINISHED").c_str());
 
-    printf(" | Speed: %s",
+    printf(" | Spd: %s",
            monster_speed(mon, me, speed_min, speed_max).c_str());
+    
+    printf(" | Int: %s",
+           monster_int(mon).c_str());
 
     const int hd = mon.hit_dice;
     printf(" | HD: %d", hd);
 
-    printf(" | Health: ");
+    printf(" | HP: ");
     const int hplow = hp_min;
     const int hphigh = hp_max;
     if (hplow < hphigh)
@@ -664,7 +711,7 @@ int main(int argc, char *argv[])
       if (attk.type)
       {
         if (monsterattacks.empty())
-          monsterattacks = " | Damage: ";
+          monsterattacks = " | Dam: ";
         else
           monsterattacks += ", ";
         monsterattacks += to_string((short int) attk.damage);
@@ -952,10 +999,10 @@ int main(int argc, char *argv[])
       switch (me->corpse_thingy)
       {
       case CE_CONTAMINATED:
-        printf("%s", colour(BROWN,"contaminated").c_str());
+        printf("%s", colour(BROWN,"contam").c_str());
         break;
       case CE_POISONOUS:
-        printf("%s", colour(LIGHTGREEN,"poisonous").c_str());
+        printf("%s", colour(LIGHTGREEN,"poison").c_str());
         break;
       case CE_POISON_CONTAM:
         printf("%s+%s", colour(LIGHTGREEN,"poison").c_str(),
