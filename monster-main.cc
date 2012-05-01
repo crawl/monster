@@ -254,7 +254,7 @@ static std::string monster_speed(const monster &mon,
 
 static void mons_flag(std::string &flag, const std::string &newflag) {
   if (flag.empty())
-    flag = " | Fl: ";
+    flag = " | ";
   else
     flag += ", ";
   flag += newflag;
