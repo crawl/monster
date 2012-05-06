@@ -186,24 +186,6 @@ static std::string monster_int(const monster &mon)
   // Let the compiler issue warnings for missing entries.
   }
 
-  switch (mons_itemuse(&mon))
-  {
-  case MONUSE_NOTHING:
-    break;
-  case MONUSE_OPEN_DOORS:
-    intel += " (doors)";
-    break;
-  case MONUSE_STARTING_EQUIPMENT:
-    intel += " (starting)";
-    break;
-  case MONUSE_WEAPONS_ARMOUR:
-    intel += " (items)";
-    break;
-  case NUM_MONUSE:  // Can't happen
-    intel += " (bugs)";
-    break;
-  }
-
   return intel;
 }
 
@@ -887,6 +869,47 @@ int main(int argc, char *argv[])
     default:
       break;
     }
+
+    switch (me->gmon_use)
+    {
+      case MONUSE_WEAPONS_ARMOUR:
+        mons_flag(monsterflags, colour(CYAN, "weapons"));
+      // intentional fall-through
+      case MONUSE_STARTING_EQUIPMENT:
+        mons_flag(monsterflags, colour(CYAN, "items"));
+      // intentional fall-through
+      case MONUSE_OPEN_DOORS:
+        mons_flag(monsterflags, colour(CYAN, "doors"));
+      // intentional fall-through
+      case MONUSE_NOTHING:
+        break;
+
+      case NUM_MONUSE:  // Can't happen
+        mons_flag(monsterflags, colour(CYAN, "eats bugs"));
+        break;
+    }
+
+    switch (me->gmon_eat)
+    {
+      case MONEAT_NOTHING:
+        break;
+      case MONEAT_ITEMS:
+        mons_flag(monsterflags, colour(LIGHTRED, "eats items"));
+        break;
+      case MONEAT_CORPSES:
+        mons_flag(monsterflags, colour(LIGHTRED, "eats corpses"));
+        break;
+      case MONEAT_HONEY:
+        mons_flag(monsterflags, colour(LIGHTRED, "eats honey"));
+        break;
+      case MONEAT_FOOD:
+        mons_flag(monsterflags, colour(LIGHTRED, "eats food"));
+        break;
+      case NUM_MONEAT:  // Can't happen
+        mons_flag(monsterflags, colour(LIGHTRED, "eats bugs"));
+        break;
+    }
+
 
     mons_check_flag(me->habitat == HT_AMPHIBIOUS,
                     monsterflags, "amphibious");
