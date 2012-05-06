@@ -104,8 +104,8 @@ static std::string colour(int colour, std::string text, bool bg = false)
     {
         if (!colour)
             return text;
-        return make_stringf("\e[0;%d%d;%dm%s\e[0m", bg ? 4 : 3, bgr[colour & 7],
-                            (colour & 8) ? 1 : 0, text.c_str());
+        return make_stringf("\e[0;%d%d%sm%s\e[0m", bg ? 4 : 3, bgr[colour & 7],
+                            (colour & 8) ? ";1" : "", text.c_str());
     }
 
     const std::string code(colour_codes[colour]);
