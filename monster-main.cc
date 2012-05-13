@@ -1011,7 +1011,7 @@ int main(int argc, char *argv[])
       case CE_ROT:
         printf("%s", colour(LIGHTRED,"rot").c_str());
         break;
-      case CE_MUTAGEN_RANDOM:
+      case CE_MUTAGEN:
         printf("%s", colour(MAGENTA, "mutagenic").c_str());
         break;
       default:
