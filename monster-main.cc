@@ -899,9 +899,6 @@ int main(int argc, char *argv[])
       case MONEAT_CORPSES:
         mons_flag(monsterflags, colour(LIGHTRED, "eats corpses"));
         break;
-      case MONEAT_HONEY:
-        mons_flag(monsterflags, colour(LIGHTRED, "eats honey"));
-        break;
       case MONEAT_FOOD:
         mons_flag(monsterflags, colour(LIGHTRED, "eats food"));
         break;
