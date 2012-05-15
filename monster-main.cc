@@ -716,7 +716,7 @@ int main(int argc, char *argv[])
                                    damage_flavour("acid", "7d3"));
           break;
         case AF_BLINK:
-          monsterattacks += colour(MAGENTA, "(blink)");
+          monsterattacks += colour(MAGENTA, "(blink self)");
           break;
         case AF_COLD:
           monsterattacks +=
