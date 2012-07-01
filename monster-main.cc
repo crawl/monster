@@ -698,6 +698,9 @@ int main(int argc, char *argv[])
 
         if (attk.type == AT_CONSTRICT)
             monsterattacks += colour(GREEN, "(constrict)");
+        
+	if (attk.type == AT_TRAMPLE)
+            monsterattacks += colour(BROWN, "(trample)");
 
         const attack_flavour flavour(
             orig_attk.flavour == AF_KLOWN ? AF_KLOWN
