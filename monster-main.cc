@@ -21,6 +21,7 @@
 
 #include "AppHdr.h"
 #include "externs.h"
+#include "directn.h"
 #include "unwind.h"
 #include "env.h"
 #include "colour.h"
@@ -54,7 +55,7 @@ const std::string CANG = "cang";
 const int PLAYER_MAXHP = 500;
 
 // Clockwise, around the compass from north (same order as enum RUN_DIR)
-const coord_def Compass[9] =
+const struct coord_def Compass[9] =
 {
     coord_def(0, -1), coord_def(1, -1), coord_def(1, 0), coord_def(1, 1),
     coord_def(0, 1), coord_def(-1, 1), coord_def(-1, 0), coord_def(-1, -1),
