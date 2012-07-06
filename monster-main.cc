@@ -686,6 +686,14 @@ int main(int argc, char *argv[])
     const int ev = generated? mev : me->ev;
     printf(" | AC/EV: %i/%i", ac, ev);
 
+    std::string defenses;
+    if (mon.is_spiny())
+        defenses += colour(YELLOW, "(spiny)");
+    if (mon.type == MONS_MINOTAUR)
+        defenses += colour(LIGHTRED, "(headbutt)");
+    if (defenses != "")
+        printf(" %s", defenses.c_str());
+
     mon.wield_melee_weapon();
     for (int x = 0; x < 4; x++)
     {
