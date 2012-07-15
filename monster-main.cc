@@ -530,8 +530,8 @@ static void rebind_mspec(std::string *requested_name,
 static std::string canned_reports[][2] = {
   { "cang",
     ("cang (" + colour(LIGHTRED, "Ω")
-     + (") | Spd: c | Int: god | Sz: !!! | HD: i | HP: 666 | "
-        "AC/EV: e/π | Dam: 999 | Res: sanity | XP: ∞")) },
+     + (") | Spd: c | HD: i | HP: 666 | AC/EV: e/π | Dam: 999"
+	 " | Res: sanity | XP: ∞ | Int: god | Sz: !!!")) },
 };
 
 int main(int argc, char *argv[])
@@ -694,12 +694,6 @@ int main(int argc, char *argv[])
 
     printf(" | Spd: %s",
            monster_speed(mon, me, speed_min, speed_max).c_str());
-    
-    printf(" | Int: %s",
-           monster_int(mon).c_str());
-    
-    printf(" | Sz: %s",
-           monster_size(mon).c_str());
 
     const int hd = mon.hit_dice;
     printf(" | HD: %d", hd);
@@ -1074,6 +1068,12 @@ int main(int argc, char *argv[])
 
     if (!spell_abilities.empty())
       printf(" | Sp: %s", spell_abilities.c_str());
+    
+    printf(" | Sz: %s",
+           monster_size(mon).c_str());
+
+    printf(" | Int: %s",
+           monster_int(mon).c_str());
 
     printf(".\n");
 
