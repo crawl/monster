@@ -207,9 +207,9 @@ static std::string monster_size(const monster &mon)
   case SIZE_BIG:
     return "Big";
   case SIZE_GIANT:
-    return "GIANT";
+    return "Giant";
   case SIZE_HUGE:
-    return "HUGE";
+    return "Huge";
   default:
     return "???";
   }
