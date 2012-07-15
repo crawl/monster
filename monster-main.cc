@@ -310,10 +310,15 @@ static std::string mons_human_readable_spell_damage_string(
 static std::string shorten_spell_name(std::string name) {
   lowercase(name);
   std::string::size_type pos = name.find('\'');
-  if (pos != std::string::npos) {
+  if (pos != std::string::npos ) {
     pos = name.find(' ', pos);
     if (pos != std::string::npos)
-      name = name.substr(pos + 1);
+    {
+      if (starts_with(name, "death's"))
+        name = "d." + name.substr(pos + 1);
+      else
+        name = name.substr(pos + 1);
+    }
   }
   if ((pos = name.find(" of ")) != std::string::npos)
     name = name.substr(pos + 4) + " " + name.substr(0, pos);
