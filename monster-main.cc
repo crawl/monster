@@ -189,6 +189,31 @@ static std::string monster_int(const monster &mon)
   return intel;
 }
 
+static std::string monster_size(const monster &mon)
+{
+  switch (mon.body_size())
+  {
+  case SIZE_TINY:
+    return "tiny";
+  case SIZE_LITTLE:
+    return "little";
+  case SIZE_SMALL:
+    return "small";
+  case SIZE_MEDIUM:
+    return "Medium";
+  case SIZE_LARGE:
+    return "Large";
+  case SIZE_BIG:
+    return "Big";
+  case SIZE_GIANT:
+    return "GIANT";
+  case SIZE_HUGE:
+    return "HUGE";
+  default:
+    return "???";
+  }
+}
+
 static std::string monster_speed(const monster &mon,
                                  const monsterentry *me,
                                  int speed_min,
@@ -505,7 +530,7 @@ static void rebind_mspec(std::string *requested_name,
 static std::string canned_reports[][2] = {
   { "cang",
     ("cang (" + colour(LIGHTRED, "Ω")
-     + (") | Spd: c | Int: god | HD: i | HP: 666 | "
+     + (") | Spd: c | Int: god | Sz: !!! | HD: i | HP: 666 | "
         "AC/EV: e/π | Dam: 999 | Res: sanity | XP: ∞")) },
 };
 
@@ -672,6 +697,9 @@ int main(int argc, char *argv[])
     
     printf(" | Int: %s",
            monster_int(mon).c_str());
+    
+    printf(" | Sz: %s",
+           monster_size(mon).c_str());
 
     const int hd = mon.hit_dice;
     printf(" | HD: %d", hd);
