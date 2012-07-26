@@ -144,14 +144,14 @@ static void record_resvul(int color, const char *name, const char *caption,
   str += colour(color, token);
 }
 
-static void record_resist(int colour, const char *name,
+static void record_resist(int colour, std::string name,
                           std::string &res, std::string &vul,
                           int rval)
 {
   if (rval > 0)
-    record_resvul(colour, name, "Res", res, rval);
+    record_resvul(colour, name.c_str(), "Res", res, rval);
   else if (rval < 0)
-    record_resvul(colour, name, "Vul", vul, -rval);
+    record_resvul(colour, name.c_str(), "Vul", vul, -rval);
 }
 
 static void monster_action_cost(std::string &qual, int cost, const char *desc) {
@@ -1011,36 +1011,38 @@ int main(int argc, char *argv[])
                                    + ")");
     }
 
-    const mon_resist_def res(
+    const resists_t res(
       shapeshifter? me->resists : get_mons_resists(&mon));
-#define res(c,x)                                \
-    do                                          \
-    {                                           \
-      record_resist(c,#x,                       \
-                    monsterresistances,         \
-                    monstervulnerabilities,     \
-                    res.x);                     \
-    } while (false)                             \
+#define res(c,x)                                  \
+    do                                            \
+    {                                             \
+      record_resist(c,lowercase_string(#x),       \
+                    monsterresistances,           \
+                    monstervulnerabilities,       \
+                    get_resist(res, MR_RES_##x)); \
+    } while (false)                               \
 
-#define res2(c,x,y)                                \
-    do                                          \
-    {                                           \
-      record_resist(c,#x,                       \
-                    monsterresistances,         \
-                    monstervulnerabilities,     \
-                    y);                         \
-    } while (false)                             \
+#define res2(c,x,y)                               \
+    do                                            \
+    {                                             \
+      record_resist(c,#x,                         \
+                    monsterresistances,           \
+                    monstervulnerabilities,       \
+                    y);                           \
+    } while (false)                               \
 
 
-    res(RED,hellfire);
-    if (me->resists.hellfire <= 0)
-      res(RED,fire);
-    res(BLUE,cold);
-    res(CYAN,elec);
-    res(GREEN,poison);
-    res(BROWN,acid);
-    res(0,steam);
-    res(0,asphyx);
+    // Don't record regular rF as hellfire vulnerability.
+    bool rhellfire = get_resist(res, MR_RES_FIRE) >= 4;
+    res2(RED, hellfire, (int)rhellfire);
+    if (!rhellfire)
+      res(RED, FIRE);
+    res(BLUE, COLD);
+    res(CYAN, ELEC);
+    res(GREEN, POISON);
+    res(BROWN, ACID);
+    res(0, STEAM);
+    res(0, ASPHYX);
 
     res2(LIGHTBLUE,    drown, mon.res_water_drowning());
     res2(LIGHTRED,     rot,   mon.res_rotting());
