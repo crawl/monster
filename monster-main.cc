@@ -1027,14 +1027,13 @@ int main(int argc, char *argv[])
     res(0,steam);
     res(0,asphyx);
 
-    res2(LIGHTBLUE,    drown, mon.res_water_drowning());
-    res2(LIGHTRED,     rot,   mon.res_rotting());
-    res2(LIGHTMAGENTA, neg,   mon.res_negative_energy());
-    res2(YELLOW,       holy,  mon.res_holy_energy(&you));
-    res2(LIGHTMAGENTA, torm,  mon.res_torment());
-    res2(LIGHTBLUE,    wind,  mon.res_wind());
-    
-    res2(LIGHTRED, napalm, res.sticky_flame);
+    res2(LIGHTBLUE,    drown,  mon.res_water_drowning());
+    res2(LIGHTRED,     rot,    mon.res_rotting());
+    res2(LIGHTMAGENTA, neg,    mon.res_negative_energy());
+    res2(YELLOW,       holy,   mon.res_holy_energy(&you));
+    res2(LIGHTMAGENTA, torm,   mon.res_torment());
+    res2(LIGHTBLUE,    wind,   mon.res_wind());
+    res2(LIGHTRED,     napalm, mon.res_sticky_flame());
 
     printf("%s", monsterresistances.c_str());
     printf("%s", monstervulnerabilities.c_str());
