@@ -1050,6 +1050,8 @@ int main(int argc, char *argv[])
     res2(YELLOW,       holy,  mon.res_holy_energy(&you));
     res2(LIGHTMAGENTA, torm,  mon.res_torment());
     res2(LIGHTBLUE,    wind,  mon.res_wind());
+    
+    res2(LIGHTRED, napalm, get_resist(res, MR_RES_STICKY_FLAME));
 
     printf("%s", monsterresistances.c_str());
     printf("%s", monstervulnerabilities.c_str());
