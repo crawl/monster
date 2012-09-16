@@ -81,7 +81,7 @@ crawl:
 
 vault_monster_data.o: vaults
 
-stable: monster-stable
+stable: monster-0.10
 
 vault_monster_data.o:
 	${CXX} ${CFLAGS} -o vault_monster_data.o -c vault_monster_data.cc
@@ -93,7 +93,7 @@ vaults: | update-cdo-git
 update-cdo-git:
 	[ "`hostname`" != "ipx14623" ] || sudo -H -u git /var/cache/git/crawl-ref.git/update.sh
 
-monster-stable: vaults update-cdo-git crawl $(MONSTER_OBJECTS) $(CONTRIB_OBJECTS)
+monster-0.10: vaults update-cdo-git crawl $(MONSTER_OBJECTS) $(CONTRIB_OBJECTS)
 	g++ $(CFLAGS) -o $@ $(ALL_OBJECTS) $(LFLAGS)
 
 $(LUASRC)/$(LUALIBA):
@@ -105,11 +105,11 @@ $(FSQLLIBA):
 	cd $(SQLSRC) && $(MAKE)
 
 test: monster
-	./monster-stable quasit
+	./monster-0.10 quasit
 
-install-stable: monster-stable tile_info.txt
-	strip -s monster-stable
-	cp monster-stable $(HOME)/bin/
+install-stable: monster-0.10 tile_info.txt
+	strip -s monster-0.10
+	cp monster-0.10 $(HOME)/bin/
 	if [ -f ~/source/announcements.log ]; then \
 	  echo 'Monster database of 0.10 branch on crawl.develz.org updated to: $(VERSION)' >>~/source/announcements.log;\
 	fi
@@ -119,6 +119,6 @@ tile_info.txt:
 
 clean:
 	rm -f *.o
-	rm -f monster monster-stable
+	rm -f monster monster-0.10
 	rm -f *.pyc vault_monster_data.cc
 	cd $(CRAWL_PATH) && git clean -f -d -x && git pull
