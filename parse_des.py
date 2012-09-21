@@ -184,13 +184,11 @@ def generate_monster_lines (des_folder, cull=True, verbose=False):
             line_set_2 = FIND_MONS_LUA_LINES.findall(this_data)
             lines_arenasprint_boss = FIND_ARENASPRINT_BOSSES.findall(this_data)
 
-            if line_set_1:
-                for line in line_set_1:
-                    monster_lines.extend(parse_mons_line(line))
+            for line in line_set_1:
+                monster_lines.extend(parse_mons_line(line))
 
-            if line_set_2:
-                for line in line_set_2:
-                    monster_lines.extend(parse_lua_line(line))
+            for line in line_set_2:
+                monster_lines.extend(parse_lua_line(line))
 
             for (monsters, boss) in lines_arenasprint_boss:
                 monster_lines.extend(parse_mons_line(monsters))
