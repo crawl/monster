@@ -174,7 +174,10 @@ def generate_monster_lines (des_folder, cull=True, verbose=False):
                 print " GEN %s" % fname
 
             this_file = open(os.path.join(dirpath, fname))
-            this_data = "\n".join([line.strip() for line in this_file.readlines()])
+            # drop lua comments, drop entire line if only comment or otherwise empty
+            this_data = "\n".join([line.split('--', 1)[0].strip()
+                                   for line in this_file.readlines()
+                                   if line.split('--', 1)[0].strip()])
             this_file.close()
 
             this_data = CLEANUP_SPELLS(this_data)
