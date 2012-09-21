@@ -342,7 +342,7 @@ static std::string shorten_spell_name(std::string name) {
     {
       if (starts_with(name, "death's"))
         name = "d." + name.substr(pos + 1);
-      else
+      else if (!starts_with(name, "trog's"))
         name = name.substr(pos + 1);
     }
   }
