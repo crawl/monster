@@ -39,7 +39,7 @@ FIND_MONS_LUA_LINES = re.compile("(k?mons\([^\)]*\))")
 FIND_ARENASPRINT_BOSSES = re.compile(r'\s*bs\[\d+\] = {"(.*)",\s*"(.*)",\s*"(?:.*)"', re.MULTILINE)
 
 # Find all phrases contained within quotes.
-FIND_QUOTED_LINES = re.compile("\"([^\"]*)\"")
+FIND_QUOTED_LINES = re.compile('"([^"]*)"')
 
 # Replace multiple instances of whitespace with a single instance of whitespace.
 _CLEANUP_WHITESPACE = re.compile("(\s)+")
