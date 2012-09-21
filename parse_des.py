@@ -36,6 +36,8 @@ DIR_DELIM = os.path.sep
 FIND_MONS_LINES = re.compile("(K?MONS:\s*(?:[^\n]*)\n)")
 FIND_MONS_LUA_LINES = re.compile("(k?mons\([^\)]*\))")
 
+FIND_ARENASPRINT_BOSSES = re.compile(r'\s*bs\[\d+\] = {"(.*)",\s*"(.*)",\s*"(?:.*)"', re.MULTILINE)
+
 # Find all phrases contained within quotes.
 FIND_QUOTED_LINES = re.compile("\"([^\"]*)\"")
 
@@ -180,6 +182,7 @@ def generate_monster_lines (des_folder, cull=True, verbose=False):
 
             line_set_1 = FIND_MONS_LINES.findall(this_data)
             line_set_2 = FIND_MONS_LUA_LINES.findall(this_data)
+            lines_arenasprint_boss = FIND_ARENASPRINT_BOSSES.findall(this_data)
 
             if line_set_1:
                 for line in line_set_1:
@@ -188,6 +191,10 @@ def generate_monster_lines (des_folder, cull=True, verbose=False):
             if line_set_2:
                 for line in line_set_2:
                     monster_lines.extend(parse_lua_line(line))
+
+            for (monsters, boss) in lines_arenasprint_boss:
+                monster_lines.extend(parse_mons_line(monsters))
+                monster_lines.extend(parse_mons_line(boss))
 
     if cull:
         return cull_unnamed_monsters(monster_lines)
