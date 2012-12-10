@@ -321,8 +321,8 @@ static std::string mons_human_readable_spell_damage_string(
     monster *monster,
     spell_type sp)
 {
-  bolt spell_beam = mons_spells(monster, sp, 12 * monster->hit_dice,
-                                true);
+  bolt spell_beam = mons_spell_beam(monster, sp, 12 * monster->hit_dice,
+                                    true);
   if (sp == SPELL_SMITING)
     return make_stringf(" (%s)", mi_calc_smiting_damage(monster).c_str());
   if (sp == SPELL_AIRSTRIKE)
@@ -424,7 +424,8 @@ static std::string mons_spell_set(monster *mp) {
       seen.insert(sp);
       std::string rawname = spell_title(sp);
       if (sp == SPELL_DRACONIAN_BREATH) {
-        const bolt spell_beam = mons_spells(mp, sp, 12 * mp->hit_dice, true);
+        const bolt spell_beam = mons_spell_beam(mp, sp, 12 * mp->hit_dice,
+                                                true);
         rawname = spell_title(spell_beam.origin_spell);
       }
       std::string name = shorten_spell_name(rawname);
