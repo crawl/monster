@@ -22,7 +22,7 @@ VERSION = $(shell cd $(CRAWL_PATH) ; git describe)
 CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX -I$(CRAWL_PATH) \
 	-I$(CRAWL_PATH)/rltiles -I/usr/include/ncursesw -g
 
-LFLAGS = -lncursesw -lz -lpthread
+LFLAGS = -lncursesw -lz -lpthread -g
 
 LUA_INCLUDE_DIR = /usr/include/lua5.1
 
@@ -74,7 +74,7 @@ ALL_OBJECTS = $(MONSTER_OBJECTS) $(CRAWL_OBJECTS:%=$(CRAWL_PATH)/%)
 all: vaults stable
 
 crawl:
-	+${MAKE} -C $(CRAWL_PATH) DEBUG= TILES= NO_LUA_BINDINGS=y
+	+${MAKE} -C $(CRAWL_PATH) DEBUG=$(DEBUG) TILES= NO_LUA_BINDINGS=y
 
 .cc.o:
 	${CXX} ${CFLAGS} -o $@ -c $<
