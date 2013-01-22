@@ -38,6 +38,7 @@
 #include "initfile.h"
 #include "libutil.h"
 #include "itemname.h"
+#include "mon-iter.h"
 #include "mon-stuff.h"
 #include "random.h"
 #include "spl-util.h"
@@ -368,6 +369,14 @@ static void mons_record_ability(std::set<std::string> &ability_names,
     beam.name = "blink";
   if (you.hp == PLAYER_MAXHP / 2 + 1)
     beam.name = "symbol of torment";
+  if (monster->type != MONS_TWISTER) {
+    for (monster_iterator mi; mi; ++mi) {
+      if (mi->type == MONS_TWISTER) {
+        beam.name = "summon twister";
+        monster_die(*mi, KILL_RESET, -1, true);
+      }
+    }
+  }
   if (!beam.name.empty()) {
     std::string ability = shorten_spell_name(beam.name);
     if (beam.damage.num && beam.damage.size) {
