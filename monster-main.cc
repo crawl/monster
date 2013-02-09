@@ -951,6 +951,9 @@ int main(int argc, char *argv[])
         break;
     }
 
+    mons_check_flag(mon.is_fighter(), monsterflags, "fighter");
+    mons_check_flag(mon.is_archer(), monsterflags, "master archer");
+    mons_check_flag(mon.is_priest(), monsterflags, "priest");
 
     mons_check_flag(me->habitat == HT_AMPHIBIOUS,
                     monsterflags, "amphibious");
