@@ -937,6 +937,7 @@ int main(int argc, char *argv[])
         break;
     }
 
+    mons_check_flag(mons_wields_two_weapons(&mon), monsterflags, "two-weapon");
     mons_check_flag(mon.is_fighter(), monsterflags, "fighter");
     mons_check_flag(mon.is_archer(), monsterflags, "master archer");
     mons_check_flag(mon.is_priest(), monsterflags, "priest");
