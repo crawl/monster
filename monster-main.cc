@@ -962,6 +962,9 @@ int main(int argc, char *argv[])
         break;
     }
 
+    mons_check_flag(mon.is_fighter(), monsterflags, colour(LIGHTGREEN, "fighter"));
+    mons_check_flag(mon.is_archer(), monsterflags, colour(LIGHTGREEN, "archer"));
+    mons_check_flag(mon.is_priest(), monsterflags, colour(LIGHTGREEN, "priest"));
 
     mons_check_flag(me->habitat == HT_AMPHIBIOUS,
                     monsterflags, "amphibious");
