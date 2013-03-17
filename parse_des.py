@@ -36,8 +36,9 @@ DIR_DELIM = os.path.sep
 FIND_MONS_LINES = re.compile("(K?MONS:\s*(?:[^\n]*)\n)")
 FIND_MONS_LUA_LINES = re.compile("(k?mons\([^\)]*\))")
 
-FIND_ARENASPRINT_LINES = re.compile(
-    r'(?:bs\[\d+\]|mon_set) = {\s*' # lua data definitions of monster and boss sets
+FIND_SPRINT_LINES = re.compile(
+    # lua data definitions of arenasprint and meatsprint monster and boss sets
+    r'(?:bs\[\d+\]|mon_set|local \w+) =(?: {)?\s*'
     r'("[^}]*")' # monster def lines
     , re.MULTILINE | re.DOTALL)
 
@@ -188,7 +189,7 @@ def generate_monster_lines (des_folder, cull=True, verbose=False):
 
             line_set_1 = FIND_MONS_LINES.findall(this_data)
             line_set_2 = FIND_MONS_LUA_LINES.findall(this_data)
-            lines_arenasprint = FIND_ARENASPRINT_LINES.findall(this_data)
+            lines_sprint = FIND_SPRINT_LINES.findall(this_data)
 
             for line in line_set_1:
                 monster_lines.extend(parse_mons_line(line))
@@ -196,7 +197,7 @@ def generate_monster_lines (des_folder, cull=True, verbose=False):
             for line in line_set_2:
                 monster_lines.extend(parse_lua_line(line))
 
-            for line in lines_arenasprint:
+            for line in lines_sprint:
                 monsters = FIND_QUOTED_LINES.findall(line)
                 for monster in monsters:
                     monster_lines.extend(parse_mons_line(monster))
