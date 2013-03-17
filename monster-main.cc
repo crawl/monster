@@ -547,9 +547,7 @@ int main(int argc, char *argv[])
 
   if (strstr(argv[1], "-version"))
   {
-    printf("%s\n",
-           std::string("Monster stats Crawl version: "
-                       + Version::Long()).c_str());
+    printf("Monster stats Crawl version: %s\n", Version::Long);
     return 0;
   }
 
