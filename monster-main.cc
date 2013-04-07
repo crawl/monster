@@ -496,7 +496,7 @@ static std::string monster_symbol(const monster &mon) {
 
 int mi_create_monster(mons_spec spec) {
   monster *monster = 
-    dgn_place_monster(spec, 10, MONSTER_PLACE, true, false, false);
+    dgn_place_monster(spec, MONSTER_PLACE, true, false, false);
   if (monster) {
     monster->behaviour = BEH_SEEK;
     monster->foe = MHITYOU;
