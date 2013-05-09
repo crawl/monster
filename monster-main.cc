@@ -651,7 +651,7 @@ int main(int argc, char *argv[])
 
     // Destroy the monster.
     mp->reset();
-    you.unique_creatures[spec_type] = false;
+    you.unique_creatures.set(spec_type, false);
 
     rebind_mspec(&target, mname, &spec);
 
