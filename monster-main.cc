@@ -904,7 +904,7 @@ int main(int argc, char *argv[])
           monsterattacks += colour(BROWN, "(plague)");
           break;
         case AF_WEAKNESS_POISON:
-          monsterattacks += colour(LIGHTRED, "(poison, weak)");
+          monsterattacks += colour(LIGHTRED, "(poison, weakness)");
           break;
         case AF_SHADOWSTAB:
           monsterattacks += colour(MAGENTA, "(shadow stab)");
