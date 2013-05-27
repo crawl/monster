@@ -543,7 +543,7 @@ static std::string canned_reports[][2] = {
   { "cang",
     ("cang (" + colour(LIGHTRED, "Ω")
      + (") | Spd: c | HD: i | HP: 666 | AC/EV: e/π | Dam: 999"
-	 " | Res: sanity | XP: ∞ | Int: god | Sz: !!!")) },
+         " | Res: sanity | XP: ∞ | Int: god | Sz: !!!")) },
 };
 
 int main(int argc, char *argv[])
@@ -746,8 +746,11 @@ int main(int argc, char *argv[])
         if (attk.type == AT_CONSTRICT)
             monsterattacks += colour(GREEN, "(constrict)");
         
-	if (attk.type == AT_TRAMPLE)
+        if (attk.type == AT_TRAMPLE)
             monsterattacks += colour(BROWN, "(trample)");
+
+        if (attk.type == AT_REACH_STING)
+            monsterattacks += colour(RED, "(reach)");
 
         const attack_flavour flavour(
             orig_attk.flavour == AF_KLOWN ? AF_KLOWN
@@ -902,6 +905,7 @@ int main(int argc, char *argv[])
           break;
         case AF_WEAKNESS_POISON:
           monsterattacks += colour(LIGHTRED, "(poison, weak)");
+          break;
         case AF_SHADOWSTAB:
           monsterattacks += colour(MAGENTA, "(shadow stab)");
           break;
