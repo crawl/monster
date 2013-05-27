@@ -883,6 +883,26 @@ int main(int argc, char *argv[])
         case AF_ENSNARE:
           monsterattacks += colour(WHITE, "(ensnare)");
           break;
+        case AF_DROWN:
+          monsterattacks += colour(LIGHTBLUE, "(drown)");
+          break;
+        case AF_PURE_FIRE:
+          monsterattacks += colour(LIGHTRED, "(pure fire)");
+          break;
+        case AF_DRAIN_SPEED:
+          monsterattacks += colour(LIGHTMAGENTA, "(drain speed)");
+          break;
+        case AF_VULN:
+          monsterattacks += colour(LIGHTBLUE, "(vuln)");
+          break;
+        case AF_PLAGUE:
+          monsterattacks += colour(BROWN, "(plague)");
+          break;
+        case AF_WEAKNESS_POISON:
+          monsterattacks += colour(LIGHTRED, "(poison, weak)");
+        case AF_SHADOWSTAB:
+          monsterattacks += colour(MAGENTA, "(shadow stab)");
+          break;
         case AF_CRUSH:
         case AF_PLAIN:
           break;
