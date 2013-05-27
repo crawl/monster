@@ -803,6 +803,11 @@ int main(int argc, char *argv[])
             colour(LIGHTRED, damage_flavour("fire", mon.hit_dice,
                                             mon.hit_dice * 2 - 1));
           break;
+        case AF_PURE_FIRE:
+          monsterattacks +=
+            colour(LIGHTRED, damage_flavour("pure fire", mon.hit_dice*3/2,
+                                            mon.hit_dice*5/2 - 1));
+          break;
         case AF_NAPALM:
           monsterattacks += colour(LIGHTRED, "(napalm)");
           break;
@@ -885,9 +890,6 @@ int main(int argc, char *argv[])
           break;
         case AF_DROWN:
           monsterattacks += colour(LIGHTBLUE, "(drown)");
-          break;
-        case AF_PURE_FIRE:
-          monsterattacks += colour(LIGHTRED, "(pure fire)");
           break;
         case AF_DRAIN_SPEED:
           monsterattacks += colour(LIGHTMAGENTA, "(drain speed)");
