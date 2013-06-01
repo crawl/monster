@@ -415,6 +415,7 @@ static spell_type mi_draconian_breath_spell(monster *mons) {
   switch (draco_subspecies(mons)) {
   case MONS_DRACONIAN:
   case MONS_YELLOW_DRACONIAN:
+  case MONS_GREY_DRACONIAN:
     return SPELL_NO_SPELL;
   default:
     return SPELL_DRACONIAN_BREATH;
