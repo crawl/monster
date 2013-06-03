@@ -51,6 +51,7 @@
 
 const coord_def MONSTER_PLACE(20, 20);
 const coord_def PLAYER_PLACE(21, 20);
+const coord_def DOOR_PLACE(20, 21);
 
 const std::string CANG = "cang";
 
@@ -364,7 +365,10 @@ static void mons_record_ability(std::set<std::string> &ability_names,
   bolt beam;
   you.hp = you.hp_max = PLAYER_MAXHP;
   monster->moveto(MONSTER_PLACE);
+  grd(DOOR_PLACE) = DNGN_OPEN_DOOR;
   mon_special_ability(monster, beam);
+  if (grd(DOOR_PLACE) == DNGN_SEALED_DOOR)
+    beam.name = "seal doors";
   if (monster->pos() != MONSTER_PLACE)
     beam.name = "blink";
   if (you.hp == PLAYER_MAXHP / 2 + 1)
@@ -377,6 +381,9 @@ static void mons_record_ability(std::set<std::string> &ability_names,
       }
     }
   }
+  if (you.duration[DUR_FLAYED])
+    beam.name = "flay";
+
   if (!beam.name.empty()) {
     std::string ability = shorten_spell_name(beam.name);
     if (beam.damage.num && beam.damage.size) {
