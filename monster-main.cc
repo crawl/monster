@@ -178,6 +178,9 @@ static std::string monster_int(const monster &mon)
   case I_INSECT:
     intel = "insect";
     break;
+  case I_REPTILE:
+    intel = "reptile";
+    break;
   case I_ANIMAL:
     intel = "animal";
     break;
