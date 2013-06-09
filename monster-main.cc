@@ -358,6 +358,8 @@ static std::string shorten_spell_name(std::string name) {
     name = name.substr(7);
   if (name.find("bolt") == name.length() - 4)
     name = "b." + name.substr(0, name.length() - 5);
+  if (name.find("word") == name.length() - 4)
+    name = "w." + name.substr(0, name.length() - 5);
   return (name);
 }
 
