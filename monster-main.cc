@@ -370,6 +370,7 @@ static void mons_record_ability(std::set<std::string> &ability_names,
   bolt beam;
   you.hp = you.hp_max = PLAYER_MAXHP;
   monster->moveto(MONSTER_PLACE);
+  you.moveto(PLAYER_PLACE);
   grd(DOOR_PLACE) = DNGN_OPEN_DOOR;
   mon_special_ability(monster, beam);
   if (grd(DOOR_PLACE) == DNGN_SEALED_DOOR)
@@ -388,6 +389,10 @@ static void mons_record_ability(std::set<std::string> &ability_names,
   }
   if (you.duration[DUR_FLAYED])
     beam.name = "flay";
+  if (you.pos() != PLAYER_PLACE)
+    beam.name = "trample breath";
+  if (monster->has_ench(ENCH_BERSERK))
+    beam.name = "berserker rage";
 
   if (!beam.name.empty()) {
     std::string ability = shorten_spell_name(beam.name);
