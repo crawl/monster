@@ -477,8 +477,12 @@ static std::string mons_spells_abilities(
   bool shapeshifter,
   const std::set<std::string> &spell_sets)
 {
-  if (shapeshifter || monster->type == MONS_PANDEMONIUM_LORD)
+  if (shapeshifter || monster->type == MONS_PANDEMONIUM_LORD
+      || monster->type == MONS_CHIMERA
+         && monster->base_monster == MONS_PANDEMONIUM_LORD)
+  {
     return "(random)";
+  }
 
   bool first = true;
   std::string spell_abilities = mons_special_ability_set(monster);
