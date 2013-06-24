@@ -745,8 +745,8 @@ int main(int argc, char *argv[])
     printf(" | AC/EV: %i/%i", ac, ev);
 
     std::string defenses;
-    if (mon.is_spiny())
-        defenses += colour(YELLOW, "(spiny)");
+    if (mon.spiny_degree() > 0)
+        defenses += colour(YELLOW, make_stringf("(spiny %d)", mon.spiny_degree()));
     if (mon.type == MONS_MINOTAUR)
         defenses += colour(LIGHTRED, "(headbutt)");
     if (defenses != "")
