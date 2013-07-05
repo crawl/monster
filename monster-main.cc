@@ -1049,10 +1049,12 @@ int main(int argc, char *argv[])
 
 
     // Don't record regular rF as hellfire vulnerability.
-    bool rhellfire = get_resist(res, MR_RES_FIRE) >= 4;
+    int rfire = get_resist(res, MR_RES_FIRE);
+    bool rhellfire = rfire >= 4;
+    if (rfire > 3)
+      rfire = 3;
     res2(RED, hellfire, (int)rhellfire);
-    if (!rhellfire)
-      res(RED, FIRE);
+    res2(RED, fire, rfire);
     res(BLUE, COLD);
     res(CYAN, ELEC);
     res(GREEN, POISON);
