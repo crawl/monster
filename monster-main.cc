@@ -17,6 +17,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * ===========================================================================
+ * All commits by Adam Borowski and Darshan Shaligram are instead under plain
+ * GPL 2+, like Crawl itself.
+ * All commits by Stefan O'Rear are under the 2-clause BSD.
+ * ===========================================================================
  */
 
 #include "AppHdr.h"
