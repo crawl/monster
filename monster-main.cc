@@ -227,6 +227,8 @@ static std::string monster_speed(const monster &mon,
   char buf[50];
   if (speed_max != speed_min)
     snprintf(buf, sizeof buf, "%i-%i", speed_min, speed_max);
+  else if (speed_max == 0)
+    snprintf(buf, sizeof buf, "%s", colour(BROWN, "0").c_str());
   else
     snprintf(buf, sizeof buf, "%i", speed_max);
 
@@ -254,6 +256,12 @@ static std::string monster_speed(const monster &mon,
     monster_action_cost(qualifiers, cost.spell, "spell");
     monster_action_cost(qualifiers, cost.special, "special");
     monster_action_cost(qualifiers, cost.item, "item");
+  }
+  if (speed_max > 0 && mons_class_flag(mon.type, M_STATIONARY))
+  {
+    if (!qualifiers.empty())
+      qualifiers += "; ";
+    qualifiers += colour(BROWN, "stationary");
   }
 
   if (!qualifiers.empty())
