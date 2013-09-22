@@ -451,6 +451,8 @@ static std::string mons_spell_set(monster *mp) {
       std::string name = shorten_spell_name(rawname);
       if (!spells.empty())
         spells += ", ";
+      if (i == NUM_MONSTER_SPELL_SLOTS - 1)
+        spells += colour(LIGHTRED, "esc:");
       spells += name + mons_human_readable_spell_damage_string(mp, sp);
     }
   }
