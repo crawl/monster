@@ -319,7 +319,7 @@ static std::string dice_def_string(dice_def dice) {
 static dice_def mi_calc_iood_damage(monster *mons) {
   const int power = stepdown_value(6 * mons->hit_dice,
                                    30, 30, 200, -1);
-  return dice_def(8, power / 4);
+  return dice_def(9, power / 4);
 }
 
 static std::string mi_calc_smiting_damage(monster *mons) {
