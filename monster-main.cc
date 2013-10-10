@@ -455,6 +455,7 @@ static std::string mons_spell_set(monster *mp) {
   std::set<spell_type> seen;
   std::string spells;
 
+  seed_rng(0);
   for (int i = -1; i < NUM_MONSTER_SPELL_SLOTS; ++i) {
     const spell_type sp = i == -1?
       mi_draconian_breath_spell(mp) : mp->spells[i];
