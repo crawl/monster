@@ -1043,8 +1043,7 @@ int main(int argc, char *argv[])
     mons_check_flag(me->bitfields & M_SEE_INVIS, monsterflags, "see invisible");
     mons_check_flag(me->fly == FL_LEVITATE, monsterflags, "lev");
     mons_check_flag(me->fly == FL_WINGED, monsterflags, "fly");
-    mons_check_flag(monster_descriptor(mon.type, MDSC_REGENERATES),
-                    monsterflags, "regen");
+    mons_check_flag(me->bitfields & M_FAST_REGEN, monsterflags, "regen");
     mons_check_flag(me->bitfields & M_DEFLECT_MISSILES, monsterflags, "DMsl");
     mons_check_flag(me->bitfields & M_WEB_SENSE, monsterflags, "web sense");
 
