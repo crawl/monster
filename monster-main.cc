@@ -60,6 +60,7 @@ const coord_def DOOR_PLACE(20, 21);
 const std::string CANG = "cang";
 
 const int PLAYER_MAXHP = 500;
+const int PLAYER_MAXMP = 50;
 
 // Clockwise, around the compass from north (same order as enum RUN_DIR)
 const struct coord_def Compass[9] =
@@ -313,6 +314,8 @@ static void initialize_crawl() {
   los_changed();
   you.moveto(PLAYER_PLACE);
   you.hp = you.hp_max = PLAYER_MAXHP;
+  you.magic_points = you.max_magic_points = PLAYER_MAXMP;
+  you.species = SP_HUMAN;
 }
 
 static std::string dice_def_string(dice_def dice) {
@@ -405,6 +408,21 @@ static void mons_record_ability(std::set<std::string> &ability_names,
     beam.name = "trample breath";
   if (monster->has_ench(ENCH_BERSERK))
     beam.name = "berserker rage";
+
+  // If that did nothing, try using its nearby ability.
+  if (beam.name.empty()) {
+    you.magic_points = you.max_magic_points = PLAYER_MAXMP;
+    you.duration[DUR_CONF] = you.duration[DUR_PARALYSIS] = 0;
+    mon_nearby_ability(monster);
+    if (you.magic_points < PLAYER_MAXMP)
+      beam.name = "mp drain gaze";
+    if (you.duration[DUR_CONF])
+      beam.name = "confusion gaze";
+    if (you.duration[DUR_PARALYSIS])
+      beam.name = "paralysis gaze";
+    // In case it submerged.
+    monster->del_ench(ENCH_SUBMERGED);
+  }
 
   if (!beam.name.empty()) {
     std::string ability = shorten_spell_name(beam.name);
