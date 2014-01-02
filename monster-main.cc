@@ -42,6 +42,7 @@
 #include "initfile.h"
 #include "libutil.h"
 #include "itemname.h"
+#include "itemprop.h"
 #include "act-iter.h"
 #include "mon-stuff.h"
 #include "random.h"
