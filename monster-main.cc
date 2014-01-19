@@ -362,20 +362,29 @@ static std::string shorten_spell_name(std::string name) {
     pos = name.find(' ', pos);
     if (pos != std::string::npos)
     {
-      if (starts_with(name, "death's"))
-        name = "d." + name.substr(pos + 1);
-      else if (!starts_with(name, "trog's"))
+      // strip wizard names
+      if (starts_with(name, "iskenderun's")
+          || starts_with(name, "olgreb's")
+          || starts_with(name, "lee's")
+          || starts_with(name, "leda's")
+          || starts_with(name, "lehudib's")
+          || starts_with(name, "borgnjor's")
+          || starts_with(name, "ozocubu's")
+          || starts_with(name, "tukima's")
+          || starts_with(name, "alistair's"))
+      {
         name = name.substr(pos + 1);
+      }
     }
   }
   if ((pos = name.find(" of ")) != std::string::npos)
-    name = name.substr(pos + 4) + " " + name.substr(0, pos);
-  if (name.find("summon ") == 0 && name != "summon undead")
-    name = name.substr(7);
+    name = name.substr(0, pos) + "/" + name.substr(pos+4);
+  if (starts_with(name, "summon "))
+    name = "sum." + name.substr(7);
+  if (starts_with(name, "bolt/"))
+    name = "b." + name.substr(5);
   if (ends_with(name, " bolt"))
     name = "b." + name.substr(0, name.length() - 5);
-  if (ends_with(name, " word"))
-    name = "w." + name.substr(0, name.length() - 5);
   return (name);
 }
 
