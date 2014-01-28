@@ -974,6 +974,9 @@ int main(int argc, char *argv[])
         case AF_DROWN:
           monsterattacks += colour(LIGHTBLUE, "(drown)");
           break;
+        case AF_ENGULF:
+          monsterattacks += colour(LIGHTBLUE, "(engulf)");
+          break;
         case AF_DRAIN_SPEED:
           monsterattacks += colour(LIGHTMAGENTA, "(drain speed)");
           break;
@@ -989,8 +992,8 @@ int main(int argc, char *argv[])
         case AF_SHADOWSTAB:
           monsterattacks += colour(MAGENTA, "(shadow stab)");
           break;
-        case AF_WATERPORT:
-          monsterattacks += colour(LIGHTCYAN, "(waterport)");
+        case AF_FIREBRAND:
+          monsterattacks += colour(RED, "(firebrand)");
           break;
         case AF_CRUSH:
         case AF_PLAIN:
