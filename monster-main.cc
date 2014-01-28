@@ -452,7 +452,7 @@ static void mons_record_ability(std::set<std::string> &ability_names,
 
 static std::string mons_special_ability_set(monster *monster) {
   if (mons_genus(monster->type) == MONS_DRACONIAN
-      && draco_subspecies(monster) != MONS_YELLOW_DRACONIAN)
+      && draco_or_demonspawn_subspecies(monster) != MONS_YELLOW_DRACONIAN)
   {
     return ("");
   }
@@ -469,7 +469,7 @@ static std::string mons_special_ability_set(monster *monster) {
 static spell_type mi_draconian_breath_spell(monster *mons) {
   if (mons_genus(mons->type) != MONS_DRACONIAN)
     return SPELL_NO_SPELL;
-  switch (draco_subspecies(mons)) {
+  switch (draco_or_demonspawn_subspecies(mons)) {
   case MONS_DRACONIAN:
   case MONS_YELLOW_DRACONIAN:
   case MONS_GREY_DRACONIAN:
@@ -587,7 +587,12 @@ static void rebind_mspec(std::string *requested_name,
                          mons_spec *mspec)
 {
   if (*requested_name != actual_name
-      && requested_name->find("draconian") == 0)
+      && (requested_name->find("draconian") == 0
+          || requested_name->find("blood saint") == 0
+          || requested_name->find("corrupter") == 0
+          || requested_name->find("warmonger") == 0
+          || requested_name->find("chaos champion") == 0
+          || requested_name->find("black sun") == 0))
   {
     // If the user requested a drac, the game might generate a
     // coloured drac in response. Try to reuse that colour for further
@@ -744,8 +749,17 @@ int main(int argc, char *argv[])
       || spec_type == MONS_SHAPESHIFTER
       || spec_type == MONS_GLOWING_SHAPESHIFTER;
 
+  const bool nonbase_demonspawn =
+      mons_species(mon.type) == MONS_DEMONSPAWN
+      && mon.type != MONS_DEMONSPAWN;
+
   const monsterentry *me =
       shapeshifter ? get_monster_data(spec_type) : mon.find_monsterentry();
+
+  const monsterentry *mbase =
+      nonbase_demonspawn
+      ? get_monster_data(draco_or_demonspawn_subspecies(&mon))
+      : (monsterentry*) 0;
 
   if (me)
   {
@@ -782,8 +796,12 @@ int main(int argc, char *argv[])
     else
         printf("%i", hplow);
 
-    const int ac = generated? mac : me->AC;
-    const int ev = generated? mev : me->ev;
+    const int ac = generated          ? mac :
+                   nonbase_demonspawn ? me->AC + mbase->AC
+                                      : me->AC;
+    const int ev = generated          ? mev :
+                   nonbase_demonspawn ? me->ev + mbase->ev
+                                      : me->ev;
     printf(" | AC/EV: %i/%i", ac, ev);
 
     std::string defenses;
