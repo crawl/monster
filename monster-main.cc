@@ -378,11 +378,9 @@ static std::string shorten_spell_name(std::string name) {
     }
   }
   if ((pos = name.find(" of ")) != std::string::npos)
-    name = name.substr(0, pos) + "/" + name.substr(pos+4);
+    name = name.substr(0, 1) + "." + name.substr(pos+4);
   if (starts_with(name, "summon "))
     name = "sum." + name.substr(7);
-  if (starts_with(name, "bolt/"))
-    name = "b." + name.substr(5);
   if (ends_with(name, " bolt"))
     name = "b." + name.substr(0, name.length() - 5);
   return (name);
