@@ -747,15 +747,17 @@ int main(int argc, char *argv[])
       || spec_type == MONS_SHAPESHIFTER
       || spec_type == MONS_GLOWING_SHAPESHIFTER;
 
-  const bool nonbase_demonspawn =
-      mons_species(mon.type) == MONS_DEMONSPAWN
-      && mon.type != MONS_DEMONSPAWN;
+  const bool nonbase =
+      mons_species(mon.type) == MONS_DRACONIAN
+      && mon.type != MONS_DRACONIAN
+      || mons_species(mon.type) == MONS_DEMONSPAWN
+         && mon.type != MONS_DEMONSPAWN;
 
   const monsterentry *me =
       shapeshifter ? get_monster_data(spec_type) : mon.find_monsterentry();
 
   const monsterentry *mbase =
-      nonbase_demonspawn
+      nonbase
       ? get_monster_data(draco_or_demonspawn_subspecies(&mon))
       : (monsterentry*) 0;
 
@@ -794,12 +796,12 @@ int main(int argc, char *argv[])
     else
         printf("%i", hplow);
 
-    const int ac = generated          ? mac :
-                   nonbase_demonspawn ? me->AC + mbase->AC
-                                      : me->AC;
-    const int ev = generated          ? mev :
-                   nonbase_demonspawn ? me->ev + mbase->ev
-                                      : me->ev;
+    const int ac = generated ? mac :
+                   nonbase   ? me->AC + mbase->AC
+                             : me->AC;
+    const int ev = generated ? mev :
+                   nonbase   ? me->ev + mbase->ev
+                             : me->ev;
     printf(" | AC/EV: %i/%i", ac, ev);
 
     std::string defenses;
@@ -1132,12 +1134,13 @@ int main(int argc, char *argv[])
     }
     else if (me->resist_magic < 0)
     {
+      const int res = (mbase) ? mbase->resist_magic : me->resist_magic;
       if (monsterresistances.empty())
         monsterresistances = " | Res: ";
       else
         monsterresistances += ", ";
       monsterresistances += colour(MAGENTA, std::string() + "magic("
-                                   + to_string((short int) mon.hit_dice * me->resist_magic * 4 / 3 * -1)
+                                   + to_string((short int) mon.hit_dice * res * 4 / 3 * -1)
                                    + ")");
     }
     else if (me->resist_magic > 0)
