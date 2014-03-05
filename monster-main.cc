@@ -49,6 +49,7 @@
 #include "spl-util.h"
 #include "state.h"
 #include "stuff.h"
+#include "artefact.h"
 #include "vault_monsters.h"
 #include <sstream>
 #include <set>
@@ -556,6 +557,18 @@ static std::string monster_symbol(const monster &mon) {
 }
 
 int mi_create_monster(mons_spec spec) {
+  item_list items = spec.items;
+  for (unsigned int i = 0; i < spec.items.size(); i++)
+  {
+    int ego = spec.items.get_item(i).ego;
+    if (ego >= 0)
+      continue;
+    // XXX: this is an unholy hack; xref set_unique_item_status
+    item_def tempitem;
+    tempitem.flags |= ISFLAG_UNRANDART;
+    tempitem.special = -ego;
+    set_unique_item_status(tempitem, UNIQ_NOT_EXISTS);
+  }
   monster *monster = 
     dgn_place_monster(spec, MONSTER_PLACE, true, false, false);
   if (monster) {
