@@ -935,28 +935,15 @@ int main(int argc, char *argv[])
           monsterattacks += colour(LIGHTRED, "(paralyse)");
           break;
         case AF_POISON:
-          monsterattacks += colour(YELLOW,"(poison)");
-          break;
-        case AF_POISON_NASTY:
-          monsterattacks += colour(YELLOW,"(nasty poison)");
-          break;
-        case AF_POISON_MEDIUM:
-          monsterattacks += colour(LIGHTRED,"(medium poison)");
+          monsterattacks +=
+            colour(YELLOW, damage_flavour("poison", mon.hit_dice*2 + 1,
+                                           mon.hit_dice*3 + 4));
           break;
         case AF_POISON_STRONG:
-          monsterattacks += colour(LIGHTRED,"(strong poison)");
-          break;
-        case AF_POISON_STR:
-          monsterattacks += colour(LIGHTRED,"(poison, drain str)");
-          break;
-        case AF_POISON_INT:
-          monsterattacks += colour(LIGHTRED,"(poison, drain int)");
-          break;
-        case AF_POISON_DEX:
-          monsterattacks += colour(LIGHTRED,"(poison, drain dex)");
-          break;
-        case AF_POISON_STAT:
-          monsterattacks += colour(LIGHTRED,"(poison, drain stat)");
+          monsterattacks +=
+            colour(LIGHTRED, damage_flavour("strong poison",
+                                            mon.hit_dice*5/2 + 1,
+                                            mon.hit_dice*4 + 4));
           break;
         case AF_ROT:
           monsterattacks += colour(LIGHTRED,"(rot)");
