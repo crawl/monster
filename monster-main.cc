@@ -438,7 +438,7 @@ static void mons_record_ability(std::set<std::string> &ability_names,
     if (beam.damage.num && beam.damage.size) {
       std::string extra;
       // Skip the shield slot when reckoning acid damage.
-      if (ability == "acid splash")
+      if (ability == "s.acid")
         extra = "+" +
           dice_def_string(dice_def(EQ_MAX_ARMOUR - EQ_MIN_ARMOUR + 2, 5));
       ability += make_stringf(" (%s%s)",
