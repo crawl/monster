@@ -936,14 +936,14 @@ int main(int argc, char *argv[])
           break;
         case AF_POISON:
           monsterattacks +=
-            colour(YELLOW, damage_flavour("poison", mon.hit_dice*2 + 1,
-                                           mon.hit_dice*3 + 4));
+            colour(YELLOW, damage_flavour("poison", mon.hit_dice*2,
+                                           mon.hit_dice*4));
           break;
         case AF_POISON_STRONG:
           monsterattacks +=
             colour(LIGHTRED, damage_flavour("strong poison",
-                                            mon.hit_dice*5/2 + 1,
-                                            mon.hit_dice*4 + 4));
+                                            mon.hit_dice*7/2,
+                                            mon.hit_dice*11/2));
           break;
         case AF_ROT:
           monsterattacks += colour(LIGHTRED,"(rot)");
