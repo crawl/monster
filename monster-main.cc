@@ -942,8 +942,8 @@ int main(int argc, char *argv[])
         case AF_POISON_STRONG:
           monsterattacks +=
             colour(LIGHTRED, damage_flavour("strong poison",
-                                            mon.hit_dice*7/2,
-                                            mon.hit_dice*11/2));
+                                            mon.hit_dice*11/3,
+                                            mon.hit_dice*13/2));
           break;
         case AF_ROT:
           monsterattacks += colour(LIGHTRED,"(rot)");
