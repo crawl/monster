@@ -1011,7 +1011,9 @@ int main(int argc, char *argv[])
           monsterattacks += colour(MAGENTA, "(shadow stab)");
           break;
         case AF_FIREBRAND:
-          monsterattacks += colour(RED, "(firebrand)");
+          monsterattacks +=
+            colour(RED, damage_flavour("firebrand", mon.hit_dice,
+                                       mon.hit_dice * 2 - 1));
           break;
         case AF_CRUSH:
         case AF_PLAIN:
