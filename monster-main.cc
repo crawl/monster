@@ -44,7 +44,7 @@
 #include "itemname.h"
 #include "itemprop.h"
 #include "act-iter.h"
-#include "mon-stuff.h"
+#include "mon-death.h"
 #include "random.h"
 #include "spl-util.h"
 #include "state.h"
