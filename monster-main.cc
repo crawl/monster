@@ -397,8 +397,11 @@ static void mons_record_ability(std::set<std::string> &ability_names,
   mon_special_ability(monster, beam);
   if (grd(DOOR_PLACE) == DNGN_SEALED_DOOR)
     beam.name = "seal doors";
-  if (monster->pos() != MONSTER_PLACE)
-    beam.name = "blink";
+  if (monster->pos() != MONSTER_PLACE
+      && !mons_class_flag(monster->type, M_BLINKER))
+  {
+    beam.name = "special move";
+  }
   if (you.hp == PLAYER_MAXHP / 2 + 1)
     beam.name = "symbol of torment";
   if (monster->type != MONS_TWISTER) {
@@ -458,6 +461,8 @@ static std::string mons_special_ability_set(monster *monster) {
   std::set<std::string> abilities;
   for (int i = 0; i < 50; ++i)
     mons_record_ability(abilities, monster);
+  if (mons_class_flag(monster->type, M_BLINKER))
+    abilities.insert("blink");
   if (abilities.empty())
     return ("");
   return comma_separated_line(abilities.begin(), abilities.end(), ", ", ", ");
