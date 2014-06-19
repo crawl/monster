@@ -925,7 +925,7 @@ int main(int argc, char *argv[])
             colour(LIGHTRED, damage_flavour("pure fire", mon.hit_dice*3/2,
                                             mon.hit_dice*5/2 - 1));
           break;
-        case AF_NAPALM:
+        case AF_STICKY_FLAME:
           monsterattacks += colour(LIGHTRED, "(napalm)");
           break;
         case AF_HUNGER:
