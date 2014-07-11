@@ -1201,7 +1201,7 @@ int main(int argc, char *argv[])
     res2(LIGHTMAGENTA, torm,   mon.res_torment());
     res2(LIGHTBLUE,    wind,   mon.res_wind());
     res2(LIGHTRED,     napalm, mon.res_sticky_flame());
-    res2(LIGHTCYAN, silver, -(int)mon.is_chaotic());
+    res2(LIGHTCYAN,    silver, mon.how_chaotic() ? -1 : 0);
 
     printf("%s", monsterresistances.c_str());
     printf("%s", monstervulnerabilities.c_str());
