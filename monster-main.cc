@@ -324,7 +324,7 @@ static std::string dice_def_string(dice_def dice) {
 }
 
 static dice_def mi_calc_iood_damage(monster *mons) {
-  const int power = stepdown_value(6 * mons->hit_dice,
+  const int power = stepdown_value(6 * mons->get_experience_level(),
                                    30, 30, 200, -1);
   return dice_def(9, power / 4);
 }
@@ -334,14 +334,14 @@ static std::string mi_calc_smiting_damage(monster *mons) {
 }
 
 static std::string mi_calc_airstrike_damage(monster *mons) {
-  return make_stringf("0-%d", 10 + 2 * mons->hit_dice);
+  return make_stringf("0-%d", 10 + 2 * mons->get_experience_level());
 }
 
 static std::string mons_human_readable_spell_damage_string(
     monster *monster,
     spell_type sp)
 {
-  bolt spell_beam = mons_spell_beam(monster, sp, 12 * monster->hit_dice,
+  bolt spell_beam = mons_spell_beam(monster, sp, 12 * monster->get_experience_level(),
                                     true);
   if (sp == SPELL_SMITING)
     return make_stringf(" (%s)", mi_calc_smiting_damage(monster).c_str());
@@ -492,7 +492,7 @@ static std::string mons_spell_set(monster *mp) {
       seen.insert(sp);
       std::string rawname = spell_title(sp);
       if (sp == SPELL_DRACONIAN_BREATH) {
-        const bolt spell_beam = mons_spell_beam(mp, sp, 12 * mp->hit_dice,
+        const bolt spell_beam = mons_spell_beam(mp, sp, 12 * mp->get_experience_level(),
                                                 true);
         rawname = spell_title(spell_beam.origin_spell);
       }
@@ -801,7 +801,7 @@ int main(int argc, char *argv[])
     printf(" | Spd: %s",
            monster_speed(mon, me, speed_min, speed_max).c_str());
 
-    const int hd = mon.hit_dice;
+    const int hd = mon.get_experience_level();
     printf(" | HD: %d", hd);
 
     printf(" | HP: ");
@@ -884,8 +884,7 @@ int main(int argc, char *argv[])
           break;
         case AF_COLD:
           monsterattacks +=
-            colour(LIGHTBLUE, damage_flavour("cold", mon.hit_dice,
-                                             3 * mon.hit_dice - 1));
+            colour(LIGHTBLUE, damage_flavour("cold", hd, 3 * hd - 1));
           break;
         case AF_CONFUSE:
           monsterattacks += colour(LIGHTMAGENTA,"(confuse)");
@@ -908,19 +907,15 @@ int main(int argc, char *argv[])
         case AF_ELEC:
           monsterattacks +=
             colour(LIGHTCYAN,
-                   damage_flavour("elec", mon.hit_dice,
-                                  mon.hit_dice +
-                                  std::max(mon.hit_dice / 2 - 1, 0)));
+                   damage_flavour("elec", hd, hd + std::max(hd / 2 - 1, 0)));
           break;
         case AF_FIRE:
           monsterattacks +=
-            colour(LIGHTRED, damage_flavour("fire", mon.hit_dice,
-                                            mon.hit_dice * 2 - 1));
+            colour(LIGHTRED, damage_flavour("fire", hd, hd * 2 - 1));
           break;
         case AF_PURE_FIRE:
           monsterattacks +=
-            colour(LIGHTRED, damage_flavour("pure fire", mon.hit_dice*3/2,
-                                            mon.hit_dice*5/2 - 1));
+            colour(LIGHTRED, damage_flavour("pure fire", hd*3/2, hd*5/2 - 1));
           break;
         case AF_STICKY_FLAME:
           monsterattacks += colour(LIGHTRED, "(napalm)");
@@ -936,14 +931,11 @@ int main(int argc, char *argv[])
           break;
         case AF_POISON:
           monsterattacks +=
-            colour(YELLOW, damage_flavour("poison", mon.hit_dice*2,
-                                           mon.hit_dice*4));
+            colour(YELLOW, damage_flavour("poison", hd*2, hd*4));
           break;
         case AF_POISON_STRONG:
           monsterattacks +=
-            colour(LIGHTRED, damage_flavour("strong poison",
-                                            mon.hit_dice*11/3,
-                                            mon.hit_dice*13/2));
+            colour(LIGHTRED, damage_flavour("strong poison", hd*11/3, hd*13/2));
           break;
         case AF_ROT:
           monsterattacks += colour(LIGHTRED,"(rot)");
@@ -1007,8 +999,7 @@ int main(int argc, char *argv[])
           break;
         case AF_FIREBRAND:
           monsterattacks +=
-            colour(RED, damage_flavour("firebrand", mon.hit_dice,
-                                       mon.hit_dice * 2 - 1));
+            colour(RED, damage_flavour("firebrand", hd, hd * 2 - 1));
           break;
         case AF_CRUSH:
         case AF_PLAIN:
@@ -1137,7 +1128,7 @@ int main(int argc, char *argv[])
       else
         monsterresistances += ", ";
       monsterresistances += colour(MAGENTA, std::string() + "magic("
-                                   + to_string((short int) mon.hit_dice * res * 4 / 3 * -1)
+                                   + to_string((short int) hd * res * 4 / 3 * -1)
                                    + ")");
     }
     else if (me->resist_magic > 0)
