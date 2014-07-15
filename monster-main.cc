@@ -341,8 +341,12 @@ static std::string mons_human_readable_spell_damage_string(
     monster *monster,
     spell_type sp)
 {
-  bolt spell_beam = mons_spell_beam(monster, sp, 12 * monster->get_experience_level(),
+  bolt spell_beam = mons_spell_beam(monster, sp,
+                                    12 * monster->get_experience_level(),
                                     true);
+  // Fake damage beam
+  if (sp == SPELL_PORTAL_PROJECTILE)
+    return "";
   if (sp == SPELL_SMITING)
     return make_stringf(" (%s)", mi_calc_smiting_damage(monster).c_str());
   if (sp == SPELL_AIRSTRIKE)
