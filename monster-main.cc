@@ -337,6 +337,16 @@ static std::string mi_calc_airstrike_damage(monster *mons) {
   return make_stringf("0-%d", 10 + 2 * mons->get_experience_level());
 }
 
+static std::string mi_calc_glaciate_damage(monster *mons) {
+  int pow = 12 * mons->get_experience_level();
+  // Minimum of the number of dice, or the max damage at max range
+  int min = std::min(10, (54 + 3 * pow / 2) / 6);
+  // Maximum damage at minimum range.
+  int max = (54 + 3 * pow / 2) / 3;
+
+  return make_stringf("%d-%d", min, max);
+}
+
 static std::string mons_human_readable_spell_damage_string(
     monster *monster,
     spell_type sp)
@@ -351,6 +361,8 @@ static std::string mons_human_readable_spell_damage_string(
     return make_stringf(" (%s)", mi_calc_smiting_damage(monster).c_str());
   if (sp == SPELL_AIRSTRIKE)
     return make_stringf(" (%s)", mi_calc_airstrike_damage(monster).c_str());
+  if (sp == SPELL_GLACIATE)
+    return make_stringf(" (%s)", mi_calc_glaciate_damage(monster).c_str());
   if (sp == SPELL_IOOD)
     spell_beam.damage = mi_calc_iood_damage(monster);
   if (spell_beam.damage.size && spell_beam.damage.num)
