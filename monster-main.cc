@@ -883,8 +883,8 @@ int main(int argc, char *argv[])
             monsterattacks += colour(RED, "(reach)");
 
         const attack_flavour flavour(
-            orig_attk.flavour == AF_KLOWN ? AF_KLOWN
-          : attk.flavour);
+            orig_attk.flavour == AF_KLOWN || orig_attk.flavour == AF_DRAIN_STAT
+                ? orig_attk.flavour : attk.flavour);
 
         switch (flavour)
         {
