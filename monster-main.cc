@@ -48,7 +48,7 @@
 #include "random.h"
 #include "spl-util.h"
 #include "state.h"
-#include "stuff.h"
+#include "stepdown.h"
 #include "artefact.h"
 #include "vault_monsters.h"
 #include <sstream>
