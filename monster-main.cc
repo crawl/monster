@@ -729,12 +729,12 @@ int main(int argc, char *argv[])
   {
     if (!vault_monster)
     {
-      printf("Not a vault monster: %s\n", target.c_str());
+      printf("Not a vault monster: %s\n", orig_target.c_str());
       return 1;
     }
     else
     {
-      printf("%s: %s\n", target.c_str(), vault_spec.c_str());
+      printf("%s: %s\n", orig_target.c_str(), vault_spec.c_str());
       return 0;
     }
   }
