@@ -34,7 +34,7 @@
  *         nothing if not found.
  *
 **/
-mons_spec get_vault_monster (std::string monster_name)
+mons_spec get_vault_monster (std::string monster_name, std::string *vault_spec)
 {
     lowercase(monster_name);
     trim_string(monster_name);
@@ -78,9 +78,16 @@ mons_spec get_vault_monster (std::string monster_name)
             mons_remove_from_grid(mp);
 
             if (this_spec)
+            {
+                if (vault_spec)
+                    *vault_spec = *it;
                 return (this_mons);
+            }
         }
     }
+
+    if (vault_spec)
+        *vault_spec = "";
 
     return (no_monster);
 }

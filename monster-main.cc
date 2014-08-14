@@ -673,6 +673,13 @@ int main(int argc, char *argv[])
 
   trim_string(target);
 
+  const bool want_vault_spec = target.find("spec:") == 0;
+  if (want_vault_spec)
+  {
+    target.erase(0, 5);
+    trim_string(target);
+  }
+
   // [ds] Nobody mess with cang.
   for (unsigned i = 0; i < sizeof(canned_reports) / sizeof(*canned_reports);
        ++i)
@@ -697,12 +704,13 @@ int main(int argc, char *argv[])
   mons_spec spec = mons.get_monster(0);
   monster_type spec_type = static_cast<monster_type>(spec.type);
   bool vault_monster = false;
+  string vault_spec;
 
   if ((spec_type < 0 || spec_type >= NUM_MONSTERS
        || spec_type == MONS_PLAYER_GHOST)
       || !err.empty())
   {
-    spec = get_vault_monster(orig_target);
+    spec = get_vault_monster(orig_target, &vault_spec);
     spec_type = static_cast<monster_type>(spec.type);
     if (spec_type < 0 || spec_type >= NUM_MONSTERS
         || spec_type == MONS_PLAYER_GHOST)
@@ -715,6 +723,20 @@ int main(int argc, char *argv[])
     }
 
     vault_monster = true;
+  }
+
+  if (want_vault_spec)
+  {
+    if (!vault_monster)
+    {
+      printf("Not a vault monster: %s\n", orig_target.c_str());
+      return 1;
+    }
+    else
+    {
+      printf("%s: %s\n", orig_target.c_str(), vault_spec.c_str());
+      return 0;
+    }
   }
 
   int index = mi_create_monster(spec);
