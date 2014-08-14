@@ -722,6 +722,10 @@ int main(int argc, char *argv[])
       return 1;
     }
 
+    // get_vault_monster created the monster; make uniques ungenerated again
+    if (mons_is_unique(spec_type))
+      you.unique_creatures.set(spec_type, false);
+
     vault_monster = true;
   }
 
