@@ -20,7 +20,7 @@ endif
 VERSION = $(shell cd $(CRAWL_PATH) ; git describe)
 
 CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX -I$(CRAWL_PATH) \
-	-I$(CRAWL_PATH)/rltiles -I/usr/include/ncursesw -g
+	-I$(CRAWL_PATH)/rltiles -I/usr/include/ncursesw -g -O0
 
 LFLAGS = -lncursesw -lz -lpthread -g
 
@@ -74,7 +74,7 @@ ALL_OBJECTS = $(MONSTER_OBJECTS) $(CRAWL_OBJECTS:%=$(CRAWL_PATH)/%)
 all: vaults trunk
 
 crawl:
-	+${MAKE} -C $(CRAWL_PATH) DEBUG=$(DEBUG) TILES= NO_LUA_BINDINGS=y
+	+${MAKE} -C $(CRAWL_PATH) NO_OPTIMIZE=y DEBUG=$(DEBUG) TILES= NO_LUA_BINDINGS=y
 
 .cc.o:
 	${CXX} ${CFLAGS} -o $@ -c $<
