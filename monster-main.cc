@@ -306,6 +306,7 @@ static void initialize_crawl() {
   init_spell_name_cache();
   init_mons_spells();
   init_element_colours();
+  init_show_table(); // Initializes indices for get_feature_def.
 
   dgn_reset_level();
   for (int y = 0; y < GYM; ++y)
