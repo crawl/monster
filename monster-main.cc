@@ -49,6 +49,7 @@
 #include "spl-util.h"
 #include "state.h"
 #include "stepdown.h"
+#include "stringutil.h"
 #include "artefact.h"
 #include "vault_monsters.h"
 #include <sstream>

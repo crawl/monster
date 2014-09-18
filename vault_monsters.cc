@@ -16,10 +16,10 @@
 #include "dungeon.h"
 #include "env.h"
 #include "externs.h"
-#include "libutil.h"
 #include "mapdef.h"
 #include "message.h"
 #include "monster-main.h"
+#include "stringutil.h"
 #include "vault_monster_data.h"
 
 /**
