@@ -1131,7 +1131,7 @@ int main(int argc, char *argv[])
         case AF_POISON_DEX:
         case AF_POISON_INT:
         case AF_POISON_STAT:
-          monsterattacks += colour(LIGHTRED, "(???)");
+          monsterattacks += colour(LIGHTRED, "(?\?\?)");
           break;
 // let the compiler issue warnings for us
 //      default:
