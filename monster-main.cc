@@ -414,7 +414,8 @@ static void mons_record_ability(std::set<std::string> &ability_names,
   monster->moveto(MONSTER_PLACE);
   you.moveto(PLAYER_PLACE);
   grd(DOOR_PLACE) = DNGN_OPEN_DOOR;
-  mon_special_ability(monster, beam);
+  if (monster->type != MONS_LOST_SOUL)
+    mon_special_ability(monster, beam);
   if (grd(DOOR_PLACE) == DNGN_SEALED_DOOR)
     beam.name = "seal doors";
   if (monster->pos() != MONSTER_PLACE
