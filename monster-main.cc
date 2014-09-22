@@ -107,6 +107,8 @@ static int bgr[8] = { 0, 4, 2, 6, 1, 5, 3, 7 };
 #endif
 #define CONTROL(x) char(x - 'A' + 1)
 
+typedef std::vector<std::string> spell_set_t;
+
 static std::string colour(int colour, std::string text, bool bg = false)
 {
     if (is_element_colour(colour))
@@ -360,15 +362,15 @@ static std::string mons_human_readable_spell_damage_string(
   if (sp == SPELL_PORTAL_PROJECTILE)
     return "";
   if (sp == SPELL_SMITING)
-    return make_stringf(" (%s)", mi_calc_smiting_damage(monster).c_str());
+    return mi_calc_smiting_damage(monster);
   if (sp == SPELL_AIRSTRIKE)
-    return make_stringf(" (%s)", mi_calc_airstrike_damage(monster).c_str());
+    return mi_calc_airstrike_damage(monster);
   if (sp == SPELL_GLACIATE)
-    return make_stringf(" (%s)", mi_calc_glaciate_damage(monster).c_str());
+    return mi_calc_glaciate_damage(monster);
   if (sp == SPELL_IOOD)
     spell_beam.damage = mi_calc_iood_damage(monster);
   if (spell_beam.damage.size && spell_beam.damage.num)
-    return make_stringf(" (%s)", dice_def_string(spell_beam.damage).c_str());
+    return dice_def_string(spell_beam.damage);
   return ("");
 }
 
@@ -499,44 +501,40 @@ static spell_type mi_draconian_breath_spell(monster *mons) {
   }
 }
 
-static std::string mons_spell_set(monster *mp) {
-  std::set<spell_type> seen;
-  std::string spells;
+static void record_spell_set(monster *mp,
+                             std::vector<spell_set_t> &spell_names,
+                             std::vector<spell_set_t> &spell_damages)
+{
+  spell_set_t names, damages;
 
   for (int i = -1; i < NUM_MONSTER_SPELL_SLOTS; ++i) {
     const spell_type sp = i == -1?
       mi_draconian_breath_spell(mp) : mp->spells[i];
-    if (sp != SPELL_NO_SPELL && seen.find(sp) == seen.end()) {
-      seen.insert(sp);
+    if (sp != SPELL_NO_SPELL) {
       std::string rawname = spell_title(sp);
       if (sp == SPELL_DRACONIAN_BREATH) {
         const bolt spell_beam = mons_spell_beam(mp, sp, 12 * mp->get_experience_level(),
                                                 true);
         rawname = spell_title(spell_beam.origin_spell);
       }
-      std::string name = shorten_spell_name(rawname);
-      if (!spells.empty())
-        spells += ", ";
-      if (i == NUM_MONSTER_SPELL_SLOTS - 1)
-        spells += colour(LIGHTRED, "esc:");
-      spells += name + mons_human_readable_spell_damage_string(mp, sp);
+
+      names.push_back(shorten_spell_name(rawname));
+      damages.push_back(mons_human_readable_spell_damage_string(mp, sp));
+    }
+    else {
+      names.push_back("");
+      damages.push_back("");
     }
   }
-  return spells;
-}
-
-static void record_spell_set(monster *mp,
-                             std::set<std::string> &sets)
-{
-  std::string spell_set = mons_spell_set(mp);
-  if (!spell_set.empty())
-    sets.insert(spell_set);
+  spell_names.push_back(names);
+  spell_damages.push_back(damages);
 }
 
 static std::string mons_spells_abilities(
   monster *monster,
   bool shapeshifter,
-  const std::set<std::string> &spell_sets)
+  std::vector<spell_set_t> spell_names,
+  std::vector<spell_set_t> spell_damages)
 {
   if (shapeshifter || monster->type == MONS_PANDEMONIUM_LORD
       || monster->type == MONS_CHIMERA
@@ -545,19 +543,100 @@ static std::string mons_spells_abilities(
     return "(random)";
   }
 
-  bool first = true;
-  std::string spell_abilities = mons_special_ability_set(monster);
-  for (std::set<std::string>::const_iterator i = spell_sets.begin();
-       i != spell_sets.end(); ++i)
-  {
-    if (!first)
-      spell_abilities += " / ";
-    else if (!spell_abilities.empty())
-      spell_abilities += "; ";
-    first = false;
-    spell_abilities += *i;
+  std::string the_spells;
+  std::vector<spell_set_t>::const_iterator i = spell_names.begin();
+  bool all_same = true;
+  for (std::vector<spell_set_t>::const_iterator j = i + 1;
+       j != spell_names.end(); ++j) {
+    for (int a = 0; a < NUM_MONSTER_SPELL_SLOTS + 1; ++a)
+      if((*i)[a] != (*j)[a])
+        all_same = false;
   }
-  return (spell_abilities);
+
+  std::set<std::string> seen_names;
+  std::set<std::string> seen_damages;
+  if (all_same) {
+    bool first_spell = true;
+    for (int a = 0; a < NUM_MONSTER_SPELL_SLOTS + 1; ++a) {
+      const std::string name = (*i)[a];
+      if (seen_names.find(name) != seen_names.end() || name == "")
+        continue;
+      seen_names.insert(name);
+      if (!first_spell)
+        the_spells += ", ";
+      if (a == NUM_MONSTER_SPELL_SLOTS)
+        the_spells += colour(LIGHTRED, "esc:");
+      the_spells += name;
+      bool first_dam = true;
+      for (std::vector<spell_set_t>::const_iterator j = spell_damages.begin();
+           j != spell_damages.end(); ++j) {
+        const std::string damage = (*j)[a];
+        if (seen_damages.find(damage) != seen_damages.end() || damage == "")
+          continue;
+        seen_damages.insert(damage);
+        if (!first_dam)
+          the_spells += " / ";
+        else
+          the_spells += " (";
+        the_spells += damage;
+        first_dam = false;
+      }
+      if (!first_dam)
+        the_spells += ")";
+      first_spell = false;
+      seen_damages.clear();
+    }
+  } else {
+    std::set<std::string> seen_sets;
+    bool first_spell_set = true;
+    std::vector<spell_set_t>::const_iterator j,k;
+    for (j = spell_names.begin(), k = spell_damages.begin();
+         j != spell_names.end() && k != spell_damages.end();
+         ++j, ++k) {
+      std::string this_set;
+      bool first_spell = true;
+      for (int a = 0; a < NUM_MONSTER_SPELL_SLOTS + 1; ++a) {
+        const std::string name = (*j)[a];
+        const std::string damage = (*k)[a];
+        if (seen_names.find(name) != seen_names.end() || name == "")
+          continue;
+        seen_names.insert(name);
+        if (!first_spell)
+          this_set += ", ";
+        if (a == NUM_MONSTER_SPELL_SLOTS)
+          this_set += colour(LIGHTRED, "esc:");
+        this_set += name;
+        first_spell = false;
+        if (damage == "")
+          continue;
+        this_set += " (" + damage + ")";
+      }
+      seen_names.clear();
+      if (seen_sets.find(this_set) != seen_sets.end() || this_set == "")
+        continue;
+      else
+        seen_sets.insert(this_set);
+    }
+    for (std::set<std::string>::const_iterator a = seen_sets.begin();
+         a != seen_sets.end(); ++a) {
+      if (!first_spell_set)
+        the_spells += " / ";
+      the_spells += *a;
+      first_spell_set = false;
+    }
+  }
+
+
+ const std::string abilities = mons_special_ability_set(monster);
+
+  if (abilities != "") {
+    if (the_spells != "")
+      the_spells = abilities + "; " + the_spells;
+    else
+      the_spells = abilities;
+  }
+
+  return the_spells;
 }
 
 static inline void set_min_max(int num, int &min, int &max) {
@@ -753,7 +832,8 @@ int main(int argc, char *argv[])
 
   const int ntrials = 1000;
 
-  std::set<std::string> spell_sets;
+  std::vector<spell_set_t> spell_names;
+  std::vector<spell_set_t> spell_damages;
 
   long exper = 0L;
   int hp_min = 0;
@@ -768,7 +848,7 @@ int main(int argc, char *argv[])
     monster *mp = &menv[index];
     const std::string mname = mp->name(DESC_PLAIN, true);
     if (!mons_class_is_zombified(mp->type))
-      record_spell_set(mp, spell_sets);
+      record_spell_set(mp, spell_names, spell_damages);
     exper += exper_value(mp);
     mac += mp->ac;
     mev += mp->ev;
@@ -1145,7 +1225,7 @@ int main(int argc, char *argv[])
     mons_check_flag(me->bitfields & M_WEB_SENSE, monsterflags, "web sense");
 
     const std::string spell_abilities =
-      mons_spells_abilities(&mon, shapeshifter, spell_sets);
+      mons_spells_abilities(&mon, shapeshifter, spell_names, spell_damages);
 
     mons_check_flag(!spell_abilities.empty()
                     && !mon.is_priest() && !mon.is_actual_spellcaster()
