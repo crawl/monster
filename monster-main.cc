@@ -1094,9 +1094,6 @@ int main(int argc, char *argv[])
         case AF_STEAL:
           monsterattacks += colour(CYAN, "(steal)");
           break;
-        case AF_STEAL_FOOD:
-          monsterattacks += colour(CYAN, "(steal food)");
-          break;
         case AF_ENSNARE:
           monsterattacks += colour(WHITE, "(ensnare)");
           break;
@@ -1112,9 +1109,6 @@ int main(int argc, char *argv[])
         case AF_VULN:
           monsterattacks += colour(LIGHTBLUE, "(vuln)");
           break;
-        case AF_PLAGUE:
-          monsterattacks += colour(BROWN, "(plague)");
-          break;
         case AF_WEAKNESS_POISON:
           monsterattacks += colour(LIGHTRED, "(poison, weakness)");
           break;
@@ -1127,6 +1121,16 @@ int main(int argc, char *argv[])
           break;
         case AF_CRUSH:
         case AF_PLAIN:
+          break;
+        case AF_PLAGUE:
+        case AF_STEAL_FOOD:
+        case AF_POISON_MEDIUM:
+        case AF_POISON_NASTY:
+        case AF_POISON_STR:
+        case AF_POISON_DEX:
+        case AF_POISON_INT:
+        case AF_POISON_STAT:
+          monsterattacks += colour(LIGHTRED, "(???)");
           break;
 // let the compiler issue warnings for us
 //      default:
