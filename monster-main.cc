@@ -359,7 +359,7 @@ static std::string mons_human_readable_spell_damage_string(
                                     12 * monster->get_experience_level(),
                                     true);
   // Fake damage beam
-  if (sp == SPELL_PORTAL_PROJECTILE)
+  if (sp == SPELL_PORTAL_PROJECTILE || sp == SPELL_LRD)
     return "";
   if (sp == SPELL_SMITING)
     return mi_calc_smiting_damage(monster);
