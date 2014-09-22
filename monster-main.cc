@@ -367,7 +367,7 @@ static std::string mons_human_readable_spell_damage_string(
     return mi_calc_airstrike_damage(monster);
   if (sp == SPELL_GLACIATE)
     return mi_calc_glaciate_damage(monster);
-  if (sp == SPELL_IOOD)
+  if (sp == SPELL_IOOD || spell_beam.origin_spell == SPELL_IOOD)
     spell_beam.damage = mi_calc_iood_damage(monster);
   if (spell_beam.damage.size && spell_beam.damage.num)
     return dice_def_string(spell_beam.damage);
