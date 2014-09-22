@@ -848,8 +848,7 @@ int main(int argc, char *argv[])
       break;
     monster *mp = &menv[index];
     const std::string mname = mp->name(DESC_PLAIN, true);
-    if (!mons_class_is_zombified(mp->type))
-      record_spell_set(mp, spell_names, spell_damages);
+    record_spell_set(mp, spell_names, spell_damages);
     exper += exper_value(mp);
     mac += mp->ac;
     mev += mp->ev;
