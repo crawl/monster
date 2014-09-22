@@ -1197,6 +1197,9 @@ int main(int argc, char *argv[])
       case MONEAT_FOOD:
         mons_flag(monsterflags, colour(LIGHTRED, "eats food"));
         break;
+      case MONEAT_DOORS:
+        mons_flag(monsterflags, colour(LIGHTRED, "breaks doors"));
+        break;
       case NUM_MONEAT:  // Can't happen
         mons_flag(monsterflags, colour(LIGHTRED, "eats bugs"));
         break;
