@@ -410,6 +410,7 @@ static void mons_record_ability(std::set<std::string> &ability_names,
 {
   no_messages mx;
   bolt beam;
+  const bool was_berserk = monster->has_ench(ENCH_BERSERK);
   you.hp = you.hp_max = PLAYER_MAXHP;
   monster->moveto(MONSTER_PLACE);
   you.moveto(PLAYER_PLACE);
@@ -437,7 +438,7 @@ static void mons_record_ability(std::set<std::string> &ability_names,
     beam.name = "flay";
   if (you.pos() != PLAYER_PLACE)
     beam.name = "trample breath";
-  if (monster->has_ench(ENCH_BERSERK))
+  if (!was_berserk && monster->has_ench(ENCH_BERSERK))
     beam.name = "berserker rage";
 
   // If that did nothing, try using its nearby ability.
