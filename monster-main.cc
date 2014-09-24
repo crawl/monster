@@ -948,8 +948,8 @@ int main(int argc, char *argv[])
     std::string defenses;
     if (mon.spiny_degree() > 0)
         defenses += colour(YELLOW, make_stringf("(spiny %d)", mon.spiny_degree()));
-    if (mon.type == MONS_MINOTAUR)
-        defenses += colour(LIGHTRED, "(headbutt)");
+    if (mons_species(mons_base_type(&mon)) == MONS_MINOTAUR)
+        defenses += colour(LIGHTRED, "(headbutt: d20-1)");
     if (defenses != "")
         printf(" %s", defenses.c_str());
 
