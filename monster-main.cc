@@ -913,8 +913,7 @@ int main(int argc, char *argv[])
 
     const bool changing_name =
       mon.has_hydra_multi_attack() || mon.type == MONS_PANDEMONIUM_LORD
-        || mons_is_mimic(mon.type) || shapeshifter
-        || mon.type == MONS_DANCING_WEAPON;
+        || shapeshifter || mon.type == MONS_DANCING_WEAPON;
 
     printf("%s (%s)",
            changing_name ? me->name : mon.name(DESC_PLAIN, true).c_str(),
