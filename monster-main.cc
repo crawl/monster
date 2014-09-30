@@ -1211,7 +1211,13 @@ int main(int argc, char *argv[])
 
     mons_check_flag(mons_wields_two_weapons(&mon), monsterflags, "two-weapon");
     mons_check_flag(mon.is_fighter(), monsterflags, "fighter");
-    mons_check_flag(mon.is_archer(), monsterflags, "master archer");
+    if (mon.is_archer())
+    {
+      if (me->bitfields & M_DONT_MELEE)
+        mons_flag(monsterflags, "master archer");
+      else
+        mons_flag(monsterflags, "archer");
+    }
     mons_check_flag(mon.is_priest(), monsterflags, "priest");
 
     mons_check_flag(me->habitat == HT_AMPHIBIOUS,
