@@ -851,8 +851,8 @@ int main(int argc, char *argv[])
     const std::string mname = mp->name(DESC_PLAIN, true);
     record_spell_set(mp, spell_names, spell_damages);
     exper += exper_value(mp);
-    mac += mp->ac;
-    mev += mp->ev;
+    mac += mp->armour_class();
+    mev += mp->evasion();
     set_min_max(mp->speed, speed_min, speed_max);
     set_min_max(mp->hit_points, hp_min, hp_max);
 
