@@ -729,6 +729,7 @@ static std::string canned_reports[][2] = {
 
 int main(int argc, char *argv[])
 {
+  alarm(5);
   crawl_state.test = true;
   if (argc < 2)
   {
