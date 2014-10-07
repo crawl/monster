@@ -56,7 +56,7 @@
 #include <set>
 #include <unistd.h>
 
-extern spell_type serpent_of_hell_breaths[4][3];
+extern const spell_type serpent_of_hell_breaths[4][3];
 
 const coord_def MONSTER_PLACE(20, 20);
 const coord_def PLAYER_PLACE(21, 20);
@@ -525,7 +525,7 @@ static void record_spell_set(monster *mp,
         ASSERT(idx >= 0 && idx <= 3);
         ASSERT(mp->number == ARRAYSZ(serpent_of_hell_breaths[idx]));
 
-        for (int i = 0; i < mp->number; ++i) {
+        for (unsigned int i = 0; i < mp->number; ++i) {
           const spell_type breath = serpent_of_hell_breaths[idx][i];
           char buf[32] = { 0 };
           snprintf(buf, sizeof(buf), "head %d: ", i + 1);
