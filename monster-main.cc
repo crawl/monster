@@ -56,6 +56,8 @@
 #include <set>
 #include <unistd.h>
 
+extern spell_type serpent_of_hell_breaths[4][3];
+
 const coord_def MONSTER_PLACE(20, 20);
 const coord_def PLAYER_PLACE(21, 20);
 const coord_def DOOR_PLACE(20, 21);
@@ -513,15 +515,36 @@ static void record_spell_set(monster *mp,
     const spell_type sp = i == -1?
       mi_draconian_breath_spell(mp) : mp->spells[i];
     if (sp != SPELL_NO_SPELL) {
-      std::string rawname = spell_title(sp);
-      if (sp == SPELL_DRACONIAN_BREATH) {
-        const bolt spell_beam = mons_spell_beam(mp, sp, 12 * mp->get_experience_level(),
-                                                true);
-        rawname = spell_title(spell_beam.origin_spell);
-      }
+      if (sp == SPELL_SERPENT_OF_HELL_BREATH) {
+        const int idx =
+            mp->type == MONS_SERPENT_OF_HELL          ? 0
+          : mp->type == MONS_SERPENT_OF_HELL_COCYTUS  ? 1
+          : mp->type == MONS_SERPENT_OF_HELL_DIS      ? 2
+          : mp->type == MONS_SERPENT_OF_HELL_TARTARUS ? 3
+          :                                               -1;
+        ASSERT(idx >= 0 && idx <= 3);
+        ASSERT(mp->number == ARRAYSZ(serpent_of_hell_breaths[idx]));
 
-      names.push_back(shorten_spell_name(rawname));
-      damages.push_back(mons_human_readable_spell_damage_string(mp, sp));
+        for (int i = 0; i < mp->number; ++i) {
+          const spell_type breath = serpent_of_hell_breaths[idx][i];
+          char buf[32] = { 0 };
+          snprintf(buf, sizeof(buf), "head %d: ", i + 1);
+          std::string rawname = spell_title(breath);
+          names.push_back(string(buf) + shorten_spell_name(rawname));
+          damages.push_back(mons_human_readable_spell_damage_string(mp, breath));
+        }
+      }
+      else {
+        std::string rawname = spell_title(sp);
+        if (sp == SPELL_DRACONIAN_BREATH) {
+          const bolt spell_beam = mons_spell_beam(mp, sp, 12 * mp->get_experience_level(),
+                                                  true);
+          rawname = spell_title(spell_beam.origin_spell);
+        }
+
+        names.push_back(shorten_spell_name(rawname));
+        damages.push_back(mons_human_readable_spell_damage_string(mp, sp));
+      }
     }
     else {
       names.push_back("");
