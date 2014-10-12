@@ -869,8 +869,6 @@ int main(int argc, char *argv[])
   int speed_min = 0, speed_max = 0;
   // Calculate averages.
   for (int i = 0; i < ntrials; ++i) {
-    if (i == ntrials)
-      break;
     monster *mp = &menv[index];
     const std::string mname = mp->name(DESC_PLAIN, true);
     record_spell_set(mp, spell_names, spell_damages);
