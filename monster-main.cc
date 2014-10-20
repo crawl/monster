@@ -946,6 +946,9 @@ int main(int argc, char *argv[])
         case AF_SHADOWSTAB:
           monsterattacks += colour(MAGENTA, "(shadow stab)");
           break;
+        case AF_CORRODE:
+          monsterattacks += colour(BROWN, "(corrosion)");
+          break;
         case AF_FIREBRAND:
           monsterattacks +=
             colour(RED, damage_flavour("firebrand", hd, hd * 2 - 1));
