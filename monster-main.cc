@@ -431,8 +431,6 @@ static std::string record_spell_set(monster *mp)
     else {
       std::set<std::string> damages;
       std::string spell_name = spell_title(sp);
-      if (sp == SPELL_DRACONIAN_BREATH)
-        spell_name = spell_title(draco_type_to_breath(draco_or_demonspawn_subspecies(mp)));
       spell_name = shorten_spell_name(spell_name);
       if (mp->spells[i].flags & MON_SPELL_EMERGENCY)
         spell_name = colour(LIGHTRED, "esc: ") + spell_name;
@@ -1070,7 +1068,6 @@ int main(int argc, char *argv[])
     mons_check_flag(me->fly == FL_LEVITATE, monsterflags, "lev");
     mons_check_flag(me->fly == FL_WINGED, monsterflags, "fly");
     mons_check_flag(me->bitfields & M_FAST_REGEN, monsterflags, "regen");
-    mons_check_flag(me->bitfields & M_DEFLECT_MISSILES, monsterflags, "DMsl");
     mons_check_flag(me->bitfields & M_WEB_SENSE, monsterflags, "web sense");
 
     std::string spells;
