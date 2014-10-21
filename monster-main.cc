@@ -403,9 +403,11 @@ static std::string shorten_spell_name(std::string name) {
   return (name);
 }
 
-static std::string record_spell_set(monster *mp)
+// ::first is spell name, ::second is possible damages
+typedef std::multimap<std::string, std::string> spell_damage_map;
+static spell_damage_map record_spell_set(monster *mp, std::string& ret)
 {
-  std::string ret = "";
+  spell_damage_map damages;
   for (std::size_t i = 0; i < mp->spells.size(); ++i) {
     spell_type sp = mp->spells[i].spell;
     if (!ret.empty())
@@ -429,7 +431,6 @@ static std::string record_spell_set(monster *mp)
       }
     }
     else {
-      std::set<std::string> damages;
       std::string spell_name = spell_title(sp);
       spell_name = shorten_spell_name(spell_name);
       if (mp->spells[i].flags & MON_SPELL_EMERGENCY)
@@ -437,22 +438,45 @@ static std::string record_spell_set(monster *mp)
       ret += spell_name;
       for (int i = 0; i < 100; i++) {
         std::string damage = mons_human_readable_spell_damage_string(mp, sp);
-        if (!damage.empty())
-          damages.insert(damage);
-      }
-      if (damages.size() > 0) {
-        ret += " (";
-        for (std::set<std::string>::const_iterator i = damages.begin();
-             i != damages.end(); ++i) {
-          if (i != damages.begin())
-            ret += " / ";
-
-          ret += *i;
+        std::set<std::string> added_damages;
+        if (!damage.empty() && !added_damages.count(damage))
+        {
+          damages.insert(std::pair<std::string, std::string>(spell_name, damage));
+          added_damages.insert(damage);
         }
-        ret += ")";
       }
     }
   }
+  return damages;
+}
+
+static std::string construct_spells(std::set<std::string> spells,
+                                    spell_damage_map damages)
+{
+  std::string ret;
+  for (std::set<std::string>::const_iterator i = spells.begin();
+       i != spells.end(); ++i)
+  {
+    if (i != spells.begin())
+      ret += " / ";
+    ret += *i;
+  }
+  std::map<std::string, std::string> merged_spell_dam;
+  for (spell_damage_map::const_iterator i = damages.begin(); i != damages.end(); ++i)
+  {
+    std::string dam = merged_spell_dam[i->first];
+    if (!dam.empty())
+      dam += " / ";
+    dam += i->second;
+    merged_spell_dam[i->first] = dam;
+  }
+
+  for (std::map<std::string, std::string>::const_iterator i = merged_spell_dam.begin();
+       i != merged_spell_dam.end(); ++i)
+  {
+    ret = replace_all(ret, i->first, make_stringf("%s (%s)", i->first.c_str(), i->second.c_str()));
+  }
+
   return ret;
 }
 
@@ -658,7 +682,8 @@ int main(int argc, char *argv[])
   int mev = 0;
   int speed_min = 0, speed_max = 0;
   // Calculate averages.
-  std::set<std::string> spell_sets;
+  std::set<std::string> spells;
+  spell_damage_map damages;
   for (int i = 0; i < ntrials; ++i) {
     monster *mp = &menv[index];
     const std::string mname = mp->name(DESC_PLAIN, true);
@@ -668,25 +693,26 @@ int main(int argc, char *argv[])
     set_min_max(mp->speed, speed_min, speed_max);
     set_min_max(mp->hit_points, hp_min, hp_max);
 
-    std::string spell_set = record_spell_set(mp);
-    // If one of the iterations didn't get all of the possible random
-    // spell types, we only want the longer one.
-    for (std::set<std::string>::const_iterator i = spell_sets.begin();
-         i != spell_sets.end(); ++i)
+    std::string new_spells;
+    const spell_damage_map new_damages = record_spell_set(mp, new_spells);
+    for (spell_damage_map::const_iterator i = new_damages.begin(); i != new_damages.end(); ++i)
     {
-      if (spell_set.empty())
-        break;
-      if (split_string(*i, "(")[0] == split_string(spell_set, "(")[0])
+      bool skip = false;
+      std::pair<spell_damage_map::iterator, spell_damage_map::iterator> old_damages;
+      old_damages = damages.equal_range(i->first);
+      for (spell_damage_map::iterator j = old_damages.first; j != old_damages.second; ++j)
       {
-        if (i->size() > spell_set.length())
-          spell_set = "";
-        else
-          spell_sets.erase(i);
-        break;
+        if (j->second == i->second)
+        {
+          skip = true;
+          break;
+        }
       }
+      if (skip) continue;
+      damages.insert(*i);
     }
-    if (!spell_set.empty())
-      spell_sets.insert(spell_set);
+    if (!new_spells.empty())
+      spells.insert(new_spells);
 
     // Destroy the monster.
     mp->reset();
@@ -1073,20 +1099,13 @@ int main(int argc, char *argv[])
     mons_check_flag(me->bitfields & M_FAST_REGEN, monsterflags, "regen");
     mons_check_flag(me->bitfields & M_WEB_SENSE, monsterflags, "web sense");
 
-    std::string spells;
+    std::string spell_string = construct_spells(spells, damages);
     if (shapeshifter
         || mon.type == MONS_PANDEMONIUM_LORD
         || mon.type == MONS_CHIMERA
            && mon.base_monster == MONS_PANDEMONIUM_LORD)
     {
-      spells = "(random)";
-    }
-    for (std::set<std::string>::const_iterator i = spell_sets.begin();
-         i != spell_sets.end(); ++i)
-    {
-      if (i != spell_sets.begin())
-        spells += " / ";
-      spells += *i;
+      spell_string = "(random)";
     }
 
     mons_check_flag(vault_monster, monsterflags, colour(BROWN, "vault"));
@@ -1194,8 +1213,8 @@ int main(int argc, char *argv[])
 
     printf(" | XP: %ld", exper);
 
-    if (!spells.empty())
-      printf(" | Sp: %s", spells.c_str());
+    if (!spell_string.empty())
+      printf(" | Sp: %s", spell_string.c_str());
 
     printf(" | Sz: %s",
            monster_size(mon).c_str());
