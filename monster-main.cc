@@ -819,6 +819,9 @@ int main(int argc, char *argv[])
         if (attk.type == AT_TRAMPLE)
             monsterattacks += colour(BROWN, "(trample)");
 
+        if (attk.type == AT_CLAW && mon.has_claws() >= 3)
+            monsterattacks += colour(LIGHTGREEN, "(claw)");
+
         if (attk.type == AT_REACH_STING)
             monsterattacks += colour(RED, "(reach)");
 
