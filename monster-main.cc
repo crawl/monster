@@ -1091,8 +1091,6 @@ int main(int argc, char *argv[])
     mons_check_flag(mon.is_actual_spellcaster(),
                     monsterflags, "spellcaster");
     mons_check_flag(me->bitfields & M_COLD_BLOOD, monsterflags, "cold-blooded");
-    mons_check_flag(me->bitfields & M_SENSE_INVIS, monsterflags,
-                    "sense invisible");
     mons_check_flag(me->bitfields & M_SEE_INVIS, monsterflags, "see invisible");
     mons_check_flag(me->fly == FL_LEVITATE, monsterflags, "lev");
     mons_check_flag(me->fly == FL_WINGED, monsterflags, "fly");
@@ -1176,6 +1174,9 @@ int main(int argc, char *argv[])
     res(BROWN, ACID);
     res(0, STEAM);
     res(0, ASPHYX);
+
+    if (me->bitfields & M_UNBLINDABLE)
+      res2(YELLOW, blind, 1);
 
     res2(LIGHTBLUE,    drown,  mon.res_water_drowning());
     res2(LIGHTRED,     rot,    mon.res_rotting());
