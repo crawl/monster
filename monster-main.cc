@@ -435,28 +435,30 @@ static spell_damage_map record_spell_set(monster *mp, std::string& ret)
       spell_name = shorten_spell_name(spell_name);
       ret += spell_name;
       std::string flags;
-      if (mp->spells[i].flags & MON_SPELL_NATURAL)
-        flags += colour(GREEN, "N");
-      if (mp->spells[i].flags & MON_SPELL_MAGICAL)
-        flags += colour(LIGHTMAGENTA, "M");
-      if (mp->spells[i].flags & MON_SPELL_DEMONIC)
-        flags += colour(LIGHTRED, "D");
-      if (mp->spells[i].flags & MON_SPELL_PRIEST)
-        flags += colour(LIGHTGREEN, "P");
-      // don't show a flag for MONS_SPELL_WIZARD
 
+      if (!(mp->spells[i].flags & MON_SPELL_ANTIMAGIC_MASK))
+        flags += colour(LIGHTCYAN, "!AM");
+      if (!(mp->spells[i].flags & MON_SPELL_SILENCE_MASK))
+      {
+        if (!flags.empty())
+          flags += ", ";
+        flags += colour(MAGENTA, "!sil");
+      }
       if (mp->spells[i].flags & MON_SPELL_BREATH)
-        flags += colour(YELLOW, "B");
-      if (mp->spells[i].flags & MON_SPELL_INSTANT)
-        flags += colour(LIGHTCYAN, "I");
+      {
+        if (!flags.empty())
+          flags += ", ";
+        flags += colour(YELLOW, "breath");
+      }
       if (mp->spells[i].flags & MON_SPELL_EMERGENCY)
-        flags += colour(LIGHTRED, "E");
-      if (mp->spells[i].flags & MON_SPELL_NOISY)
-        flags += colour(LIGHTBLUE, "L");
-      if (mp->spells[i].flags & MON_SPELL_NO_SILENT)
-        flags += colour(MAGENTA, "S");
+      {
+        if (!flags.empty())
+          flags += ", ";
+        flags += colour(LIGHTRED, "emergency");
+      }
+
       if (!flags.empty())
-        ret += "[" + flags + "]";
+        ret += " [" + flags + "]";
       for (int i = 0; i < 100; i++) {
         std::string damage = mons_human_readable_spell_damage_string(mp, sp);
         std::set<std::string> added_damages;
