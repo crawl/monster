@@ -403,6 +403,36 @@ static std::string shorten_spell_name(std::string name) {
   return (name);
 }
 
+std::string spell_flag_string(const mon_spell_slot &slot)
+{
+  std::string flags;
+
+  if (!(slot.flags & MON_SPELL_ANTIMAGIC_MASK))
+    flags += colour(LIGHTCYAN, "!AM");
+  if (!(slot.flags & MON_SPELL_SILENCE_MASK))
+  {
+    if (!flags.empty())
+      flags += ", ";
+    flags += colour(MAGENTA, "!sil");
+  }
+  if (slot.flags & MON_SPELL_BREATH)
+  {
+    if (!flags.empty())
+      flags += ", ";
+    flags += colour(YELLOW, "breath");
+  }
+  if (slot.flags & MON_SPELL_EMERGENCY)
+  {
+    if (!flags.empty())
+      flags += ", ";
+    flags += colour(LIGHTRED, "emergency");
+  }
+
+  if (!flags.empty())
+    flags = " [" + flags + "]";
+  return flags;
+}
+
 // ::first is spell name, ::second is possible damages
 typedef std::multimap<std::string, std::string> spell_damage_map;
 static spell_damage_map record_spell_set(monster *mp, std::string& ret)
@@ -422,6 +452,7 @@ static spell_damage_map record_spell_set(monster *mp, std::string& ret)
       ASSERT(idx >= 0 && idx <= 3);
       ASSERT(mp->number == ARRAYSZ(serpent_of_hell_breaths[idx]));
 
+      ret += "{";
       for (unsigned int i = 0; i < mp->number; ++i) {
         const spell_type breath = serpent_of_hell_breaths[idx][i];
         const std::string rawname = spell_title(breath);
@@ -429,36 +460,16 @@ static spell_damage_map record_spell_set(monster *mp, std::string& ret)
         ret += make_stringf("head %d: ", i + 1) + shorten_spell_name(rawname) + " (";
         ret += mons_human_readable_spell_damage_string(mp, breath) + ")";
       }
+      ret += "}";
+
+      ret += spell_flag_string(mp->spells[i]);
     }
     else {
       std::string spell_name = spell_title(sp);
       spell_name = shorten_spell_name(spell_name);
       ret += spell_name;
-      std::string flags;
+      ret += spell_flag_string(mp->spells[i]);
 
-      if (!(mp->spells[i].flags & MON_SPELL_ANTIMAGIC_MASK))
-        flags += colour(LIGHTCYAN, "!AM");
-      if (!(mp->spells[i].flags & MON_SPELL_SILENCE_MASK))
-      {
-        if (!flags.empty())
-          flags += ", ";
-        flags += colour(MAGENTA, "!sil");
-      }
-      if (mp->spells[i].flags & MON_SPELL_BREATH)
-      {
-        if (!flags.empty())
-          flags += ", ";
-        flags += colour(YELLOW, "breath");
-      }
-      if (mp->spells[i].flags & MON_SPELL_EMERGENCY)
-      {
-        if (!flags.empty())
-          flags += ", ";
-        flags += colour(LIGHTRED, "emergency");
-      }
-
-      if (!flags.empty())
-        ret += " [" + flags + "]";
       for (int i = 0; i < 100; i++) {
         std::string damage = mons_human_readable_spell_damage_string(mp, sp);
         std::set<std::string> added_damages;
