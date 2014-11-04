@@ -525,8 +525,9 @@ static std::string monster_symbol(const monster &mon) {
   std::string symbol;
   const monsterentry *me = mon.find_monsterentry();
   if (me) {
+    monster_info mi(&mon, MILEV_NAME);
     symbol += me->basechar;
-    symbol = colour(mon.colour, symbol);
+    symbol = colour(mi.colour(), symbol);
   }
   return (symbol);
 }
