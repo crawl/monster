@@ -453,11 +453,11 @@ static spell_damage_map record_spell_set(monster *mp, std::string& ret)
       ASSERT(mp->number == ARRAYSZ(serpent_of_hell_breaths[idx]));
 
       ret += "{";
-      for (unsigned int i = 0; i < mp->number; ++i) {
-        const spell_type breath = serpent_of_hell_breaths[idx][i];
+      for (unsigned int k = 0; k < mp->number; ++k) {
+        const spell_type breath = serpent_of_hell_breaths[idx][k];
         const std::string rawname = spell_title(breath);
-        ret += i == 0 ? "" : ", ";
-        ret += make_stringf("head %d: ", i + 1) + shorten_spell_name(rawname) + " (";
+        ret += k == 0 ? "" : ", ";
+        ret += make_stringf("head %d: ", k + 1) + shorten_spell_name(rawname) + " (";
         ret += mons_human_readable_spell_damage_string(mp, breath) + ")";
       }
       ret += "}";
