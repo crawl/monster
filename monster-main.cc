@@ -849,7 +849,10 @@ int main(int argc, char *argv[])
     for (int x = 0; x < 4; x++)
     {
       mon_attack_def orig_attk(me->attack[x]);
-      mon_attack_def attk = mons_attack_spec(&mon, x);
+      int attack_num = x;
+      if (mon.has_hydra_multi_attack())
+          attack_num = x == 0 ? x : x + mon.number - 1;
+      mon_attack_def attk = mons_attack_spec(&mon, attack_num);
       if (attk.type)
       {
         if (monsterattacks.empty())
@@ -1040,11 +1043,9 @@ int main(int argc, char *argv[])
 //        break;
         }
 
-        if (mon.has_hydra_multi_attack())
+        if (x == 0 && mon.has_hydra_multi_attack())
           monsterattacks += " per head";
       }
-      if (mon.has_hydra_multi_attack())
-        break;
     }
 
     printf("%s", monsterattacks.c_str());
