@@ -20,7 +20,7 @@ endif
 VERSION = $(shell cd $(CRAWL_PATH) ; git describe)
 
 CFLAGS = -Wall -Wno-parentheses -DNDEBUG -DUNIX -I$(CRAWL_PATH) \
-	-I$(CRAWL_PATH)/rltiles -I/usr/include/ncursesw -g -O0
+	-I$(CRAWL_PATH)/rltiles -I/usr/include/ncursesw -g -O0 --std=c++11
 
 LFLAGS = -lncursesw -lz -lpthread -g
 
