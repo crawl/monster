@@ -349,6 +349,24 @@ static std::string mi_calc_glaciate_damage(monster *mons) {
   return make_stringf("%d-%d", min, max);
 }
 
+static std::string mi_calc_chain_lightning_damage(monster* mons) {
+  int pow = 4 * mons->get_experience_level();
+
+  // Damage is 5d(9.2 + pow / 30), but if lots of targets are around
+  // it can hit the player precisely once at very low (e.g. 1) power
+  // and deal 5 damage.
+  int min = 5;
+
+  // Max damage per bounce is 46 + pow / 6; in the worst case every other
+  // bounce hits the player, losing 8 pow on the bounce away and 8 on the
+  // bounce back for a total of 16; thus, for n bounces, it's:
+  // (46 + pow/6) * n less 16/6 times the (n - 1)th triangular number.
+  int n = (pow + 15) / 16;
+  int max = (46 + (pow / 6)) * n - 4 * n * (n - 1) / 3;
+
+  return make_stringf("%d-%d", min, max);
+}
+
 static std::string mons_human_readable_spell_damage_string(
     monster *monster,
     spell_type sp)
@@ -367,6 +385,8 @@ static std::string mons_human_readable_spell_damage_string(
     return mi_calc_glaciate_damage(monster);
   if (sp == SPELL_IOOD || spell_beam.origin_spell == SPELL_IOOD)
     spell_beam.damage = mi_calc_iood_damage(monster);
+  if (sp == SPELL_CHAIN_LIGHTNING)
+    return mi_calc_chain_lightning_damage(monster);
   if (spell_beam.damage.size && spell_beam.damage.num)
     return dice_def_string(spell_beam.damage);
   return ("");
