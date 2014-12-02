@@ -1159,8 +1159,12 @@ int main(int argc, char *argv[])
     std::string spell_string = construct_spells(spells, damages);
     if (shapeshifter
         || mon.type == MONS_PANDEMONIUM_LORD
+        || mon.type == MONS_LICH
+        || mon.type == MONS_ANCIENT_LICH
         || mon.type == MONS_CHIMERA
-           && mon.base_monster == MONS_PANDEMONIUM_LORD)
+           && (mon.base_monster == MONS_PANDEMONIUM_LORD
+               || mon.base_monster == MONS_LICH
+               || mon.base_monster == MONS_ANCIENT_LICH))
     {
       spell_string = "(random)";
     }
