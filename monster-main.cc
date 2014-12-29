@@ -900,9 +900,6 @@ int main(int argc, char *argv[])
         if (attk.type == AT_CONSTRICT)
             monsterattacks += colour(GREEN, "(constrict)");
         
-        if (attk.type == AT_TRAMPLE)
-            monsterattacks += colour(BROWN, "(trample)");
-
         if (attk.type == AT_CLAW && mon.has_claws() >= 3)
             monsterattacks += colour(LIGHTGREEN, "(claw)");
 
@@ -917,6 +914,12 @@ int main(int argc, char *argv[])
         {
         case AF_REACH:
           monsterattacks += "(reach)";
+          break;
+        case AF_KITE:
+          monsterattacks += "(kite)";
+          break;
+        case AF_SWOOP:
+          monsterattacks += "(swoop)";
           break;
         case AF_ACID:
           monsterattacks += colour(YELLOW,
@@ -1040,6 +1043,9 @@ int main(int argc, char *argv[])
         case AF_FIREBRAND:
           monsterattacks +=
             colour(RED, damage_flavour("firebrand", hd, hd * 2 - 1));
+          break;
+        case AF_TRAMPLE:
+          monsterattacks += colour(BROWN, "(trample)");
           break;
         case AF_CRUSH:
         case AF_PLAIN:
