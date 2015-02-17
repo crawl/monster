@@ -1320,8 +1320,6 @@ int yylineno;
 
 std::string init_file_error;    // externed in newgame.cc
 
-char info[ INFO_SIZE ];         // messaging queue extern'd everywhere {dlb}
-
 int stealth;                    // externed in view.cc
 bool apply_berserk_penalty;     // externed in evoke.cc
 
