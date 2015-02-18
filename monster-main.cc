@@ -636,6 +636,13 @@ int main(int argc, char *argv[])
     printf("Monster stats Crawl version: %s\n", Version::Long);
     return 0;
   }
+  else if (strstr(argv[1], "-name"))
+  {
+    seed_rng();
+    string name = make_name(random_int(), false);
+    printf("%s\n", name.c_str());
+    return 0;
+  }
 
   initialize_crawl();
 
