@@ -856,13 +856,7 @@ int main(int argc, char *argv[])
     else
         printf("%i", hplow);
 
-    const int ac = generated ? mac :
-                   nonbase   ? me->AC + mbase->AC
-                             : me->AC;
-    const int ev = generated ? mev :
-                   nonbase   ? me->ev + mbase->ev
-                             : me->ev;
-    printf(" | AC/EV: %i/%i", ac, ev);
+    printf(" | AC/EV: %i/%i", mac, mev);
 
     std::string defenses;
     if (mon.spiny_degree() > 0)
