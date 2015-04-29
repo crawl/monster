@@ -1140,8 +1140,7 @@ int main(int argc, char *argv[])
                     monsterflags, "spellcaster");
     mons_check_flag(me->bitfields & M_COLD_BLOOD, monsterflags, "cold-blooded");
     mons_check_flag(me->bitfields & M_SEE_INVIS, monsterflags, "see invisible");
-    mons_check_flag(me->fly == FL_LEVITATE, monsterflags, "lev");
-    mons_check_flag(me->fly == FL_WINGED, monsterflags, "fly");
+    mons_check_flag(me->bitfields & M_FLIES, monsterflags, "fly");
     mons_check_flag(me->bitfields & M_FAST_REGEN, monsterflags, "regen");
     mons_check_flag(me->bitfields & M_WEB_SENSE, monsterflags, "web sense");
 
