@@ -1246,11 +1246,8 @@ int main(int argc, char *argv[])
       printf(" | Chunks: ");
       switch (me->corpse_thingy)
       {
-      case CE_POISONOUS:
-        printf("%s", colour(LIGHTGREEN,"poison").c_str());
-        break;
-      case CE_ROT:
-        printf("%s", colour(LIGHTRED,"rot").c_str());
+      case CE_NOXIOUS:
+        printf("%s", colour(DARKGREY,"noxious").c_str());
         break;
       case CE_MUTAGEN:
         printf("%s", colour(MAGENTA, "mutagenic").c_str());
