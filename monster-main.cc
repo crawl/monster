@@ -1241,7 +1241,7 @@ int main(int argc, char *argv[])
     printf("%s", monsterresistances.c_str());
     printf("%s", monstervulnerabilities.c_str());
 
-    if (me->weight != 0 && me->corpse_thingy != CE_NOCORPSE && me->corpse_thingy != CE_CLEAN)
+    if (me->corpse_thingy != CE_NOCORPSE && me->corpse_thingy != CE_CLEAN)
     {
       printf(" | Chunks: ");
       switch (me->corpse_thingy)
