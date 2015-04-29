@@ -1114,30 +1114,12 @@ int main(int argc, char *argv[])
         break;
 
       case NUM_MONUSE:  // Can't happen
-        mons_flag(monsterflags, colour(CYAN, "eats bugs"));
+        mons_flag(monsterflags, colour(CYAN, "uses bugs"));
         break;
     }
 
-    switch (me->gmon_eat)
-    {
-      case MONEAT_NOTHING:
-        break;
-      case MONEAT_ITEMS:
-        mons_flag(monsterflags, colour(LIGHTRED, "eats items"));
-        break;
-      case MONEAT_CORPSES:
-        mons_flag(monsterflags, colour(LIGHTRED, "eats corpses"));
-        break;
-      case MONEAT_FOOD:
-        mons_flag(monsterflags, colour(LIGHTRED, "eats food"));
-        break;
-      case MONEAT_DOORS:
-        mons_flag(monsterflags, colour(LIGHTRED, "breaks doors"));
-        break;
-      case NUM_MONEAT:  // Can't happen
-        mons_flag(monsterflags, colour(LIGHTRED, "eats bugs"));
-        break;
-    }
+    mons_check_flag(me->bitfields & M_EAT_ITEMS, monsterflags, colour(LIGHTRED, "eats items"));
+    mons_check_flag(me->bitfields & M_CRASH_DOORS, monsterflags, colour(LIGHTRED, "breaks doors"));
 
     mons_check_flag(mons_wields_two_weapons(&mon), monsterflags, "two-weapon");
     mons_check_flag(mon.is_fighter(), monsterflags, "fighter");
