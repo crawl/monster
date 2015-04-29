@@ -1143,6 +1143,7 @@ int main(int argc, char *argv[])
     mons_check_flag(me->bitfields & M_FLIES, monsterflags, "fly");
     mons_check_flag(me->bitfields & M_FAST_REGEN, monsterflags, "regen");
     mons_check_flag(me->bitfields & M_WEB_SENSE, monsterflags, "web sense");
+    mons_check_flag(mon.is_unbreathing(), monsterflags, "unbreathing");
 
     std::string spell_string = construct_spells(spells, damages);
     if (shapeshifter
@@ -1224,7 +1225,6 @@ int main(int argc, char *argv[])
     res(GREEN, POISON);
     res(BROWN, ACID);
     res(0, STEAM);
-    res(0, ASPHYX);
 
     if (me->bitfields & M_UNBLINDABLE)
       res2(YELLOW, blind, 1);
