@@ -181,23 +181,14 @@ static std::string monster_int(const monster &mon)
   std::string intel = "???";
   switch (mons_intel(&mon))
   {
-  case I_PLANT:
-    intel = "plant";
-    break;
-  case I_INSECT:
-    intel = "insect";
-    break;
-  case I_REPTILE:
-    intel = "reptile";
+  case I_BRAINLESS:
+    intel = "brainless";
     break;
   case I_ANIMAL:
     intel = "animal";
     break;
-  case I_NORMAL:
-    intel = "normal";
-    break;
-  case I_HIGH:
-    intel = "high";
+  case I_HUMAN:
+    intel = "human";
     break;
   // Let the compiler issue warnings for missing entries.
   }
