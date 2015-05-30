@@ -788,12 +788,6 @@ int main(int argc, char *argv[])
 
   const std::string symbol(monster_symbol(mon));
 
-  const bool generated =
-    mons_class_is_zombified(mon.type) || mons_class_is_chimeric(mon.type)
-    || mon.type == MONS_HELL_BEAST || mon.type == MONS_PANDEMONIUM_LORD
-    || mon.type == MONS_UGLY_THING || mon.type == MONS_DANCING_WEAPON
-    || mon.type == MONS_SPECTRAL_WEAPON;
-
   const bool shapeshifter =
       mon.is_shapeshifter()
       || spec_type == MONS_SHAPESHIFTER
