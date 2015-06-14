@@ -1216,7 +1216,7 @@ int main(int argc, char *argv[])
 
     res2(LIGHTBLUE,    drown,  mon.res_water_drowning());
     res2(LIGHTRED,     rot,    mon.res_rotting());
-    res2(LIGHTMAGENTA, neg,    mon.res_negative_energy());
+    res2(LIGHTMAGENTA, neg,    mon.res_negative_energy(true));
     res2(YELLOW,       holy,   mon.res_holy_energy(&you));
     res2(LIGHTMAGENTA, torm,   mon.res_torment());
     res2(LIGHTBLUE,    wind,   mon.res_wind());
