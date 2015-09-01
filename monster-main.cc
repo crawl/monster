@@ -1103,8 +1103,8 @@ int main(int argc, char *argv[])
         break;
     }
 
-    mons_check_flag(me->bitfields & M_EAT_ITEMS, monsterflags, colour(LIGHTRED, "eats items"));
-    mons_check_flag(me->bitfields & M_CRASH_DOORS, monsterflags, colour(LIGHTRED, "breaks doors"));
+    mons_check_flag(bool(me->bitfields & M_EAT_ITEMS), monsterflags, colour(LIGHTRED, "eats items"));
+    mons_check_flag(bool(me->bitfields & M_CRASH_DOORS), monsterflags, colour(LIGHTRED, "breaks doors"));
 
     mons_check_flag(mons_wields_two_weapons(&mon), monsterflags, "two-weapon");
     mons_check_flag(mon.is_fighter(), monsterflags, "fighter");
@@ -1123,11 +1123,11 @@ int main(int argc, char *argv[])
     mons_check_flag(mon.is_evil(), monsterflags, "evil");
     mons_check_flag(mon.is_actual_spellcaster(),
                     monsterflags, "spellcaster");
-    mons_check_flag(me->bitfields & M_COLD_BLOOD, monsterflags, "cold-blooded");
-    mons_check_flag(me->bitfields & M_SEE_INVIS, monsterflags, "see invisible");
-    mons_check_flag(me->bitfields & M_FLIES, monsterflags, "fly");
-    mons_check_flag(me->bitfields & M_FAST_REGEN, monsterflags, "regen");
-    mons_check_flag(me->bitfields & M_WEB_SENSE, monsterflags, "web sense");
+    mons_check_flag(bool(me->bitfields & M_COLD_BLOOD), monsterflags, "cold-blooded");
+    mons_check_flag(bool(me->bitfields & M_SEE_INVIS), monsterflags, "see invisible");
+    mons_check_flag(bool(me->bitfields & M_FLIES), monsterflags, "fly");
+    mons_check_flag(bool(me->bitfields & M_FAST_REGEN), monsterflags, "regen");
+    mons_check_flag(bool(me->bitfields & M_WEB_SENSE), monsterflags, "web sense");
     mons_check_flag(mon.is_unbreathing(), monsterflags, "unbreathing");
 
     std::string spell_string = construct_spells(spells, damages);
