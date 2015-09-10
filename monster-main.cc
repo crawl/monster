@@ -236,7 +236,7 @@ static std::string monster_speed(const monster &mon,
 
   speed += buf;
 
-  const mon_energy_usage &cost(me->energy_usage);
+  const mon_energy_usage &cost = mons_energy(&mon);
   std::string qualifiers;
 
   bool skip_action = false;
