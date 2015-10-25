@@ -98,7 +98,7 @@ static std::string colour_codes[] = {
     "04",
     "13",
     "08",
-    "16"
+    "00"
 };
 
 static int bgr[8] = { 0, 4, 2, 6, 1, 5, 3, 7 };
