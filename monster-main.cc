@@ -631,8 +631,7 @@ int main(int argc, char *argv[])
   else if (!strcmp(argv[1], "-name") || !strcmp(argv[1], "--name"))
   {
     seed_rng();
-    string name = make_name(random_int(), MNAME_DEFAULT);
-    printf("%s\n", name.c_str());
+    printf("%s\n", make_name().c_str());
     return 0;
   }
 
