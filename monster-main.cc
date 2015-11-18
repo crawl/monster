@@ -20,6 +20,9 @@
  * All commits by Adam Borowski and Darshan Shaligram are instead under plain
  * GPL 2+, like Crawl itself.
  * All commits by Stefan O'Rear are under the 2-clause BSD.
+ * All commits by Neil Moore are licensed under both the GNU GPL version 2
+ * or later and the GNU Affero GPL version 3 or later, and may be distributed
+ * under the terms of either.
  * ===========================================================================
  */
 
