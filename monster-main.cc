@@ -892,9 +892,6 @@ int main(int argc, char *argv[])
         if (attk.type == AT_CLAW && mon.has_claws() >= 3)
             monsterattacks += colour(LIGHTGREEN, "(claw)");
 
-        if (attk.type == AT_REACH_STING)
-            monsterattacks += colour(RED, "(reach)");
-
         const attack_flavour flavour(
             orig_attk.flavour == AF_KLOWN || orig_attk.flavour == AF_DRAIN_STAT
                 ? orig_attk.flavour : attk.flavour);
@@ -902,6 +899,7 @@ int main(int argc, char *argv[])
         switch (flavour)
         {
         case AF_REACH:
+        case AF_REACH_STING:
           monsterattacks += "(reach)";
           break;
         case AF_KITE:
@@ -1020,21 +1018,17 @@ int main(int argc, char *argv[])
         case AF_VULN:
           monsterattacks += colour(LIGHTBLUE, "(vuln)");
           break;
-        case AF_WEAKNESS_POISON:
-          monsterattacks += colour(LIGHTRED, "(poison, weakness)");
-          break;
         case AF_SHADOWSTAB:
           monsterattacks += colour(MAGENTA, "(shadow stab)");
           break;
         case AF_CORRODE:
           monsterattacks += colour(BROWN, "(corrosion)");
           break;
-        case AF_FIREBRAND:
-          monsterattacks +=
-            colour(RED, damage_flavour("firebrand", hd, hd * 2 - 1));
-          break;
         case AF_TRAMPLE:
           monsterattacks += colour(BROWN, "(trample)");
+          break;
+        case AF_WEAKNESS:
+          monsterattacks += colour(LIGHTRED, "(weakness)");
           break;
         case AF_CRUSH:
         case AF_PLAIN:
@@ -1049,6 +1043,7 @@ int main(int argc, char *argv[])
         case AF_POISON_DEX:
         case AF_POISON_INT:
         case AF_POISON_STAT:
+	case AF_FIREBRAND:
           monsterattacks += colour(LIGHTRED, "(?\?\?)");
           break;
 #endif
