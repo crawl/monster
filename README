@@ -1,9 +1,13 @@
-To update trunk:
-   git checkout bleeding-edge-crawl
-   cd crawl-ref && git checkout master && cd ..
-   make install-trunk
+As of 0.18, monster is part of the crawl source distribution:
 
-To update for 0.9:
-   git checkout dscss09
-   cd crawl-ref && git checkout stone_soup-0.9 && cd ..
-   make install
+  https://github.com/crawl/crawl/
+
+in directory crawl-ref/source/util/monster/
+
+To build monster for 0.17 (likewise 0.9 through 0.16):
+  git checkout dcss017
+  # On the first build:
+    git clone -b stone_soup-0.17 https://github.com/crawl/crawl/ crawl-ref
+  # Subsequent builds:
+    # cd crawl-ref && git checkout stone_soup-0.17 && cd ..
+  make
